@@ -283,6 +283,22 @@ body.light .stat-label{color:#000000;}
 #toast.ok  {background:#10b981;color:#fff;}
 #toast.err {background:#ef4444;color:#fff;}
 #toast.warn{background:#f59e0b;color:#000;}
+
+/* ── IMPRESSÃO ──────────────────────────────────────────────────────────────── */
+@media print {
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  header { position: relative !important; box-shadow: none !important; }
+  .btn-add, .btn-del, .btn-salvar, .acoes-cell, thead th:last-child, tbody td:last-child,
+  #btnPrint, #btnTema, [onclick="exportarCSV()"], #banner-vincular, #toast { display: none !important; }
+  body { background: #fff !important; }
+  body.light { background: #fff !important; }
+  .card { box-shadow: none !important; border: 1px solid #ccc !important; page-break-inside: avoid; }
+  .group { box-shadow: none !important; border: 1px solid #ddd !important; margin: 6px 0 !important; page-break-inside: avoid; }
+  .stat-grid { display: grid !important; grid-template-columns: repeat(4,1fr) !important; gap: 6px !important; }
+  main { padding: 8px !important; }
+  table { min-width: unset !important; font-size: .75rem !important; }
+  td input { border: none !important; background: transparent !important; padding: 2px 4px !important; }
+}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
@@ -300,10 +316,10 @@ body.light .stat-label{color:#000000;}
     </div>
   </div>
   <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-    <button onclick="exportarCSV()" style="padding:7px 14px;border-radius:8px;border:none;background:var(--orange);color:#fff;cursor:pointer;font-size:.82rem;font-weight:700;">📥 Exportar</button>
+    <button onclick="exportarCSV()" style="padding:7px 14px;border-radius:8px;border:none;background:var(--orange);color:#fff;cursor:pointer;font-size:.82rem;font-weight:700;">📥 Exportar CSV</button>
     <button id="btnPrint" onclick="tirarPrint()"
       style="padding:7px 14px;border-radius:8px;border:none;background:#25d366;color:#fff;cursor:pointer;font-size:.82rem;font-weight:700;white-space:nowrap;"
-      onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">📷 Print</button>
+      onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'" title='Ctrl+P para imprimir ou salvar como PDF'>📷 Print</button>
     <span style="color:var(--border);font-size:1.2rem;">|</span>
     <button id="btnTema" onclick="toggleTema()"
       style="padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:var(--s2);color:var(--text);cursor:pointer;font-size:.82rem;font-weight:700;">🌙 Escuro</button>
@@ -429,17 +445,8 @@ body.light .stat-label{color:#000000;}
 
 <script>
 // ══════════════════════════════════════════════════════════════════════════════
-//  VERSÃO — força reset do localStorage antigo em todos os browsers
+//  STORAGE — localStorage como primário, JSON como backup
 // ══════════════════════════════════════════════════════════════════════════════
-(function() {
-  const VER = 'v3';
-  if (localStorage.getItem('_frotas_ver') !== VER) {
-    ['tabela-cam-proprio','tabela-cam-terceiro','tabela-cam-borracharia',
-     'tabela-col-proprio','tabela-col-terceiro','tabela-transbordo']
-      .forEach(k => localStorage.removeItem(k));
-    localStorage.setItem('_frotas_ver', VER);
-  }
-})();
 
 // ══════════════════════════════════════════════════════════════════════════════
 //  FROTAS DISPONÍVEIS POR TABELA
@@ -557,6 +564,7 @@ setInterval(() => {
 // ══════════════════════════════════════════════════════════════════════════════
 //  CARGA INICIAL — sempre começa do localStorage (ou vazio)
 // ══════════════════════════════════════════════════════════════════════════════
+
 window.onload = function() {
   TABELAS.forEach(id => {
     const salvo = localStorage.getItem(id);
@@ -575,7 +583,7 @@ window.onload = function() {
   _carregarUltimaAtualizacao();
 };
 
-// ═════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════════
 //  ADICIONAR — cria linha pendente (não conta, não salva ainda)
 // ══════════════════════════════════════════════════════════════════════════════
 function adicionarLinha(idTabela) {
@@ -946,6 +954,7 @@ function toggleSec(key) {
   document.getElementById('hdr-'+key)?.classList.toggle('collapsed');
 }
 
+
 // ══════════════════════════════════════════════════════════════════════════════
 //  EXPORTAR CSV
 // ══════════════════════════════════════════════════════════════════════════════
@@ -984,6 +993,21 @@ document.addEventListener('keydown', e => {
   if (!active.closest('tbody')) return;
 
   e.preventDefault();
+
+  const tr  = active.closest('tr');
+  const id  = active.closest('table')?.id;
+
+  // Campo Duração: interpreta, recalcula e vai para o botão Salvar da linha
+  if (active.dataset.campo === 'previsao') {
+    _interpretarDuracao(active);
+    _recalcular(active);
+    if (tr?.dataset.salvo === 'true' && id) _salvarDados(id);
+    // Foca o botão Salvar (não salvo) ou Remover (já salvo)
+    const btnSalvar = tr?.querySelector('.btn-salvar');
+    const btnDel    = tr?.querySelector('.btn-del');
+    if (btnSalvar) { btnSalvar.focus(); return; }
+    if (btnDel)    { btnDel.focus();    return; }
+  }
 
   const allInputs = Array.from(
     document.querySelectorAll('tbody tr td input:not([readonly])')
@@ -1035,53 +1059,77 @@ function showToast(msg, tipo='ok') {
 //  PRINT
 // ══════════════════════════════════════════════════════════════════════════════
 function tirarPrint() {
+  // No preview do Claude (iframe) nada funciona — avisa e sai
+  if (window !== window.top) {
+    showToast('⚠️ Abra o arquivo no navegador para usar o print.', 'warn');
+    return;
+  }
+
   const btn  = document.getElementById('btnPrint');
   const orig = btn.innerHTML;
   btn.innerHTML = '⏳'; btn.disabled = true;
-  window.scrollTo(0, 0);
-  const hdr    = document.querySelector('header');
+
+  // Esconde o header sticky temporariamente para captura correta
+  const hdr = document.querySelector('header');
   const hdrPos = hdr.style.position;
   hdr.style.position = 'relative';
+  window.scrollTo(0, 0);
 
+  const bg = document.body.classList.contains('light') ? '#f0f2f5' : '#0d1117';
+
+  // Aguarda o browser renderizar, depois captura
   setTimeout(() => {
-    const bg = document.body.classList.contains('light') ? '#f0f4f8' : '#0d1117';
     html2canvas(document.body, {
-      backgroundColor: bg, scale: 1.5, useCORS: true, allowTaint: true, logging: false,
+      backgroundColor: bg,
+      scale: 1.5,
+      useCORS: true,
+      allowTaint: true,
+      logging: false,
       scrollX: 0, scrollY: 0,
       windowWidth:  document.documentElement.scrollWidth,
       windowHeight: document.documentElement.scrollHeight
     }).then(canvas => {
       hdr.style.position = hdrPos || '';
-      // Abre a imagem numa nova aba — clique direito > Copiar imagem, ou Ctrl+V direto
-      const dataUrl = canvas.toDataURL('image/png');
-      const w = window.open('', '_blank');
-      if (w) {
-        w.document.write(
-          '<html><head><title>Frotas Paradas</title></head><body style="margin:0;background:#0d1117">' +
-          '<img src="' + dataUrl + '" style="max-width:100%;display:block">' +
-          '<p style="color:#aaa;font-family:sans-serif;padding:10px;font-size:13px">' +
-          '📋 Clique com botão direito na imagem → <b>Copiar imagem</b> → Cole com Ctrl+V</p>' +
-          '</body></html>'
-        );
-        w.document.close();
-        showToast('📷 Imagem aberta — clique direito > Copiar imagem', 'ok');
-      } else {
-        // Fallback: download direto se popup bloqueado
-        const a = document.createElement('a');
-        a.href = dataUrl;
-        a.download = 'frotas-paradas-' + new Date().toLocaleString('pt-BR').replace(/[/:,\s]/g,'-') + '.png';
-        a.click();
-        showToast('📥 Popup bloqueado — imagem baixada!', 'warn');
-      }
-      btn.innerHTML = orig;
-      btn.style.background = '#25d366';
-      btn.disabled = false;
+
+      // Passa o blob DIRETAMENTE para ClipboardItem — sem fetch, sem blob URL
+      canvas.toBlob(blob => {
+        if (navigator.clipboard && window.ClipboardItem) {
+          navigator.clipboard.write([new ClipboardItem({'image/png': blob})])
+            .then(() => {
+              btn.innerHTML = '✅';
+              btn.style.background = '#16a34a';
+              showToast('✅ Copiado! Cole em qualquer lugar com Ctrl+V', 'ok');
+              setTimeout(() => {
+                btn.innerHTML = orig;
+                btn.style.background = '#25d366';
+                btn.disabled = false;
+              }, 2500);
+            })
+            .catch(() => _downloadFallback(blob, btn, orig));
+        } else {
+          _downloadFallback(blob, btn, orig);
+        }
+      }, 'image/png');
+
     }).catch(err => {
       hdr.style.position = hdrPos || '';
       btn.innerHTML = orig; btn.disabled = false;
       showToast('Erro: ' + err.message, 'err');
     });
-  }, 200);
+  }, 250);
+}
+
+function _downloadFallback(blob, btn, orig) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'frotas-' + new Date().toLocaleDateString('pt-BR').replace(/\//g, '-') + '.png';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  showToast('📥 Clipboard indisponível — imagem baixada! Cole do arquivo.', 'warn');
+  btn.innerHTML = orig;
+  btn.style.background = '#25d366';
+  btn.disabled = false;
 }
 </script>
 </body>
