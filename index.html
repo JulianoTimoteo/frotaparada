@@ -495,6 +495,86 @@ const FROTAS_DISPONIVEIS = {
 };
 
 // ══════════════════════════════════════════════════════════════════════════════
+//  PREFIXOS VÁLIDOS POR TABELA + VALIDAÇÃO + AUTO-CADASTRO
+// ══════════════════════════════════════════════════════════════════════════════
+const PREFIXOS_VALIDOS = {
+  'tabela-cam-proprio':    ['31'],
+  'tabela-cam-terceiro':   ['91'],
+  'tabela-cam-borracharia':['31','91'],   // só caminhão (próprio+terceiro)
+  'tabela-col-proprio':    ['80'],
+  'tabela-col-terceiro':   ['93'],
+  'tabela-transbordo':     ['92']
+};
+
+const NOMES_TABELA = {
+  'tabela-cam-proprio':    'Caminhão Próprio (31...)',
+  'tabela-cam-terceiro':   'Caminhão Terceiro (91...)',
+  'tabela-cam-borracharia':'Borracharia (31... ou 91...)',
+  'tabela-col-proprio':    'Colhedora Própria (80...)',
+  'tabela-col-terceiro':   'Colhedora Terceira (93...)',
+  'tabela-transbordo':     'Transbordo (92...)'
+};
+
+// Verifica se o prefixo da frota é válido para a tabela
+function _prefixoValido(frota, idTabela) {
+  const prefixos = PREFIXOS_VALIDOS[idTabela] || [];
+  return prefixos.some(p => frota.startsWith(p));
+}
+
+// Auto-cadastra frota nova com prefixo correto
+function _autoCadastrarFrota(frota, idTabela) {
+  if (!frota || frota.length < 4) return;
+  if (!_prefixoValido(frota, idTabela)) return;
+  if (FROTAS_DISPONIVEIS[idTabela].includes(frota)) return;
+
+  FROTAS_DISPONIVEIS[idTabela].push(frota);
+  FROTAS_DISPONIVEIS[idTabela].sort();
+
+  // Persiste no localStorage
+  const key = '_frotas_custom_' + idTabela;
+  const custom = JSON.parse(localStorage.getItem(key) || '[]');
+  if (!custom.includes(frota)) {
+    custom.push(frota);
+    localStorage.setItem(key, JSON.stringify(custom));
+  }
+  showToast('✅ Frota ' + frota + ' cadastrada automaticamente!', 'ok');
+}
+
+// Carrega frotas customizadas ao iniciar
+function _carregarFrotasCustom() {
+  TABELAS.forEach(id => {
+    const custom = JSON.parse(localStorage.getItem('_frotas_custom_' + id) || '[]');
+    custom.forEach(f => {
+      if (!FROTAS_DISPONIVEIS[id].includes(f)) {
+        FROTAS_DISPONIVEIS[id].push(f);
+      }
+    });
+    FROTAS_DISPONIVEIS[id].sort();
+  });
+}
+
+// Aplica estilo de erro/ok no input de frota
+function _validarInputFrota(input, idTabela) {
+  const frota = input.value.trim();
+  if (!frota) {
+    input.style.borderColor = 'transparent';
+    input.title = '';
+    return true;
+  }
+  if (_prefixoValido(frota, idTabela)) {
+    input.style.borderColor = 'rgba(16,185,129,.6)';
+    input.style.background  = 'rgba(16,185,129,.06)';
+    input.title = '';
+    return true;
+  } else {
+    input.style.borderColor = '#ef4444';
+    input.style.background  = 'rgba(239,68,68,.08)';
+    input.title = '⚠️ Frota inválida para ' + NOMES_TABELA[idTabela];
+    return false;
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
 //  MAPAS
 // ══════════════════════════════════════════════════════════════════════════════
 const TABELAS = [
@@ -566,11 +646,15 @@ setInterval(() => {
 // ══════════════════════════════════════════════════════════════════════════════
 
 window.onload = function() {
+  _carregarFrotasCustom();
   TABELAS.forEach(id => {
     const salvo = localStorage.getItem(id);
     const linhas = salvo ? JSON.parse(salvo) : [];
     document.querySelector(`#${id} tbody`).innerHTML = '';
     linhas.forEach(l => _criarLinha(id, l, true));
+    // Valida visualmente frotas já carregadas
+    document.querySelectorAll(`#${id} tbody tr[data-salvo="true"] [data-campo="frota"]`)
+      .forEach(inp => _validarInputFrota(inp, id));
   });
   atualizarTodosCronometros();
   atualizarTodosContadores();
@@ -672,6 +756,13 @@ function _ativarListeners(tr, idTabela, salvo) {
     inpFrota.addEventListener('input',  () => _salvarDados(idTabela));
   }
 
+  // Validação em tempo real no campo frota
+  const inpFrotaEl = tr.querySelector('[data-campo="frota"]');
+  if (inpFrotaEl) {
+    inpFrotaEl.addEventListener('input', () => _validarInputFrota(inpFrotaEl, idTabela));
+    inpFrotaEl.addEventListener('blur',  () => _validarInputFrota(inpFrotaEl, idTabela));
+  }
+
   // Botão Salvar
   const btnSalvar = tr.querySelector('.btn-salvar');
   if (btnSalvar) {
@@ -698,6 +789,14 @@ function _confirmarLinha(tr, idTabela) {
     tr.querySelector('[data-campo="frota"]').focus();
     return;
   }
+  // Bloqueia prefixo errado
+  if (!_prefixoValido(frota, idTabela)) {
+    showToast('❌ Frota ' + frota + ' inválida para ' + NOMES_TABELA[idTabela], 'err');
+    tr.querySelector('[data-campo="frota"]').focus();
+    return;
+  }
+  // Auto-cadastra se for nova
+  _autoCadastrarFrota(frota, idTabela);
   tr.setAttribute('data-salvo', 'true');
 
   // Remove botão Salvar
