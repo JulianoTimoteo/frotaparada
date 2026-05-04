@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frotas Paradas</title>
+<style>
+:root {
+  --bg:#0d1117; --s1:#161b22; --s2:#1c2128; --s3:#21262d;
+  --border:#30363d; --text:#ffffff; --muted:#ffffff;
+  --blue:#3b82f6; --amber:#f59e0b; --red:#ef4444;
+  --green:#10b981; --purple:#a855f7; --orange:#f97316;
+  --radius:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Arial,sans-serif;min-height:100vh;}
+
+header{
+  position:sticky;top:0;z-index:30;
+  background:rgba(22,27,34,.97);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border);
+  padding:14px 24px;display:flex;justify-content:space-between;align-items:center;
+  box-shadow:0 4px 20px rgba(0,0,0,.5);
+}
+header h1{font-size:1.1rem;font-weight:800;}
+#dataAtual{color:#ffffff;font-size:.83rem;}
+
+.top-bar{max-width:1600px;margin:0 auto;padding:0;}
+main{max-width:1600px;margin:0 auto;padding:16px 24px 50px;display:grid;gap:18px;}
+
+.card{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:0 6px 20px rgba(0,0,0,.3);}
+.card-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 20px;border-bottom:1px solid var(--border);
+  cursor:pointer;user-select:none;transition:background .15s;
+}
+.card-header:hover{background:var(--s2);}
+.card-title{display:flex;align-items:center;gap:10px;font-size:.98rem;font-weight:800;}
+.pill{padding:3px 10px;border-radius:999px;font-size:.72rem;font-weight:800;background:var(--s3);border:1px solid var(--border);}
+.arrow{color:var(--muted);transition:transform .2s;}
+.card-header.collapsed .arrow{transform:rotate(-90deg);}
+.card-body.hidden{display:none;}
+
+.group{border-top:1px solid rgba(255,255,255,.04);}
+.group-label{
+  display:flex;align-items:center;gap:8px;padding:11px 20px;
+  font-size:.72rem;text-transform:uppercase;letter-spacing:1px;font-weight:800;
+}
+.gc{padding:2px 8px;border-radius:999px;font-size:.7rem;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.07);}
+.blue-t  {color:var(--blue);  background:rgba(59,130,246,.07);}
+.amber-t {color:var(--amber); background:rgba(245,158,11,.07);}
+.red-t   {color:var(--red);   background:rgba(239,68,68,.07);}
+.green-t {color:var(--green); background:rgba(16,185,129,.07);}
+.purple-t{color:var(--purple);background:rgba(168,85,247,.07);}
+
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;min-width:860px;}
+thead th{
+  text-align:left;padding:9px 10px;
+  font-size:.69rem;text-transform:uppercase;letter-spacing:.9px;
+  color:var(--muted);background:var(--s2);border-bottom:1px solid var(--border);white-space:nowrap;
+}
+tbody tr{border-bottom:1px solid rgba(255,255,255,.04);transition:background .12s;}
+tbody tr:last-child{border-bottom:none;}
+tbody td{padding:5px 6px;vertical-align:middle;}
+
+/* Linha não salva ainda */
+tbody tr[data-salvo="false"]{
+  background:rgba(245,158,11,.05);
+  border-left:3px solid rgba(245,158,11,.45);
+}
+
+td input[type="text"],
+td input[type="time"]{
+  width:100%;padding:7px 8px;
+  border-radius:7px;border:1px solid transparent;
+  background:transparent;color:var(--text);
+  font-size:.84rem;outline:none;
+  transition:border-color .18s,background .18s;
+}
+td input[type="text"]:hover,
+td input[type="time"]:hover{background:var(--s3);border-color:var(--border);}
+td input[type="text"]:focus,
+td input[type="time"]:focus{border-color:#4d77ff;background:var(--s2);}
+td input[readonly]{color:var(--muted);cursor:default;}
+td input[readonly]:hover{background:transparent;border-color:transparent;}
+td input::placeholder{color:#7a8899;}
+
+/* AUTOCOMPLETE */
+.ac-wrap{position:relative;width:100%;}
+.ac-wrap input{width:100%;}
+.ac-list{
+  position:absolute;top:calc(100% + 2px);left:0;right:0;z-index:200;
+  background:var(--s1);border:1px solid #4d77ff;border-radius:8px;
+  max-height:180px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.5);
+  display:none;
+}
+.ac-list.show{display:block;}
+.ac-item{
+  padding:8px 12px;font-size:.83rem;cursor:pointer;
+  border-bottom:1px solid rgba(255,255,255,.05);transition:background .1s;
+}
+.ac-item:last-child{border-bottom:none;}
+.ac-item:hover,.ac-item.ativo{background:rgba(77,119,255,.2);color:#a5b8ff;}
+.ac-item mark{background:transparent;color:#60a5fa;font-weight:800;}
+
+/* CRONÔMETRO */
+.cronometro{font-weight:700;font-size:.81rem;white-space:nowrap;padding:4px 8px;border-radius:6px;display:inline-block;}
+.cronometro-ativo    {color:#60a5fa;background:rgba(59,130,246,.12);}
+.cronometro-atrasado {color:#f87171;background:rgba(239,68,68,.12);}
+@keyframes pulsar{0%,100%{background:rgba(239,68,68,.03);}50%{background:rgba(239,68,68,.13);}}
+.linha-atrasada{animation:pulsar 1.5s infinite;}
+
+/* BOTÕES */
+.btn-add{
+  display:inline-flex;align-items:center;gap:5px;
+  margin:10px 20px 14px;padding:8px 16px;
+  border-radius:9px;border:1px dashed var(--border);
+  background:transparent;color:var(--muted);
+  font-size:.83rem;font-weight:700;cursor:pointer;transition:all .15s;
+}
+.btn-add:hover{background:var(--s2);border-color:#4a5280;color:var(--text);}
+.btn-del{
+  padding:5px 10px;border-radius:7px;
+  border:1px solid rgba(239,68,68,.25);
+  background:rgba(239,68,68,.1);color:#fca5a5;
+  font-size:.78rem;font-weight:700;cursor:pointer;transition:all .15s;white-space:nowrap;
+}
+.btn-del:hover{background:rgba(239,68,68,.25);}
+.btn-salvar{
+  padding:5px 10px;border-radius:7px;
+  border:1px solid rgba(16,185,129,.35);
+  background:rgba(16,185,129,.15);color:#6ee7b7;
+  font-size:.78rem;font-weight:700;cursor:pointer;transition:all .15s;white-space:nowrap;
+}
+.btn-salvar:hover{background:rgba(16,185,129,.3);}
+.acoes-cell{display:flex;gap:4px;align-items:center;}
+
+.card-note{padding:8px 20px 14px;color:var(--muted);font-size:.79rem;font-style:italic;border-top:1px solid rgba(255,255,255,.04);}
+
+@media(max-width:700px){
+  thead th:nth-child(6),tbody td:nth-child(6){display:none;}
+  main,.top-bar{padding-left:10px;padding-right:10px;}
+}
+
+/* TEMA CLARO — Cards brancos, cabeçalho colorido por grupo */
+body.light{
+  --bg:#f4f6f8;--s1:#ffffff;--s2:#f0f2f5;--s3:#e8ebef;
+  --border:#d0d5dd;--text:#000000;--muted:#000000;
+  --blue:#1a5cb8;--amber:#d97000;--red:#c01020;
+  --green:#0a7040;--purple:#5520b0;--orange:#d97000;
+}
+body.light{background:#f0f2f5;}
+
+/* Header */
+body.light header{
+  background:#ffffff;
+  border-bottom:2px solid #d0d5dd;
+  box-shadow:0 2px 12px rgba(0,0,0,.08);
+  color:#000;
+}
+body.light header h1{color:#000;}
+body.light #dataAtual{color:#222;font-weight:600;}
+
+/* Cards (seções principais) */
+body.light .card{
+  background:#ffffff;
+  border:1.5px solid #d0d5dd;
+  border-radius:14px;
+  box-shadow:0 3px 16px rgba(0,0,0,.07);
+}
+body.light #sec-caminhao {border-top:4px solid #1a5cb8;}
+body.light #sec-colhedora{border-top:4px solid #0a7040;}
+body.light #sec-transbordo{border-top:4px solid #5520b0;}
+
+body.light .card-header{background:#ffffff;border-bottom:1px solid #e0e4ea;color:#000;}
+body.light .card-header:hover{background:#f5f7fa;}
+body.light .card-title{color:#000;font-weight:900;}
+body.light .arrow{color:#444;}
+body.light .pill{color:#fff;font-weight:800;}
+body.light #pill-caminhao {background:#1a5cb8;border-color:#1a5cb8;}
+body.light #pill-colhedora{background:#0a7040;border-color:#0a7040;}
+body.light #pill-transbordo{background:#5520b0;border-color:#5520b0;}
+
+/* Stat cards */
+body.light .stat-card{
+  background:#ffffff;
+  border:1.5px solid #d0d5dd;
+  box-shadow:0 2px 10px rgba(0,0,0,.06);
+}
+body.light .stat-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.1);}
+body.light .stat-value{color:#000;font-weight:900;}
+body.light .stat-total .stat-value{color:#1a5cb8;}
+body.light .stat-label{color:#000;font-weight:800;}
+
+/* Grupos — fundo branco, cabeçalho colorido sólido */
+body.light .group{
+  background:#ffffff;
+  border:1px solid #e0e4ea;
+  border-radius:10px;
+  margin:10px 14px;
+  overflow:hidden;
+  box-shadow:0 1px 6px rgba(0,0,0,.05);
+}
+body.light .group-label{
+  font-size:.73rem;font-weight:900;letter-spacing:1px;
+  color:#ffffff !important;
+  padding:10px 18px;
+}
+body.light .group-label.blue-t  {background:linear-gradient(90deg,#1a5cb8,#2472d4);color:#fff !important;}
+body.light .group-label.amber-t {background:linear-gradient(90deg,#c86000,#e07820);color:#fff !important;}
+body.light .group-label.red-t   {background:linear-gradient(90deg,#b00018,#d01830);color:#fff !important;}
+body.light .group-label.green-t {background:linear-gradient(90deg,#0a6838,#0e8848);color:#fff !important;}
+body.light .group-label.purple-t{background:linear-gradient(90deg,#4a18a0,#6030c0);color:#fff !important;}
+body.light .gc{color:#fff !important;background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.4);font-weight:800;}
+
+/* Tabela */
+body.light thead th{color:#000;background:#f0f3f8;font-weight:900;border-bottom:2px solid #d0d5dd;}
+body.light tbody tr{border-bottom:1px solid #eaedf2;}
+body.light tbody tr:hover{background:#f0f5ff;}
+body.light tbody tr[data-salvo="false"]{background:#fffbf0;border-left:3px solid #d97000;}
+
+/* Inputs */
+body.light td input[type="text"],
+body.light td input[type="time"]{color:#000;}
+body.light td input[type="text"]:hover,
+body.light td input[type="time"]:hover{background:#f0f4fc;border-color:#aabbdd;}
+body.light td input[type="text"]:focus,
+body.light td input[type="time"]:focus{background:#fff;border-color:#1a5cb8;box-shadow:0 0 0 2px rgba(26,92,184,.15);}
+body.light td input::placeholder{color:#778899;}
+body.light td input[readonly]{color:#334;}
+
+/* Cronômetro */
+body.light .cronometro-ativo     {color:#1a5cb8;background:#e8f0fc;border:1px solid #c0d0f0;}
+body.light .cronometro-atrasado  {color:#c01020;background:#fde8ea;border:1px solid #f0b0b8;}
+
+/* Botões */
+body.light .btn-add{color:#1a5cb8;border:1px dashed #aabbdd;font-weight:700;}
+body.light .btn-add:hover{background:#e8f0fc;border-color:#1a5cb8;color:#000;}
+body.light .card-note{color:#444;font-style:italic;}
+
+/* Autocomplete */
+body.light .ac-list{background:#fff;border:1.5px solid #1a5cb8;box-shadow:0 8px 24px rgba(26,92,184,.15);}
+body.light .ac-item:hover,body.light .ac-item.ativo{background:#e8f0fc;color:#000;}
+
+@keyframes pulsarLight{0%,100%{background:#fff5f5;}50%{background:#fed7d7;}}
+body.light .linha-atrasada{animation:pulsarLight 1.5s infinite;}
+
+/* STAT CARDS */
+.stat-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:12px;
+  padding:16px 24px 12px;width:100%;
+}
+.stat-card{
+  background:var(--s1);border:1px solid var(--border);
+  border-left:4px solid var(--accent,var(--blue));
+  border-radius:var(--radius);padding:14px 18px;
+  display:flex;align-items:center;gap:14px;
+  transition:transform .15s,box-shadow .15s;
+}
+.stat-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.25);}
+.stat-icon{font-size:1.6rem;line-height:1;}
+.stat-info{display:flex;flex-direction:column;gap:2px;}
+.stat-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);font-weight:700;}
+.stat-value{font-size:1.7rem;font-weight:900;color:var(--accent,var(--text));line-height:1;}
+.stat-total .stat-value{color:#7aa3ff;}
+body.light .stat-value{color:#000000;}
+body.light .stat-total .stat-value{color:#000000;}
+body.light .stat-label{color:#000000;}
+@media(max-width:900px){.stat-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:500px){.stat-grid{grid-template-columns:repeat(1,1fr);}}
+
+
+
+/* TOAST */
+#toast{
+  position:fixed;bottom:24px;right:24px;z-index:9999;
+  padding:12px 22px;border-radius:10px;font-weight:700;font-size:.88rem;
+  display:none;opacity:0;transition:opacity .3s;
+  box-shadow:0 4px 20px rgba(0,0,0,.4);pointer-events:none;
+}
+#toast.show{display:block;opacity:1;}
+#toast.ok  {background:#10b981;color:#fff;}
+#toast.err {background:#ef4444;color:#fff;}
+#toast.warn{background:#f59e0b;color:#000;}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+
+<div id="toast"></div>
+
+<header>
+  <div style="display:flex;flex-direction:column;gap:3px;">
+    <h1 style="margin:0;">🚜 Controle de Frotas Paradas</h1>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      <span id="dataAtual" style="font-size:.8rem;font-weight:600;opacity:.9;"></span>
+      <span style="color:var(--border);font-size:.9rem;">·</span>
+      <span id="ultimaAtualizacao" style="font-size:.78rem;font-weight:700;"></span>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+    <button onclick="exportarCSV()" style="padding:7px 14px;border-radius:8px;border:none;background:var(--orange);color:#fff;cursor:pointer;font-size:.82rem;font-weight:700;">📥 Exportar</button>
+    <button id="btnPrint" onclick="tirarPrint()"
+      style="padding:7px 14px;border-radius:8px;border:none;background:#25d366;color:#fff;cursor:pointer;font-size:.82rem;font-weight:700;white-space:nowrap;"
+      onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">📷 Print</button>
+    <span style="color:var(--border);font-size:1.2rem;">|</span>
+    <button id="btnTema" onclick="toggleTema()"
+      style="padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:var(--s2);color:var(--text);cursor:pointer;font-size:.82rem;font-weight:700;">🌙 Escuro</button>
+  </div>
+</header>
+
+<div class="top-bar">
+  <div class="stat-grid">
+    <div class="stat-card" style="--accent:var(--blue)">
+      <div class="stat-icon">🚛</div>
+      <div class="stat-info"><span class="stat-label">Cam. Próprio</span><span class="stat-value" id="contador-cam-proprio">0</span></div>
+    </div>
+    <div class="stat-card" style="--accent:var(--amber)">
+      <div class="stat-icon">🚛</div>
+      <div class="stat-info"><span class="stat-label">Cam. Terceiro</span><span class="stat-value" id="contador-cam-terceiro">0</span></div>
+    </div>
+    <div class="stat-card" style="--accent:var(--red)">
+      <div class="stat-icon">🔧</div>
+      <div class="stat-info"><span class="stat-label">Borracharia</span><span class="stat-value" id="contador-cam-borracharia">0</span></div>
+    </div>
+    <div class="stat-card" style="--accent:var(--green)">
+      <div class="stat-icon">🌾</div>
+      <div class="stat-info"><span class="stat-label">Col. Própria</span><span class="stat-value" id="contador-col-proprio">0</span></div>
+    </div>
+    <div class="stat-card" style="--accent:var(--amber)">
+      <div class="stat-icon">🌾</div>
+      <div class="stat-info"><span class="stat-label">Col. Terceira</span><span class="stat-value" id="contador-col-terceiro">0</span></div>
+    </div>
+    <div class="stat-card" style="--accent:var(--purple)">
+      <div class="stat-icon">🔄</div>
+      <div class="stat-info"><span class="stat-label">Transbordo</span><span class="stat-value" id="contador-transbordo">0</span></div>
+    </div>
+    <div class="stat-card" style="--accent:#64748b">
+      <div class="stat-icon">📊</div>
+      <div class="stat-info"><span class="stat-label">Fora Borracharia</span><span class="stat-value" id="tot-fora">0</span></div>
+    </div>
+    <div class="stat-card stat-total" style="--accent:#4d77ff">
+      <div class="stat-icon">🚜</div>
+      <div class="stat-info"><span class="stat-label">Total Geral</span><span class="stat-value" id="tot-geral">0</span></div>
+    </div>
+  </div>
+</div>
+
+<main>
+
+  <section class="card" id="sec-caminhao">
+    <div class="card-header" id="hdr-caminhao" onclick="toggleSec('caminhao')">
+      <div class="card-title">🚛 Caminhões Parados <span class="pill" id="pill-caminhao">0</span></div>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="card-body" id="body-caminhao">
+      <div class="group">
+        <div class="group-label blue-t">Próprio <span class="gc" id="gc-cam-proprio">0</span></div>
+        <div class="table-wrap"><table id="tabela-cam-proprio">
+          <thead><tr><th style="width:10%">Frota</th><th style="width:10%">Data Entrada</th><th style="width:22%">Motivo</th><th style="width:10%">Hora Parada</th><th style="width:10%">Duração</th><th style="width:10%">Retorno</th><th style="width:14%">Tempo Restante</th><th style="width:14%">Ações</th></tr></thead>
+          <tbody></tbody>
+        </table></div>
+        <button class="btn-add" onclick="adicionarLinha('tabela-cam-proprio')">＋ Adicionar</button>
+      </div>
+      <div class="group">
+        <div class="group-label amber-t">Terceiro <span class="gc" id="gc-cam-terceiro">0</span></div>
+        <div class="table-wrap"><table id="tabela-cam-terceiro">
+          <thead><tr><th style="width:10%">Frota</th><th style="width:10%">Data Entrada</th><th style="width:22%">Motivo</th><th style="width:10%">Hora Parada</th><th style="width:10%">Duração</th><th style="width:10%">Retorno</th><th style="width:14%">Tempo Restante</th><th style="width:14%">Ações</th></tr></thead>
+          <tbody></tbody>
+        </table></div>
+        <button class="btn-add" onclick="adicionarLinha('tabela-cam-terceiro')">＋ Adicionar</button>
+      </div>
+      <div class="group">
+        <div class="group-label red-t">Borracharia <span class="gc" id="gc-cam-borracharia">0</span></div>
+        <div class="table-wrap"><table id="tabela-cam-borracharia">
+          <thead><tr><th style="width:10%">Frota</th><th style="width:10%">Data Entrada</th><th style="width:22%">Motivo</th><th style="width:10%">Hora Parada</th><th style="width:10%">Duração</th><th style="width:10%">Retorno</th><th style="width:14%">Tempo Restante</th><th style="width:14%">Ações</th></tr></thead>
+          <tbody></tbody>
+        </table></div>
+        <button class="btn-add" onclick="adicionarLinha('tabela-cam-borracharia')">＋ Adicionar</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" id="sec-colhedora">
+    <div class="card-header" id="hdr-colhedora" onclick="toggleSec('colhedora')">
+      <div class="card-title">🌾 Colhedoras Paradas <span class="pill" id="pill-colhedora">0</span></div>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="card-body" id="body-colhedora">
+      <div class="group">
+        <div class="group-label green-t">Própria <span class="gc" id="gc-col-proprio">0</span></div>
+        <div class="table-wrap"><table id="tabela-col-proprio">
+          <thead><tr><th style="width:10%">Frota</th><th style="width:10%">Data Entrada</th><th style="width:22%">Motivo</th><th style="width:10%">Hora Parada</th><th style="width:10%">Duração</th><th style="width:10%">Retorno</th><th style="width:14%">Tempo Restante</th><th style="width:14%">Ações</th></tr></thead>
+          <tbody></tbody>
+        </table></div>
+        <button class="btn-add" onclick="adicionarLinha('tabela-col-proprio')">＋ Adicionar</button>
+      </div>
+      <div class="group">
+        <div class="group-label amber-t">Terceira <span class="gc" id="gc-col-terceiro">0</span></div>
+        <div class="table-wrap"><table id="tabela-col-terceiro">
+          <thead><tr><th style="width:10%">Frota</th><th style="width:10%">Data Entrada</th><th style="width:22%">Motivo</th><th style="width:10%">Hora Parada</th><th style="width:10%">Duração</th><th style="width:10%">Retorno</th><th style="width:14%">Tempo Restante</th><th style="width:14%">Ações</th></tr></thead>
+          <tbody></tbody>
+        </table></div>
+        <button class="btn-add" onclick="adicionarLinha('tabela-col-terceiro')">＋ Adicionar</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" id="sec-transbordo">
+    <div class="card-header" id="hdr-transbordo" onclick="toggleSec('transbordo')">
+      <div class="card-title">🔄 Transbordos Parados <span class="pill" id="pill-transbordo">0</span></div>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="card-body" id="body-transbordo">
+      <div class="group">
+        <div class="group-label purple-t">Terceiro <span class="gc" id="gc-transbordo">0</span></div>
+        <div class="table-wrap"><table id="tabela-transbordo">
+          <thead><tr><th style="width:10%">Frota</th><th style="width:10%">Data Entrada</th><th style="width:22%">Motivo</th><th style="width:10%">Hora Parada</th><th style="width:10%">Duração</th><th style="width:10%">Retorno</th><th style="width:14%">Tempo Restante</th><th style="width:14%">Ações</th></tr></thead>
+          <tbody></tbody>
+        </table></div>
+        <button class="btn-add" onclick="adicionarLinha('tabela-transbordo')">＋ Adicionar</button>
+      </div>
+      <div class="card-note">⚠️ Transbordo possui somente grupo Terceiro.</div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+// ══════════════════════════════════════════════════════════════════════════════
+//  VERSÃO — força reset do localStorage antigo em todos os browsers
+// ══════════════════════════════════════════════════════════════════════════════
+(function() {
+  const VER = 'v3';
+  if (localStorage.getItem('_frotas_ver') !== VER) {
+    ['tabela-cam-proprio','tabela-cam-terceiro','tabela-cam-borracharia',
+     'tabela-col-proprio','tabela-col-terceiro','tabela-transbordo']
+      .forEach(k => localStorage.removeItem(k));
+    localStorage.setItem('_frotas_ver', VER);
+  }
+})();
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  FROTAS DISPONÍVEIS POR TABELA
+// ══════════════════════════════════════════════════════════════════════════════
+const FROTAS_DISPONIVEIS = {
+  'tabela-cam-proprio': [
+    '311025','311115','311125','31115','311215','31125','311325','311425',
+    '311525','311625','311725','311825','311925','312025','31215','31225',
+    '31315','31316','31325','31415','31425','31515','31525','31615','31625',
+    '31725','31825','31925','31815','311225'
+  ],
+  'tabela-cam-terceiro': [
+    '91065','91203','91207','91209','91210','91277','91280','91282','91284',
+    '91286','91291','91301','91374','91375','91376','91378','91379','91380',
+    '91383','91393','91394','91396','91397','91398','91399','91400','91410',
+    '91411','91412','91413'
+  ],
+  'tabela-cam-borracharia': [
+    '311025','311115','311125','31115','311215','31125','311325','311425',
+    '311525','311625','311725','311825','311925','312025','31215','31225',
+    '31315','31316','31325','31415','31425','31515','31525','31615','31625',
+    '31725','31825','31925','31815','311225',
+    '91065','91203','91207','91209','91210','91277','91280','91282','91284',
+    '91286','91291','91301','91374','91375','91376','91378','91379','91380',
+    '91383','91393','91394','91396','91397','91398','91399','91400','91410',
+    '91411','91412','91413'
+  ],
+  'tabela-col-proprio': [
+    '80118','80120','80122','80124','80217','80222','80224','80322','80519',
+    '80619','80316','80317','80319','80320','80420','80422','80119','80219',
+    '80719','80419'
+  ],
+  'tabela-col-terceiro': [
+    '93034','93044','93058','93059','93080','93081','93078','93079',
+    '93069','93070','93071','93066'
+  ],
+  'tabela-transbordo': [
+    '92672','92269','92701','92694','92671','92706','92667','92669','92060',
+    '92264','92703','92194','92498','92606','92660','92661','92664','92665',
+    '92505','92691','92682','92696','92678','92693','92673','92674','92698',
+    '92677','92697','92704','92686','92499','92659','92657','92662','92658',
+    '92666','92695','92670','92466','92631','92687','92690','92501','92201',
+    '92668','92632','92630','92506','92504','92465','92692','92252','92607',
+    '92707','92509','92266','92508','92663','92688'
+  ]
+};
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  MAPAS
+// ══════════════════════════════════════════════════════════════════════════════
+const TABELAS = [
+  'tabela-cam-proprio','tabela-cam-terceiro','tabela-cam-borracharia',
+  'tabela-col-proprio','tabela-col-terceiro','tabela-transbordo'
+];
+const CONTADORES = {
+  'tabela-cam-proprio':    'contador-cam-proprio',
+  'tabela-cam-terceiro':   'contador-cam-terceiro',
+  'tabela-cam-borracharia':'contador-cam-borracharia',
+  'tabela-col-proprio':    'contador-col-proprio',
+  'tabela-col-terceiro':   'contador-col-terceiro',
+  'tabela-transbordo':     'contador-transbordo'
+};
+const GCS = {
+  'tabela-cam-proprio':    'gc-cam-proprio',
+  'tabela-cam-terceiro':   'gc-cam-terceiro',
+  'tabela-cam-borracharia':'gc-cam-borracharia',
+  'tabela-col-proprio':    'gc-col-proprio',
+  'tabela-col-terceiro':   'gc-col-terceiro',
+  'tabela-transbordo':     'gc-transbordo'
+};
+const PILLS = {
+  'tabela-cam-proprio':    'pill-caminhao',
+  'tabela-cam-terceiro':   'pill-caminhao',
+  'tabela-cam-borracharia':'pill-caminhao',
+  'tabela-col-proprio':    'pill-colhedora',
+  'tabela-col-terceiro':   'pill-colhedora',
+  'tabela-transbordo':     'pill-transbordo'
+};
+const SEM_BORRACHARIA = [
+  'tabela-cam-proprio','tabela-cam-terceiro',
+  'tabela-col-proprio','tabela-col-terceiro','tabela-transbordo'
+];
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  ALARME SONORO
+// ══════════════════════════════════════════════════════════════════════════════
+const _alarmeSet = new Set();   // evita repetir para mesma frota+retorno
+
+function tocarAlarme() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    [0, 0.4, 0.8].forEach(delay => {
+      const osc  = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(880, ctx.currentTime + delay);
+      gain.gain.setValueAtTime(0.5,   ctx.currentTime + delay);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 0.35);
+      osc.start(ctx.currentTime + delay);
+      osc.stop(ctx.currentTime + delay + 0.35);
+    });
+  } catch(e) { /* navegador sem AudioContext */ }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  TICK 1s
+// ══════════════════════════════════════════════════════════════════════════════
+setInterval(() => {
+  atualizarTodosCronometros();
+  atualizarTodosContadores();
+}, 1000);
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  CARGA INICIAL — sempre começa do localStorage (ou vazio)
+// ══════════════════════════════════════════════════════════════════════════════
+window.onload = function() {
+  TABELAS.forEach(id => {
+    const salvo = localStorage.getItem(id);
+    const linhas = salvo ? JSON.parse(salvo) : [];
+    document.querySelector(`#${id} tbody`).innerHTML = '';
+    linhas.forEach(l => _criarLinha(id, l, true));
+  });
+  atualizarTodosCronometros();
+  atualizarTodosContadores();
+  if (localStorage.getItem('tema') === 'light') {
+    document.body.classList.add('light');
+    document.getElementById('btnTema').textContent = '☀️ Claro';
+  }
+  document.getElementById('dataAtual').textContent =
+    new Date().toLocaleDateString('pt-BR', {weekday:'long',year:'numeric',month:'long',day:'2-digit'});
+  _carregarUltimaAtualizacao();
+};
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  ADICIONAR — cria linha pendente (não conta, não salva ainda)
+// ══════════════════════════════════════════════════════════════════════════════
+function adicionarLinha(idTabela) {
+  const hoje = new Date();
+  const data =
+    String(hoje.getDate()).padStart(2,'0') + '/' +
+    String(hoje.getMonth()+1).padStart(2,'0') + '/' +
+    hoje.getFullYear();
+  _criarLinha(idTabela, { dataEntrada: data }, false);
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  _criarLinha — núcleo
+// ══════════════════════════════════════════════════════════════════════════════
+function _criarLinha(idTabela, d, salvo) {
+  salvo = salvo === true;
+  const tbody = document.querySelector(`#${idTabela} tbody`);
+  const tr = document.createElement('tr');
+  tr.setAttribute('data-salvo', salvo ? 'true' : 'false');
+  if (d.dataRetornoCompleta) tr.setAttribute('data-hora-retorno', d.dataRetornoCompleta);
+
+  // ── Célula Frota (precisa de autocomplete, então criada manualmente)
+  const tdFrota = document.createElement('td');
+  const inpFrota = document.createElement('input');
+  inpFrota.type = 'text';
+  inpFrota.dataset.campo = 'frota';
+  inpFrota.placeholder = 'Ex: 311015';
+  inpFrota.value = d.frota || '';
+  if (salvo) inpFrota.addEventListener('input', () => _salvarDados(idTabela));
+  tdFrota.appendChild(inpFrota);
+  tr.appendChild(tdFrota);
+
+  // ── Demais células
+  const tpl = document.createElement('template');
+  tpl.innerHTML = `
+    <td><input type="text" data-campo="data" placeholder="dd/mm/aaaa" maxlength="10" value="${esc(d.dataEntrada)}"></td>
+    <td><input type="text" data-campo="motivo" placeholder="Descreva o motivo" value="${esc(d.motivo)}"></td>
+    <td><input type="time" data-campo="parada" value="${esc(d.horarioParada)}"></td>
+    <td><input type="text" data-campo="previsao" placeholder="Ex: 130 = 1h30" maxlength="5" value="${esc(d.previsaoRetorno)}"></td>
+    <td><input type="text" data-campo="retorno" readonly placeholder="Calculado" value="${esc(d.horarioRetorno)}"></td>
+    <td><span class="cronometro">--:--</span></td>
+    <td>
+      <div class="acoes-cell">
+        ${salvo ? '' : '<button class="btn-salvar">✔ Salvar</button>'}
+        <button class="btn-del">Remover</button>
+      </div>
+    </td>`;
+  while (tpl.content.firstChild) tr.appendChild(tpl.content.firstChild);
+  tbody.appendChild(tr);
+
+  // ── Listeners
+  _ativarListeners(tr, idTabela, salvo);
+  _criarAutocomplete(inpFrota, idTabela);
+}
+
+function esc(v) { return (v||'').replace(/"/g,'&quot;'); }
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  LISTENERS POR LINHA
+// ══════════════════════════════════════════════════════════════════════════════
+function _ativarListeners(tr, idTabela, salvo) {
+  const inpData    = tr.querySelector('[data-campo="data"]');
+  const inpMotivo  = tr.querySelector('[data-campo="motivo"]');
+  const inpParada  = tr.querySelector('[data-campo="parada"]');
+  const inpPrevisao= tr.querySelector('[data-campo="previsao"]');
+  const inpFrota   = tr.querySelector('[data-campo="frota"]');
+
+  // Máscara + recalcular
+  inpData.addEventListener('input', () => {
+    _mascaraData(inpData);
+    _recalcular(inpData);
+    if (tr.dataset.salvo==='true') _salvarDados(idTabela);
+  });
+  inpParada.addEventListener('input', () => {
+    _recalcular(inpParada);
+    if (tr.dataset.salvo==='true') _salvarDados(idTabela);
+  });
+  inpPrevisao.addEventListener('input', () => _recalcular(inpPrevisao));
+  inpPrevisao.addEventListener('blur', () => {
+    _interpretarDuracao(inpPrevisao);
+    _recalcular(inpPrevisao);
+    if (tr.dataset.salvo==='true') _salvarDados(idTabela);
+  });
+  if (salvo) {
+    inpMotivo.addEventListener('input', () => _salvarDados(idTabela));
+    inpFrota.addEventListener('input',  () => _salvarDados(idTabela));
+  }
+
+  // Botão Salvar
+  const btnSalvar = tr.querySelector('.btn-salvar');
+  if (btnSalvar) {
+    btnSalvar.addEventListener('click', () => _confirmarLinha(tr, idTabela));
+  }
+
+  // Botão Remover
+  tr.querySelector('.btn-del').addEventListener('click', () => {
+    const frota = tr.querySelector('[data-campo="frota"]').value.trim() || 'este registro';
+    if (!confirm('Remover frota ' + frota + '?')) return;
+    tr.remove();
+    if (tr.dataset.salvo === 'true') _salvarDados(idTabela);
+    atualizarTodosContadores();
+  });
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  CONFIRMAR LINHA (botão Salvar)
+// ══════════════════════════════════════════════════════════════════════════════
+function _confirmarLinha(tr, idTabela) {
+  const frota = tr.querySelector('[data-campo="frota"]').value.trim();
+  if (!frota) {
+    showToast('⚠️ Preencha a frota antes de salvar', 'warn');
+    tr.querySelector('[data-campo="frota"]').focus();
+    return;
+  }
+  tr.setAttribute('data-salvo', 'true');
+
+  // Remove botão Salvar
+  const btnS = tr.querySelector('.btn-salvar');
+  if (btnS) btnS.remove();
+
+  // Ativa auto-save nos inputs de texto/motivo/frota
+  const inpMotivo = tr.querySelector('[data-campo="motivo"]');
+  const inpFrota  = tr.querySelector('[data-campo="frota"]');
+  inpMotivo.addEventListener('input', () => _salvarDados(idTabela));
+  inpFrota.addEventListener('input',  () => _salvarDados(idTabela));
+
+  _salvarDados(idTabela);
+  atualizarTodosContadores();
+  showToast('✅ Frota ' + frota + ' registrada!', 'ok');
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  AUTOCOMPLETE
+// ══════════════════════════════════════════════════════════════════════════════
+function _criarAutocomplete(input, idTabela) {
+  const lista = FROTAS_DISPONIVEIS[idTabela] || [];
+  const wrap = document.createElement('div');
+  wrap.className = 'ac-wrap';
+  input.parentNode.insertBefore(wrap, input);
+  wrap.appendChild(input);
+  const drop = document.createElement('div');
+  drop.className = 'ac-list';
+  wrap.appendChild(drop);
+  let idx = -1;
+
+  const filtrar = q => {
+    drop.innerHTML = ''; idx = -1;
+    if (!q) { drop.classList.remove('show'); return; }
+    const m = lista.filter(f => f.includes(q)).slice(0, 12);
+    if (!m.length) { drop.classList.remove('show'); return; }
+    m.forEach(f => {
+      const item = document.createElement('div');
+      item.className = 'ac-item';
+      item.innerHTML = f.replace(q, `<mark>${q}</mark>`);
+      item.addEventListener('mousedown', e => {
+        e.preventDefault();
+        input.value = f;
+        input.dispatchEvent(new Event('input', {bubbles:true}));
+        drop.classList.remove('show');
+      });
+      drop.appendChild(item);
+    });
+    drop.classList.add('show');
+  };
+
+  input.addEventListener('input', () => filtrar(input.value.trim()));
+  input.addEventListener('focus', () => { if (input.value.trim()) filtrar(input.value.trim()); });
+  input.addEventListener('keydown', e => {
+    const items = drop.querySelectorAll('.ac-item');
+    if (!items.length) return;
+    if (e.key==='ArrowDown') { e.preventDefault(); idx=Math.min(idx+1,items.length-1); items.forEach((it,i)=>it.classList.toggle('ativo',i===idx)); }
+    else if (e.key==='ArrowUp') { e.preventDefault(); idx=Math.max(idx-1,0); items.forEach((it,i)=>it.classList.toggle('ativo',i===idx)); }
+    else if (e.key==='Enter'&&idx>=0) { e.preventDefault(); input.value=items[idx].textContent; input.dispatchEvent(new Event('input',{bubbles:true})); drop.classList.remove('show'); }
+    else if (e.key==='Escape') drop.classList.remove('show');
+  });
+  document.addEventListener('click', e => { if (!wrap.contains(e.target)) drop.classList.remove('show'); });
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  UTILITÁRIOS
+// ══════════════════════════════════════════════════════════════════════════════
+function _mascaraData(inp) {
+  let v = inp.value.replace(/\D/g,'');
+  if (v.length>2) v=v.slice(0,2)+'/'+v.slice(2);
+  if (v.length>5) v=v.slice(0,5)+'/'+v.slice(5);
+  inp.value = v.slice(0,10);
+}
+
+function _interpretarDuracao(inp) {
+  let v = inp.value.replace(/\D/g,'').slice(0,4);
+  if (!v) return;
+  let hh, mm;
+  if (v.length<=2) { hh=0; mm=parseInt(v,10); }
+  else             { mm=parseInt(v.slice(-2),10); hh=parseInt(v.slice(0,v.length-2),10); }
+  if (mm>59) { hh+=Math.floor(mm/60); mm=mm%60; }
+  inp.value = String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');
+}
+
+function _dataBase(tr) {
+  const v = tr.querySelector('[data-campo="data"]').value.trim();
+  const m = v.match(/^(\d{2})\/(\d{2})\/(\d{2,4})$/);
+  if (!m) return null;
+  const [_,d,mo,a] = m;
+  const af = a.length===2?'20'+a:a;
+  const t = new Date(`${af}-${mo}-${d}`);
+  if (t.getDate()!==parseInt(d)||t.getMonth()+1!==parseInt(mo)) return null;
+  return `${af}-${mo}-${d}`;
+}
+
+function _recalcular(inp) {
+  const tr       = inp.closest('tr');
+  const idTabela = inp.closest('table').id;
+  const parada   = tr.querySelector('[data-campo="parada"]').value;
+  const previsao = tr.querySelector('[data-campo="previsao"]').value.trim();
+  const inpRet   = tr.querySelector('[data-campo="retorno"]');
+  const span     = tr.querySelector('.cronometro');
+  const valida   = /^\d{1,2}:\d{2}$/.test(previsao);
+
+  if (!parada || !valida) {
+    tr.removeAttribute('data-hora-retorno');
+    inpRet.value = '';
+    if (span) { span.textContent='--:--'; span.className='cronometro'; }
+    tr.classList.remove('linha-atrasada');
+    return;
+  }
+
+  let dataISO = _dataBase(tr);
+  if (!dataISO) {
+    const hj = new Date();
+    dataISO = `${hj.getFullYear()}-${String(hj.getMonth()+1).padStart(2,'0')}-${String(hj.getDate()).padStart(2,'0')}`;
+    tr.querySelector('[data-campo="data"]').value =
+      `${String(hj.getDate()).padStart(2,'0')}/${String(hj.getMonth()+1).padStart(2,'0')}/${hj.getFullYear()}`;
+  }
+
+  const [hP,mP]   = parada.split(':').map(Number);
+  const [hPv,mPv] = previsao.split(':').map(Number);
+  const total = hP*60+mP + hPv*60+mPv;
+  const dias  = Math.floor(total/1440);
+  const hR    = Math.floor((total%1440)/60);
+  const mR    = total%60;
+  inpRet.value = `${String(hR).padStart(2,'0')}:${String(mR).padStart(2,'0')}`;
+
+  const dt = new Date(dataISO+'T00:00:00');
+  dt.setDate(dt.getDate()+dias);
+  dt.setHours(hR, mR, 0, 0);
+  tr.setAttribute('data-hora-retorno', dt.toISOString());
+
+  _atualizarCronometroLinha(tr);
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  CRONÔMETRO
+// ══════════════════════════════════════════════════════════════════════════════
+function atualizarTodosCronometros() {
+  TABELAS.forEach(id => {
+    document.querySelector(`#${id} tbody`)
+      ?.querySelectorAll('tr[data-salvo="true"]')
+      .forEach(_atualizarCronometroLinha);
+  });
+}
+
+function _atualizarCronometroLinha(tr) {
+  const iso  = tr.getAttribute('data-hora-retorno');
+  const span = tr.querySelector('.cronometro');
+  if (!span) return;
+  if (!iso) { span.textContent='--:--'; span.className='cronometro'; tr.classList.remove('linha-atrasada'); return; }
+
+  const frota = tr.querySelector('[data-campo="frota"]')?.value || '';
+  const diff  = new Date(iso) - new Date();
+
+  if (diff <= 0) {
+    const a = Math.abs(diff);
+    const h = Math.floor(a/3600000), m = Math.floor((a%3600000)/60000);
+    span.textContent = `Atrasado ${h}h ${m}min`;
+    span.className   = 'cronometro cronometro-atrasado';
+    tr.classList.add('linha-atrasada');
+
+    // Alarme — dispara somente uma vez por frota+iso
+    const key = frota + '|' + iso;
+    if (frota && !_alarmeSet.has(key)) {
+      _alarmeSet.add(key);
+      tocarAlarme();
+      showToast(`🔔 Frota ${frota} com retorno atrasado!`, 'warn');
+    }
+  } else {
+    const h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000);
+    span.textContent = `Falta ${h}h ${m}min`;
+    span.className   = 'cronometro cronometro-ativo';
+    tr.classList.remove('linha-atrasada');
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  CONTADORES — só linhas com data-salvo="true"
+// ══════════════════════════════════════════════════════════════════════════════
+function atualizarTodosContadores() {
+  let foraBorr=0, geral=0;
+  const pills = {'pill-caminhao':0,'pill-colhedora':0,'pill-transbordo':0};
+
+  TABELAS.forEach(id => {
+    const n = document.querySelector(`#${id} tbody`)
+                ?.querySelectorAll('tr[data-salvo="true"]').length || 0;
+    const cel = document.getElementById(CONTADORES[id]);
+    const gc  = document.getElementById(GCS[id]);
+    if (cel) cel.textContent = n;
+    if (gc)  gc.textContent  = n;
+    pills[PILLS[id]] = (pills[PILLS[id]]||0) + n;
+    geral += n;
+    if (SEM_BORRACHARIA.includes(id)) foraBorr += n;
+  });
+
+  Object.entries(pills).forEach(([id,n]) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = n;
+  });
+  document.getElementById('tot-fora').textContent  = foraBorr;
+  document.getElementById('tot-geral').textContent = geral;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  SALVAR localStorage — persiste somente linhas confirmadas
+// ══════════════════════════════════════════════════════════════════════════════
+function _salvarDados(idTabela) {
+  const rows = [];
+  document.querySelector(`#${idTabela} tbody`)
+    ?.querySelectorAll('tr[data-salvo="true"]')
+    .forEach(tr => rows.push({
+      frota:               tr.querySelector('[data-campo="frota"]')?.value    || '',
+      dataEntrada:         tr.querySelector('[data-campo="data"]')?.value     || '',
+      motivo:              tr.querySelector('[data-campo="motivo"]')?.value   || '',
+      horarioParada:       tr.querySelector('[data-campo="parada"]')?.value   || '',
+      previsaoRetorno:     tr.querySelector('[data-campo="previsao"]')?.value || '',
+      horarioRetorno:      tr.querySelector('[data-campo="retorno"]')?.value  || '',
+      dataRetornoCompleta: tr.getAttribute('data-hora-retorno') || ''
+    }));
+  localStorage.setItem(idTabela, JSON.stringify(rows));
+  _registrarUltimaAtualizacao();
+}
+
+// ── ÚLTIMA ATUALIZAÇÃO ────────────────────────────────────────────────────────
+function _registrarUltimaAtualizacao() {
+  const agora = new Date();
+  const ts = agora.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+  localStorage.setItem('_frotas_ultima_atualizacao', ts);
+  const el = document.getElementById('ultimaAtualizacao');
+  if (el) { el.textContent = '🕐 Última atualização: ' + ts; el.style.color = 'var(--green)'; el.style.opacity='1'; }
+}
+
+function _carregarUltimaAtualizacao() {
+  const ts = localStorage.getItem('_frotas_ultima_atualizacao');
+  const el = document.getElementById('ultimaAtualizacao');
+  if (!el) return;
+  if (ts) {
+    el.textContent = '🕐 Última atualização: ' + ts;
+    el.style.color = 'var(--green)';
+  } else {
+    el.textContent = '🕐 Nenhum dado salvo ainda';
+    el.style.color = 'var(--muted)';
+    el.style.opacity = '.7';
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  TOGGLE SEÇÃO
+// ══════════════════════════════════════════════════════════════════════════════
+function toggleSec(key) {
+  document.getElementById('body-'+key)?.classList.toggle('hidden');
+  document.getElementById('hdr-'+key)?.classList.toggle('collapsed');
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  EXPORTAR CSV
+// ══════════════════════════════════════════════════════════════════════════════
+function exportarCSV() {
+  const NOMES = {
+    'tabela-cam-proprio':'Caminhão Próprio','tabela-cam-terceiro':'Caminhão Terceiro',
+    'tabela-cam-borracharia':'Borracharia','tabela-col-proprio':'Colhedora Própria',
+    'tabela-col-terceiro':'Colhedora Terceira','tabela-transbordo':'Transbordo Terceiro'
+  };
+  let csv = '\uFEFF';
+  TABELAS.forEach(id => {
+    csv += NOMES[id] + '\n';
+    csv += 'Frota,Data Entrada,Motivo,Hora Parada,Previsão Retorno,Horário Retorno\n';
+    const linhas = JSON.parse(localStorage.getItem(id)||'[]');
+    linhas.forEach(l => {
+      csv += `${l.frota||''},${l.dataEntrada||''},${l.motivo||''},${l.horarioParada||''},${l.previsaoRetorno||''},${l.horarioRetorno||''}\n`;
+    });
+    csv += '\n';
+  });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8;'}));
+  a.download = 'frotas_paradas.csv';
+  a.click();
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  F10 — preenche hora atual no campo parada com foco
+// ══════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════════
+//  TAB / ENTER — navega entre inputs editáveis da tabela
+// ══════════════════════════════════════════════════════════════════════════════
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Tab' && e.key !== 'Enter') return;
+  const active = document.activeElement;
+  if (!active || active.tagName !== 'INPUT' || active.readOnly) return;
+  if (!active.closest('tbody')) return;
+
+  e.preventDefault();
+
+  const allInputs = Array.from(
+    document.querySelectorAll('tbody tr td input:not([readonly])')
+  ).filter(inp => inp.offsetParent !== null);
+
+  const idx = allInputs.indexOf(active);
+  if (idx === -1) return;
+
+  const next = (e.shiftKey && e.key === 'Tab')
+    ? allInputs[idx - 1]
+    : allInputs[idx + 1];
+
+  if (next) { next.focus(); next.select?.(); }
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'F10') {
+    e.preventDefault();
+    const a = document.activeElement;
+    if (a && a.dataset.campo === 'parada') {
+      const now = new Date();
+      a.value = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+      a.dispatchEvent(new Event('input', {bubbles:true}));
+    }
+  }
+});
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  TEMA
+// ══════════════════════════════════════════════════════════════════════════════
+function toggleTema() {
+  const light = document.body.classList.toggle('light');
+  document.getElementById('btnTema').textContent = light ? '☀️ Claro' : '🌙 Escuro';
+  localStorage.setItem('tema', light ? 'light' : 'dark');
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  TOAST
+// ══════════════════════════════════════════════════════════════════════════════
+function showToast(msg, tipo='ok') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show ' + tipo;
+  clearTimeout(t._t);
+  t._t = setTimeout(() => { t.className=''; }, 3500);
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  PRINT
+// ══════════════════════════════════════════════════════════════════════════════
+function tirarPrint() {
+  const btn  = document.getElementById('btnPrint');
+  const orig = btn.innerHTML;
+  btn.innerHTML = '⏳'; btn.disabled = true;
+  window.scrollTo(0, 0);
+  const hdr    = document.querySelector('header');
+  const hdrPos = hdr.style.position;
+  hdr.style.position = 'relative';
+
+  setTimeout(() => {
+    const bg = document.body.classList.contains('light') ? '#f0f4f8' : '#0d1117';
+    html2canvas(document.body, {
+      backgroundColor: bg, scale: 1.5, useCORS: true, allowTaint: true, logging: false,
+      scrollX: 0, scrollY: 0,
+      windowWidth:  document.documentElement.scrollWidth,
+      windowHeight: document.documentElement.scrollHeight
+    }).then(canvas => {
+      hdr.style.position = hdrPos || '';
+      // Abre a imagem numa nova aba — clique direito > Copiar imagem, ou Ctrl+V direto
+      const dataUrl = canvas.toDataURL('image/png');
+      const w = window.open('', '_blank');
+      if (w) {
+        w.document.write(
+          '<html><head><title>Frotas Paradas</title></head><body style="margin:0;background:#0d1117">' +
+          '<img src="' + dataUrl + '" style="max-width:100%;display:block">' +
+          '<p style="color:#aaa;font-family:sans-serif;padding:10px;font-size:13px">' +
+          '📋 Clique com botão direito na imagem → <b>Copiar imagem</b> → Cole com Ctrl+V</p>' +
+          '</body></html>'
+        );
+        w.document.close();
+        showToast('📷 Imagem aberta — clique direito > Copiar imagem', 'ok');
+      } else {
+        // Fallback: download direto se popup bloqueado
+        const a = document.createElement('a');
+        a.href = dataUrl;
+        a.download = 'frotas-paradas-' + new Date().toLocaleString('pt-BR').replace(/[/:,\s]/g,'-') + '.png';
+        a.click();
+        showToast('📥 Popup bloqueado — imagem baixada!', 'warn');
+      }
+      btn.innerHTML = orig;
+      btn.style.background = '#25d366';
+      btn.disabled = false;
+    }).catch(err => {
+      hdr.style.position = hdrPos || '';
+      btn.innerHTML = orig; btn.disabled = false;
+      showToast('Erro: ' + err.message, 'err');
+    });
+  }, 200);
+}
+</script>
+</body>
+</html>
