@@ -62,7 +62,8 @@ thead th{
 }
 tbody tr{border-bottom:1px solid rgba(255,255,255,.04);transition:background .12s;}
 tbody tr:last-child{border-bottom:none;}
-tbody td{padding:5px 6px;vertical-align:middle;}
+tbody td{padding:5px 4px;vertical-align:middle;text-align:center;}
+tbody td:nth-child(3){text-align:left;} /* Mantém a coluna Motivo alinhada à esquerda */
 
 /* Linha não salva ainda */
 tbody tr[data-salvo="false"]{
@@ -72,12 +73,14 @@ tbody tr[data-salvo="false"]{
 
 td input[type="text"],
 td input[type="time"]{
-  width:100%;padding:7px 8px;
+  width:100%;padding:6px 2px;
+  text-align:center;
   border-radius:7px;border:1px solid transparent;
   background:transparent;color:var(--text);
   font-size:.84rem;outline:none;
   transition:border-color .18s,background .18s;
 }
+td input[data-campo="motivo"]{text-align:left;padding-left:8px;}
 td input[type="text"]:hover,
 td input[type="time"]:hover{background:var(--s3);border-color:var(--border);}
 td input[type="text"]:focus,
