@@ -91,6 +91,12 @@ td input[readonly]{color:var(--muted);cursor:default;}
 td input[readonly]:hover{background:transparent;border-color:transparent;}
 td input::placeholder{color:#7a8899;}
 
+/* Indicador de Tempo Adicionado */
+.relogio-indicador {
+  position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
+  font-size: 0.8rem; color: var(--amber); pointer-events: none;
+}
+
 /* AUTOCOMPLETE */
 .ac-wrap{position:relative;width:100%;}
 .ac-wrap input{width:100%;}
@@ -289,6 +295,15 @@ body.light .stat-label{color:#000000;}
 #toast.err {background:#ef4444;color:#fff;}
 #toast.warn{background:#f59e0b;color:#000;}
 
+/* MODAL */
+.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:10000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.modal-content{background:var(--s1);padding:24px;border-radius:var(--radius);border:1px solid var(--border);text-align:center;max-width:380px;box-shadow:0 20px 50px rgba(0,0,0,0.5);}
+.modal-content h3{margin-bottom:12px;font-size:1.2rem;}
+.modal-content p{margin-bottom:20px;font-size:0.9rem;opacity:0.8;}
+.modal-btns{display:flex;gap:12px;justify-content:center;}
+body.light .modal{background:rgba(0,0,0,0.4);}
+body.light .modal-content{background:#fff;color:#000;border-color:#ccc;}
+
 /* ── IMPRESSÃO ──────────────────────────────────────────────────────────────── */
 @media print {
   * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
@@ -308,6 +323,17 @@ body.light .stat-label{color:#000000;}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
+
+<div id="modalAtraso" class="modal">
+  <div class="modal-content">
+    <h3>⚠️ Frota <span id="modalFrotaNum"></span></h3>
+    <p>O tempo previsto encerrou. O que deseja fazer?</p>
+    <div class="modal-btns">
+      <button onclick="escolhaModal('mais')" class="btn-salvar" style="padding:10px 15px;">＋ Adicionar Tempo</button>
+      <button onclick="escolhaModal('remover')" class="btn-del" style="padding:10px 15px;">❌ Remover</button>
+    </div>
+  </div>
+</div>
 
 <div id="toast"></div>
 
@@ -618,6 +644,37 @@ const SEM_BORRACHARIA = [
 // ══════════════════════════════════════════════════════════════════════════════
 //  ALARME SONORO
 // ══════════════════════════════════════════════════════════════════════════════
+let trPendente = null;
+let tabelaPendente = null;
+
+function abrirModalAtraso(tr, idTabela) {
+  trPendente = tr;
+  tabelaPendente = idTabela;
+  const frota = tr.querySelector('[data-campo="frota"]').value || "S/N";
+  document.getElementById('modalFrotaNum').textContent = frota;
+  document.getElementById('modalAtraso').style.display = 'flex';
+}
+
+function escolhaModal(opcao) {
+  document.getElementById('modalAtraso').style.display = 'none';
+  if (!trPendente) return;
+
+  if (opcao === 'mais') {
+    const inpPrev = trPendente.querySelector('[data-campo="previsao"]');
+    trPendente.dataset.tempoAdicionado = "true";
+    _renderizarIconeRelogio(trPendente);
+    inpPrev.focus();
+    inpPrev.select();
+  } else {
+    const frota = trPendente.querySelector('[data-campo="frota"]').value;
+    trPendente.remove();
+    _salvarDados(tabelaPendente);
+    atualizarTodosContadores();
+    showToast(`Frota ${frota} removida.`, 'ok');
+  }
+  trPendente = null;
+}
+
 const _alarmeSet = new Set();   // evita repetir para mesma frota+retorno
 
 function tocarAlarme() {
@@ -693,9 +750,11 @@ function _criarLinha(idTabela, d, salvo) {
   const tr = document.createElement('tr');
   tr.setAttribute('data-salvo', salvo ? 'true' : 'false');
   if (d.dataRetornoCompleta) tr.setAttribute('data-hora-retorno', d.dataRetornoCompleta);
+  if (d.tempoAdicionado) tr.setAttribute('data-tempo-adicionado', 'true');
 
   // ── Célula Frota (precisa de autocomplete, então criada manualmente)
   const tdFrota = document.createElement('td');
+  tdFrota.style.position = 'relative';
   const inpFrota = document.createElement('input');
   inpFrota.type = 'text';
   inpFrota.dataset.campo = 'frota';
@@ -726,6 +785,7 @@ function _criarLinha(idTabela, d, salvo) {
   // ── Listeners
   _ativarListeners(tr, idTabela, salvo);
   _criarAutocomplete(inpFrota, idTabela);
+  _renderizarIconeRelogio(tr);
 }
 
 function esc(v) { return (v||'').replace(/"/g,'&quot;'); }
@@ -733,6 +793,17 @@ function esc(v) { return (v||'').replace(/"/g,'&quot;'); }
 // ══════════════════════════════════════════════════════════════════════════════
 //  LISTENERS POR LINHA
 // ══════════════════════════════════════════════════════════════════════════════
+function _renderizarIconeRelogio(tr) {
+  const td = tr.querySelector('td'); // Primeira TD é a da frota
+  if (tr.dataset.tempoAdicionado === 'true' && !td.querySelector('.relogio-indicador')) {
+    const span = document.createElement('span');
+    span.className = 'relogio-indicador';
+    span.innerHTML = '🕒';
+    span.title = 'Tempo extra adicionado após atraso';
+    td.appendChild(span);
+  }
+}
+
 function _ativarListeners(tr, idTabela, salvo) {
   const inpData    = tr.querySelector('[data-campo="data"]');
   const inpMotivo  = tr.querySelector('[data-campo="motivo"]');
@@ -748,6 +819,10 @@ function _ativarListeners(tr, idTabela, salvo) {
   });
   inpParada.addEventListener('input', () => {
     _recalcular(inpParada);
+    if (tr.dataset.salvo==='true') _salvarDados(idTabela);
+  });
+  inpPrevisao.addEventListener('input', () => {
+    _recalcular(inpPrevisao);
     if (tr.dataset.salvo==='true') _salvarDados(idTabela);
   });
   inpPrevisao.addEventListener('input', () => _recalcular(inpPrevisao));
@@ -918,8 +993,6 @@ function _recalcular(inp) {
   if (!dataISO) {
     const hj = new Date();
     dataISO = `${hj.getFullYear()}-${String(hj.getMonth()+1).padStart(2,'0')}-${String(hj.getDate()).padStart(2,'0')}`;
-    tr.querySelector('[data-campo="data"]').value =
-      `${String(hj.getDate()).padStart(2,'0')}/${String(hj.getMonth()+1).padStart(2,'0')}/${hj.getFullYear()}`;
   }
 
   const [hP,mP]   = parada.split(':').map(Number);
@@ -970,6 +1043,9 @@ function _atualizarCronometroLinha(tr) {
     if (frota && !_alarmeSet.has(key)) {
       _alarmeSet.add(key);
       tocarAlarme();
+      if (tr.dataset.salvo === 'true') {
+        abrirModalAtraso(tr, tr.closest('table').id);
+      }
       showToast(`🔔 Frota ${frota} com retorno atrasado!`, 'warn');
     }
   } else {
@@ -1021,7 +1097,8 @@ function _salvarDados(idTabela) {
       horarioParada:       tr.querySelector('[data-campo="parada"]')?.value   || '',
       previsaoRetorno:     tr.querySelector('[data-campo="previsao"]')?.value || '',
       horarioRetorno:      tr.querySelector('[data-campo="retorno"]')?.value  || '',
-      dataRetornoCompleta: tr.getAttribute('data-hora-retorno') || ''
+      dataRetornoCompleta: tr.getAttribute('data-hora-retorno') || '',
+      tempoAdicionado:     tr.dataset.tempoAdicionado === 'true'
     }));
   localStorage.setItem(idTabela, JSON.stringify(rows));
   _registrarUltimaAtualizacao();
