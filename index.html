@@ -363,11 +363,11 @@ body.light .modal-content{background:#fff;color:#000;border-color:#ccc;}
       <span id="dataAtual" style="font-size:.8rem;font-weight:600;opacity:.9;"></span>
       <span style="color:var(--border);font-size:.9rem;">·</span>
       <span id="ultimaAtualizacao" style="font-size:.78rem;font-weight:700;"></span>
-      <span id="syncStatus" style="font-size:.7rem;color:#4ade80;">🟢 Sincronizado</span>
+      <span id="syncStatus" style="font-size:.7rem;color:#4ade80;">🟢 Online</span>
     </div>
   </div>
   <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-    <button id="btnSync" style="padding:7px 14px;border-radius:8px;border:none;background:var(--blue);color:#fff;cursor:pointer;font-size:.82rem;font-weight:700;">🔄 Sincronizar</button>
+    <button id="btnSyncFirebase" style="padding:7px 14px;border-radius:8px;border:none;background:var(--blue);color:#fff;cursor:pointer;font-size:.82rem;font-weight:700;">🔄 Sincronizar</button>
     <button onclick="exportarCSV()" style="padding:7px 14px;border-radius:8px;border:none;background:var(--orange);color:#fff;cursor:pointer;font-size:.82rem;font-weight:700;">📥 Exportar CSV</button>
     <button id="btnPrint" onclick="tirarPrint()" style="padding:7px 14px;border-radius:8px;border:none;background:#25d366;color:#fff;cursor:pointer;font-size:.82rem;font-weight:700;white-space:nowrap;">📷 Print</button>
     <span style="color:var(--border);font-size:1.2rem;">|</span>
@@ -397,7 +397,7 @@ body.light .modal-content{background:#fff;color:#000;border-color:#ccc;}
     <div class="card-body" id="body-caminhao">
       <div class="group"><div class="group-label blue-t">Próprio <span class="gc" id="gc-cam-proprio">0</span></div><div class="table-wrap"><table id="tabela-cam-proprio"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-cam-proprio')">＋ Adicionar</button></div>
       <div class="group"><div class="group-label amber-t">Terceiro <span class="gc" id="gc-cam-terceiro">0</span></div><div class="table-wrap"><table id="tabela-cam-terceiro"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-cam-terceiro')">＋ Adicionar</button></div>
-      <div class="group"><div class="group-label red-t">Borracharia <span class="gc" id="gc-cam-borracharia">0</span></div><div class="table-wrap"><table id="tabela-cam-borracharia"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante</th><th>Ações</th></tr></thead><tbody></tbody></td></div><button class="btn-add" onclick="adicionarLinha('tabela-cam-borracharia')">＋ Adicionar</button></div>
+      <div class="group"><div class="group-label red-t">Borracharia <span class="gc" id="gc-cam-borracharia">0</span></div><div class="table-wrap"><table id="tabela-cam-borracharia"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante</th><th>Ações</th></tr></thead><tbody></tbody></tr></div><button class="btn-add" onclick="adicionarLinha('tabela-cam-borracharia')">＋ Adicionar</button></div>
     </div>
   </section>
   <section class="card" id="sec-colhedora">
@@ -406,7 +406,7 @@ body.light .modal-content{background:#fff;color:#000;border-color:#ccc;}
       <span class="arrow">▼</span>
     </div>
     <div class="card-body" id="body-colhedora">
-      <div class="group"><div class="group-label green-t">Própria <span class="gc" id="gc-col-proprio">0</span></div><div class="table-wrap"><table id="tabela-col-proprio"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante</th><th>Ações</th></tr></thead><tbody></tbody><tr></div><button class="btn-add" onclick="adicionarLinha('tabela-col-proprio')">＋ Adicionar</button></div>
+      <div class="group"><div class="group-label green-t">Própria <span class="gc" id="gc-col-proprio">0</span></div><div class="table-wrap"><table id="tabela-col-proprio"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-col-proprio')">＋ Adicionar</button></div>
       <div class="group"><div class="group-label amber-t">Terceira <span class="gc" id="gc-col-terceiro">0</span></div><div class="table-wrap"><table id="tabela-col-terceiro"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-col-terceiro')">＋ Adicionar</button></div>
     </div>
   </section>
@@ -416,7 +416,7 @@ body.light .modal-content{background:#fff;color:#000;border-color:#ccc;}
       <span class="arrow">▼</span>
     </div>
     <div class="card-body" id="body-transbordo">
-      <div class="group"><div class="group-label purple-t">Terceiro <span class="gc" id="gc-transbordo">0</span></div><div class="table-wrap"><table id="tabela-transbordo"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante</th><th>Ações</th></tr></thead><tbody></tbody></tr></div><button class="btn-add" onclick="adicionarLinha('tabela-transbordo')">＋ Adicionar</button></div>
+      <div class="group"><div class="group-label purple-t">Terceiro <span class="gc" id="gc-transbordo">0</span></div><div class="table-wrap"><table id="tabela-transbordo"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-transbordo')">＋ Adicionar</button></div>
       <div class="card-note">⚠️ Transbordo possui somente grupo Terceiro.</div>
     </div>
   </section>
@@ -434,104 +434,134 @@ const firebaseConfig = {
 };
 
 let db = null;
-let syncInProgress = false;
+let sincronizando = false;
 
-// ==================== FIREBASE INIT ====================
+// Inicializar Firebase
 async function initFirebase() {
   try {
-    let existingApp = firebase.apps.find(app => app.name === '[DEFAULT]');
-    if (existingApp) {
-      db = existingApp.firestore();
-    } else {
-      const app = firebase.initializeApp(firebaseConfig);
-      db = firebase.firestore();
+    if (firebase.apps.length === 0) {
+      firebase.initializeApp(firebaseConfig);
     }
-    db.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED });
-    console.log('✅ Firebase conectado');
-    document.getElementById('syncStatus').innerHTML = '🟢 Conectado';
+    db = firebase.firestore();
+    console.log('✅ Firebase conectado!');
+    document.getElementById('syncStatus').innerHTML = '🟢 Firebase OK';
     return true;
   } catch (error) {
     console.error('Erro Firebase:', error);
-    document.getElementById('syncStatus').innerHTML = '🔴 Offline';
+    document.getElementById('syncStatus').innerHTML = '🔴 Firebase Offline';
     return false;
   }
 }
 
-// ==================== SALVAR NO FIREBASE ====================
-async function salvarTodosDadosFirebase() {
-  if (!db || syncInProgress) return;
-  syncInProgress = true;
-  
+// Salvar UMA tabela no Firebase
+async function salvarTabelaFirebase(tableId) {
+  if (!db) return;
+  const registros = [];
+  document.querySelectorAll(`#${tableId} tbody tr[data-salvo="true"]`).forEach(tr => {
+    registros.push({
+      frota: tr.querySelector('[data-campo="frota"]')?.value || '',
+      dataEntrada: tr.querySelector('[data-campo="data"]')?.value || '',
+      motivo: tr.querySelector('[data-campo="motivo"]')?.value || '',
+      horarioParada: tr.querySelector('[data-campo="parada"]')?.value || '',
+      previsaoRetorno: tr.querySelector('[data-campo="previsao"]')?.value || '',
+      horarioRetorno: tr.querySelector('[data-campo="retorno"]')?.value || '',
+      dataRetornoCompleta: tr.getAttribute('data-hora-retorno') || '',
+      tempoAdicionado: tr.dataset.tempoAdicionado === 'true'
+    });
+  });
   try {
-    for (const id of TABELAS) {
-      const rows = [];
-      document.querySelector(`#${id} tbody`)?.querySelectorAll('tr[data-salvo="true"]').forEach(tr => {
-        rows.push({
-          frota: tr.querySelector('[data-campo="frota"]')?.value || '',
-          dataEntrada: tr.querySelector('[data-campo="data"]')?.value || '',
-          motivo: tr.querySelector('[data-campo="motivo"]')?.value || '',
-          horarioParada: tr.querySelector('[data-campo="parada"]')?.value || '',
-          previsaoRetorno: tr.querySelector('[data-campo="previsao"]')?.value || '',
-          horarioRetorno: tr.querySelector('[data-campo="retorno"]')?.value || '',
-          dataRetornoCompleta: tr.getAttribute('data-hora-retorno') || '',
-          tempoAdicionado: tr.dataset.tempoAdicionado === 'true'
-        });
-      });
-      await db.collection('frotas_ativas').doc(id).set({ registros: rows, ultima_atualizacao: new Date().toISOString() }, { merge: true });
-    }
-    document.getElementById('syncStatus').innerHTML = '🟢 Sincronizado';
+    await db.collection('frotas_ativas').doc(tableId).set({ registros, atualizado: new Date().toISOString() }, { merge: true });
+    console.log(`✅ Salvo ${tableId}: ${registros.length} registros`);
+    return true;
   } catch (error) {
-    console.error('Erro ao salvar:', error);
-    document.getElementById('syncStatus').innerHTML = '⚠️ Erro';
-  } finally {
-    syncInProgress = false;
+    console.error(`Erro ao salvar ${tableId}:`, error);
+    return false;
   }
 }
 
-// ==================== CARREGAR DO FIREBASE ====================
-async function carregarTodosDadosFirebase() {
-  if (!db || syncInProgress) return;
-  syncInProgress = true;
-  
+// Salvar TODAS as tabelas no Firebase
+async function salvarTudoFirebase() {
+  if (!db || sincronizando) return;
+  sincronizando = true;
+  showToast('💾 Salvando no Firebase...', 'warn');
+  let ok = true;
+  for (const id of TABELAS) {
+    const result = await salvarTabelaFirebase(id);
+    if (!result) ok = false;
+  }
+  if (ok) {
+    showToast('✅ Dados salvos no Firebase!', 'ok');
+    document.getElementById('syncStatus').innerHTML = '🟢 Sincronizado';
+  } else {
+    showToast('⚠️ Erro ao salvar no Firebase', 'err');
+  }
+  sincronizando = false;
+}
+
+// Carregar UMA tabela do Firebase
+async function carregarTabelaFirebase(tableId) {
+  if (!db) return [];
   try {
-    for (const id of TABELAS) {
-      const doc = await db.collection('frotas_ativas').doc(id).get();
-      if (doc.exists && doc.data().registros) {
-        const registros = doc.data().registros;
-        const tbody = document.querySelector(`#${id} tbody`);
-        if (tbody && registros.length > 0) {
-          tbody.innerHTML = '';
-          registros.forEach(l => _criarLinha(id, l, true));
-        }
-      }
+    const doc = await db.collection('frotas_ativas').doc(tableId).get();
+    if (doc.exists && doc.data().registros) {
+      return doc.data().registros;
     }
-    atualizarTodosContadores();
-    document.getElementById('syncStatus').innerHTML = '🟢 Sincronizado';
-    showToast('✅ Dados carregados do Firebase!', 'ok');
   } catch (error) {
-    console.error('Erro ao carregar:', error);
-    document.getElementById('syncStatus').innerHTML = '⚠️ Erro';
-  } finally {
-    syncInProgress = false;
+    console.error(`Erro ao carregar ${tableId}:`, error);
   }
+  return [];
 }
 
-// ==================== FUNÇÃO DE SINCRONIZAÇÃO MANUAL ====================
-async function syncWithFirebase() {
-  showToast('🔄 Sincronizando...', 'warn');
-  await salvarTodosDadosFirebase();
-  await carregarTodosDadosFirebase();
-  showToast('✅ Sincronização concluída!', 'ok');
+// Carregar TODAS as tabelas do Firebase
+async function carregarTudoFirebase() {
+  if (!db || sincronizando) return;
+  sincronizando = true;
+  showToast('🔄 Carregando do Firebase...', 'warn');
+  for (const id of TABELAS) {
+    const registros = await carregarTabelaFirebase(id);
+    const tbody = document.querySelector(`#${id} tbody`);
+    if (!tbody) continue;
+    tbody.innerHTML = '';
+    registros.forEach(l => _criarLinha(id, l, true));
+    localStorage.setItem(id, JSON.stringify(registros));
+  }
+  atualizarTodosCronometros();
+  atualizarTodosContadores();
+  showToast('✅ Dados carregados do Firebase!', 'ok');
+  document.getElementById('syncStatus').innerHTML = '🟢 Sincronizado';
+  sincronizando = false;
 }
 
-// ==================== SOBRESCREVER _salvarDados ORIGINAL ====================
-const _salvarDadosOriginal = _salvarDados;
-function _salvarDados(id) {
-  _salvarDadosOriginal(id);
-  if (db) {
-    setTimeout(() => salvarTodosDadosFirebase(), 500);
-  }
+// Função de sincronização manual
+async function syncFirebase() {
+  await salvarTudoFirebase();
+  await carregarTudoFirebase();
 }
+
+// ==================== HISTORICO DE REMOCOES ====================
+const NOMES_TABELA_HIST = {
+  'tabela-cam-proprio':'Caminhao Proprio','tabela-cam-terceiro':'Caminhao Terceiro',
+  'tabela-cam-borracharia':'Borracharia','tabela-col-proprio':'Colhedora Propria',
+  'tabela-col-terceiro':'Colhedora Terceira','tabela-transbordo':'Transbordo'
+};
+async function salvarHistorico(tr, idTabela) {
+  if (!db) return;
+  try {
+    const frota=tr.querySelector('[data-campo="frota"]')?.value||'';
+    const dataEntrada=tr.querySelector('[data-campo="data"]')?.value||'';
+    const motivo=tr.querySelector('[data-campo="motivo"]')?.value||'';
+    const parada=tr.querySelector('[data-campo="parada"]')?.value||'';
+    const previsao=tr.querySelector('[data-campo="previsao"]')?.value||'';
+    const retorno=tr.querySelector('[data-campo="retorno"]')?.value||'';
+    const tipo=NOMES_TABELA_HIST[idTabela]||idTabela;
+    let duracao='';
+    if(parada){const hoje=new Date();const[hP,mP]=parada.split(':').map(Number);const base=new Date(hoje.getFullYear(),hoje.getMonth(),hoje.getDate(),hP,mP,0);const diffMs=hoje-base;if(diffMs>0){const h=Math.floor(diffMs/3600000);const m=Math.floor((diffMs%3600000)/60000);duracao=h+'h '+m+'min';}}
+    await db.collection('historico_paradas').add({frota,tipo,dataEntrada,motivo,parada,previsaoRetorno:previsao,horarioRetorno:retorno,duracao,timestamp:new Date().toISOString(),data:new Date().toLocaleDateString('pt-BR')});
+    console.log('Historico salvo: Frota '+frota);
+  } catch(err){console.error('Erro historico:',err);}
+}
+
+// _salvarDados unificado definido abaixo junto ao código principal
 
 // ==================== SEU CÓDIGO ORIGINAL COMPLETO ====================
 const FROTAS_DISPONIVEIS = {
@@ -568,7 +598,7 @@ function _autoCadastrarFrota(frota, idTabela) { if(!frota||frota.length<4||!_pre
 function _carregarFrotasCustom() { TABELAS.forEach(id=>{const c=JSON.parse(localStorage.getItem('_frotas_custom_'+id)||'[]');c.forEach(f=>{if(!FROTAS_DISPONIVEIS[id].includes(f))FROTAS_DISPONIVEIS[id].push(f);});FROTAS_DISPONIVEIS[id].sort();});}
 function _validarInputFrota(inp,id){ const f=inp.value.trim(); if(!f){inp.style.borderColor='transparent';return true;} if(_prefixoValido(f,id)){inp.style.borderColor='rgba(16,185,129,.6)';inp.style.background='rgba(16,185,129,.06)';return true;}else{inp.style.borderColor='#ef4444';inp.style.background='rgba(239,68,68,.08)';return false;} }
 function mostrarModalAtraso(tr,id){ trPendente=tr; tabelaPendente=id; const f=tr.querySelector('[data-campo="frota"]')?.value||"S/N"; document.getElementById('modalFrotaNum').textContent=f; document.getElementById('modalAtraso').style.display='flex';}
-function escolhaModal(op){ document.getElementById('modalAtraso').style.display='none'; if(!trPendente)return; if(op==='mais'){ const inp=trPendente.querySelector('[data-campo="previsao"]'); trPendente.dataset.tempoAdicionado="true"; _renderizarIconeRelogio(trPendente); inp.focus(); inp.select(); }else{ const f=trPendente.querySelector('[data-campo="frota"]').value; trPendente.remove(); _salvarDados(tabelaPendente); atualizarTodosContadores(); showToast(`Frota ${f} removida.`,'ok');} trPendente=null;}
+function escolhaModal(op){ document.getElementById('modalAtraso').style.display='none'; if(!trPendente)return; if(op==='mais'){ const inp=trPendente.querySelector('[data-campo="previsao"]'); trPendente.dataset.tempoAdicionado="true"; _renderizarIconeRelogio(trPendente); inp.focus(); inp.select(); trPendente=null; }else{ const f=trPendente.querySelector('[data-campo="frota"]').value; const _tr=trPendente,_id=tabelaPendente; trPendente=null; salvarHistorico(_tr,_id).then(()=>{ _tr.remove(); _salvarDados(_id); atualizarTodosContadores(); showToast('Frota '+f+' removida.','ok'); }); }}
 function tocarAlarme(){try{const c=new (AudioContext||webkitAudioContext)();[0,0.4,0.8].forEach(d=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.setValueAtTime(880,c.currentTime+d);g.gain.setValueAtTime(0.5,c.currentTime+d);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+d+0.35);o.start(c.currentTime+d);o.stop(c.currentTime+d+0.35);});}catch(e){}}
 function _renderizarIconeRelogio(tr){ const td=tr.querySelector('td'); if(tr.dataset.tempoAdicionado==='true' && !td.querySelector('.relogio-indicador')){const s=document.createElement('span');s.className='relogio-indicador';s.innerHTML='🕒';s.title='Tempo extra adicionado';td.appendChild(s);} }
 function _mascaraData(inp){ let v=inp.value.replace(/\D/g,''); if(v.length>2)v=v.slice(0,2)+'/'+v.slice(2); if(v.length>5)v=v.slice(0,5)+'/'+v.slice(5); inp.value=v.slice(0,10);}
@@ -579,12 +609,12 @@ function _atualizarCronometroLinha(tr){ const iso=tr.getAttribute('data-hora-ret
 function atualizarTodosCronometros(){ TABELAS.forEach(id=>{document.querySelector(`#${id} tbody`)?.querySelectorAll('tr[data-salvo="true"]').forEach(_atualizarCronometroLinha);});}
 setInterval(()=>{ atualizarTodosCronometros(); atualizarTodosContadores(); },1000);
 function _criarAutocomplete(inp,id){ const lista=FROTAS_DISPONIVEIS[id]||[], wrap=document.createElement('div');wrap.className='ac-wrap';inp.parentNode.insertBefore(wrap,inp);wrap.appendChild(inp);const drop=document.createElement('div');drop.className='ac-list';wrap.appendChild(drop);let idx=-1; const filtrar=q=>{drop.innerHTML='';idx=-1;if(!q){drop.classList.remove('show');return;}const m=lista.filter(f=>f.includes(q)).slice(0,12);if(!m.length){drop.classList.remove('show');return;}m.forEach(f=>{const it=document.createElement('div');it.className='ac-item';it.innerHTML=f.replace(q,`<mark>${q}</mark>`);it.addEventListener('mousedown',e=>{e.preventDefault();inp.value=f;inp.dispatchEvent(new Event('input',{bubbles:true}));drop.classList.remove('show');});drop.appendChild(it);});drop.classList.add('show');}; inp.addEventListener('input',()=>filtrar(inp.value.trim())); inp.addEventListener('focus',()=>{if(inp.value.trim())filtrar(inp.value.trim());}); inp.addEventListener('keydown',e=>{const its=drop.querySelectorAll('.ac-item');if(!its.length)return;if(e.key==='ArrowDown'){e.preventDefault();idx=Math.min(idx+1,its.length-1);its.forEach((it,i)=>it.classList.toggle('ativo',i===idx));}else if(e.key==='ArrowUp'){e.preventDefault();idx=Math.max(idx-1,0);its.forEach((it,i)=>it.classList.toggle('ativo',i===idx));}else if(e.key==='Enter'&&idx>=0){e.preventDefault();inp.value=its[idx].textContent;inp.dispatchEvent(new Event('input',{bubbles:true}));drop.classList.remove('show');}else if(e.key==='Escape')drop.classList.remove('show');}); document.addEventListener('click',e=>{if(!wrap.contains(e.target))drop.classList.remove('show');});}
-function _ativarListeners(tr,id,salvo){ const inpData=tr.querySelector('[data-campo="data"]'), inpMotivo=tr.querySelector('[data-campo="motivo"]'), inpParada=tr.querySelector('[data-campo="parada"]'), inpPrevisao=tr.querySelector('[data-campo="previsao"]'), inpFrota=tr.querySelector('[data-campo="frota"]'); inpData.addEventListener('input',()=>{_mascaraData(inpData);_recalcular(inpData);if(tr.dataset.salvo==='true')_salvarDados(id);}); inpParada.addEventListener('input',()=>{_recalcular(inpParada);if(tr.dataset.salvo==='true')_salvarDados(id);}); inpPrevisao.addEventListener('input',()=>{_recalcular(inpPrevisao);if(tr.dataset.salvo==='true')_salvarDados(id);}); inpPrevisao.addEventListener('blur',()=>{_interpretarDuracao(inpPrevisao);_recalcular(inpPrevisao);if(tr.dataset.salvo==='true')_salvarDados(id);}); if(salvo){inpMotivo.addEventListener('input',()=>_salvarDados(id));inpFrota.addEventListener('input',()=>_salvarDados(id));} const inpFrotaEl=tr.querySelector('[data-campo="frota"]'); if(inpFrotaEl){ inpFrotaEl.addEventListener('input',()=>_validarInputFrota(inpFrotaEl,id)); inpFrotaEl.addEventListener('blur',()=>_validarInputFrota(inpFrotaEl,id));} const btnSalvar=tr.querySelector('.btn-salvar'); if(btnSalvar)btnSalvar.addEventListener('click',()=>_confirmarLinha(tr,id)); tr.querySelector('.btn-del').addEventListener('click',()=>{ const f=tr.querySelector('[data-campo="frota"]').value.trim()||'este registro'; if(!confirm('Remover frota '+f+'?'))return; tr.remove(); if(tr.dataset.salvo==='true')_salvarDados(id); atualizarTodosContadores();});}
-function _confirmarLinha(tr,id){ const f=tr.querySelector('[data-campo="frota"]').value.trim(); if(!f){showToast('⚠️ Preencha a frota','warn');tr.querySelector('[data-campo="frota"]').focus();return;} if(!_prefixoValido(f,id)){showToast('❌ Frota '+f+' inválida para '+NOMES_TABELA[id],'err');tr.querySelector('[data-campo="frota"]').focus();return;} _autoCadastrarFrota(f,id); tr.setAttribute('data-salvo','true'); const btnS=tr.querySelector('.btn-salvar'); if(btnS)btnS.remove(); const inpMotivo=tr.querySelector('[data-campo="motivo"]'), inpFrota=tr.querySelector('[data-campo="frota"]'); inpMotivo.addEventListener('input',()=>_salvarDados(id)); inpFrota.addEventListener('input',()=>_salvarDados(id)); _salvarDados(id); atualizarTodosContadores(); showToast('✅ Frota '+f+' registrada!','ok');}
+function _ativarListeners(tr,id,salvo){ const inpData=tr.querySelector('[data-campo="data"]'), inpMotivo=tr.querySelector('[data-campo="motivo"]'), inpParada=tr.querySelector('[data-campo="parada"]'), inpPrevisao=tr.querySelector('[data-campo="previsao"]'), inpFrota=tr.querySelector('[data-campo="frota"]'); inpData.addEventListener('input',()=>{_mascaraData(inpData);_recalcular(inpData);if(tr.dataset.salvo==='true')_salvarDados(id);}); inpParada.addEventListener('input',()=>{_recalcular(inpParada);if(tr.dataset.salvo==='true')_salvarDados(id);}); inpPrevisao.addEventListener('input',()=>{_recalcular(inpPrevisao);if(tr.dataset.salvo==='true')_salvarDados(id);}); inpPrevisao.addEventListener('blur',()=>{_interpretarDuracao(inpPrevisao);_recalcular(inpPrevisao);if(tr.dataset.salvo==='true')_salvarDados(id);}); if(salvo){inpMotivo.addEventListener('input',()=>_salvarDados(id));inpFrota.addEventListener('input',()=>_salvarDados(id));} const inpFrotaEl=tr.querySelector('[data-campo="frota"]'); if(inpFrotaEl){ inpFrotaEl.addEventListener('input',()=>_validarInputFrota(inpFrotaEl,id)); inpFrotaEl.addEventListener('blur',()=>_validarInputFrota(inpFrotaEl,id));} const btnSalvar=tr.querySelector('.btn-salvar'); if(btnSalvar)btnSalvar.addEventListener('click',()=>_confirmarLinha(tr,id)); tr.querySelector('.btn-del').addEventListener('click',()=>{ const f=tr.querySelector('[data-campo="frota"]').value.trim()||'este registro'; if(!confirm('Remover frota '+f+'?'))return; if(tr.dataset.salvo==='true'){salvarHistorico(tr,id).then(()=>{ tr.remove(); _salvarDados(id); atualizarTodosContadores(); showToast('Frota '+f+' removida.','ok'); });}else{tr.remove();atualizarTodosContadores();}});}
+function _confirmarLinha(tr,id){ const f=tr.querySelector('[data-campo="frota"]').value.trim(); if(!f){showToast('⚠️ Preencha a frota','warn');tr.querySelector('[data-campo="frota"]').focus();return;} if(!_prefixoValido(f,id)){showToast('❌ Frota '+f+' inválida para '+NOMES_TABELA[id],'err');tr.querySelector('[data-campo="frota"]').focus();return;} _autoCadastrarFrota(f,id); tr.setAttribute('data-salvo','true'); const btnS=tr.querySelector('.btn-salvar'); if(btnS)btnS.remove(); const inpMotivo=tr.querySelector('[data-campo="motivo"]'), inpFrota=tr.querySelector('[data-campo="frota"]'); inpMotivo.addEventListener('input',()=>_salvarDados(id)); inpFrota.addEventListener('input',()=>_salvarDados(id)); _salvarDadosOriginalImpl(id); if(db){ salvarTabelaFirebase(id).then(ok=>{ if(ok){ showToast('✅ Frota '+f+' salva no Firebase!','ok'); document.getElementById('syncStatus').innerHTML='🟢 Salvo'; }else{ showToast('⚠️ Frota '+f+' salva local. Firebase falhou.','warn'); } }); }else{ showToast('✅ Frota '+f+' registrada (sem Firebase)!','ok'); } atualizarTodosContadores();}
 function _criarLinha(id,d,salvo){ const tbody=document.querySelector(`#${id} tbody`), tr=document.createElement('tr'); tr.setAttribute('data-salvo',salvo?'true':'false'); if(d.dataRetornoCompleta)tr.setAttribute('data-hora-retorno',d.dataRetornoCompleta); if(d.tempoAdicionado)tr.setAttribute('data-tempo-adicionado','true'); const tdF=document.createElement('td'); tdF.style.position='relative'; const inpF=document.createElement('input'); inpF.type='text'; inpF.dataset.campo='frota'; inpF.placeholder='Ex: 311015'; inpF.value=d.frota||''; if(salvo)inpF.addEventListener('input',()=>_salvarDados(id)); tdF.appendChild(inpF); tr.appendChild(tdF); const tpl=document.createElement('template'); tpl.innerHTML=`<td><input type="text" data-campo="data" placeholder="dd/mm/aaaa" maxlength="10" value="${d.dataEntrada||''}"></td><td><input type="text" data-campo="motivo" placeholder="Descreva o motivo" value="${(d.motivo||'').replace(/"/g,'&quot;')}"></td><td><input type="time" data-campo="parada" value="${d.horarioParada||''}"></td><td><input type="text" data-campo="previsao" placeholder="Ex: 130 = 1h30" maxlength="5" value="${d.previsaoRetorno||''}"></td><td><input type="text" data-campo="retorno" readonly placeholder="Calculado" value="${d.horarioRetorno||''}"></td><td><span class="cronometro">--:--</span></td><td><div class="acoes-cell">${salvo?'':'<button class="btn-salvar">✔ Salvar</button>'}<button class="btn-del">Remover</button></div></td>`; while(tpl.content.firstChild)tr.appendChild(tpl.content.firstChild); tbody.appendChild(tr); _ativarListeners(tr,id,salvo); _criarAutocomplete(inpF,id); _renderizarIconeRelogio(tr);}
 function adicionarLinha(id){ const hoje=new Date(); const data=`${String(hoje.getDate()).padStart(2,'0')}/${String(hoje.getMonth()+1).padStart(2,'0')}/${hoje.getFullYear()}`; _criarLinha(id,{dataEntrada:data},false);}
 function _salvarDadosOriginalImpl(id){ const rows=[]; document.querySelector(`#${id} tbody`)?.querySelectorAll('tr[data-salvo="true"]').forEach(tr=>rows.push({frota:tr.querySelector('[data-campo="frota"]')?.value||'',dataEntrada:tr.querySelector('[data-campo="data"]')?.value||'',motivo:tr.querySelector('[data-campo="motivo"]')?.value||'',horarioParada:tr.querySelector('[data-campo="parada"]')?.value||'',previsaoRetorno:tr.querySelector('[data-campo="previsao"]')?.value||'',horarioRetorno:tr.querySelector('[data-campo="retorno"]')?.value||'',dataRetornoCompleta:tr.getAttribute('data-hora-retorno')||'',tempoAdicionado:tr.dataset.tempoAdicionado==='true'})); localStorage.setItem(id,JSON.stringify(rows)); _registrarUltimaAtualizacao();}
-function _salvarDados(id){ _salvarDadosOriginalImpl(id); if(db){ setTimeout(()=>salvarTodosDadosFirebase(), 500); } }
+function _salvarDados(id){ _salvarDadosOriginalImpl(id); if(db){ setTimeout(()=>salvarTabelaFirebase(id), 100); } }
 function _registrarUltimaAtualizacao(){ const agora=new Date(), ts=agora.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'}); localStorage.setItem('_frotas_ultima_atualizacao',ts); const el=document.getElementById('ultimaAtualizacao'); if(el){el.textContent='🕐 Última atualização: '+ts;el.style.color='var(--green)';}}
 function _carregarUltimaAtualizacao(){ const ts=localStorage.getItem('_frotas_ultima_atualizacao'), el=document.getElementById('ultimaAtualizacao'); if(!el)return; if(ts){el.textContent='🕐 Última atualização: '+ts;el.style.color='var(--green)';}else{el.textContent='🕐 Nenhum dado salvo ainda';el.style.color='var(--muted)';}}
 function atualizarTodosContadores(){ let foraBorr=0,geral=0; const pills={'pill-caminhao':0,'pill-colhedora':0,'pill-transbordo':0}; TABELAS.forEach(id=>{ const n=document.querySelector(`#${id} tbody`)?.querySelectorAll('tr[data-salvo="true"]').length||0; const cel=document.getElementById(CONTADORES[id]), gc=document.getElementById(GCS[id]); if(cel)cel.textContent=n; if(gc)gc.textContent=n; pills[PILLS[id]]=(pills[PILLS[id]]||0)+n; geral+=n; if(SEM_BORRACHARIA.includes(id))foraBorr+=n; }); Object.entries(pills).forEach(([id,n])=>{const el=document.getElementById(id);if(el)el.textContent=n;}); document.getElementById('tot-fora').textContent=foraBorr; document.getElementById('tot-geral').textContent=geral;}
@@ -599,43 +629,26 @@ document.addEventListener('keydown',e=>{ if(e.key==='F10'){e.preventDefault(); c
 
 // ==================== INICIALIZAÇÃO ====================
 window.onload = async function(){ 
-  _carregarFrotasCustom(); 
-  
-  // Inicializar Firebase
   await initFirebase();
-  
-  // Carregar dados do Firebase (se houver)
-  if (db) {
-    await carregarTodosDadosFirebase();
-  }
-  
-  // Carregar dados do localStorage (fallback)
+  _carregarFrotasCustom(); 
   TABELAS.forEach(id=>{ 
     const salvo = localStorage.getItem(id); 
     const linhas = salvo ? JSON.parse(salvo) : []; 
-    const tbody = document.querySelector(`#${id} tbody`);
-    if (tbody && tbody.children.length === 0) {
-      linhas.forEach(l=>_criarLinha(id,l,true)); 
-    }
+    document.querySelector(`#${id} tbody`).innerHTML = ''; 
+    linhas.forEach(l=>_criarLinha(id,l,true)); 
     document.querySelectorAll(`#${id} tbody tr[data-salvo="true"] [data-campo="frota"]`).forEach(inp=>_validarInputFrota(inp,id));
   }); 
-  
+  await carregarTudoFirebase();
   atualizarTodosCronometros(); 
   atualizarTodosContadores(); 
-  
   if(localStorage.getItem('tema')==='light'){
     document.body.classList.add('light');
     document.getElementById('btnTema').textContent='☀️ Claro';
   } 
-  
   document.getElementById('dataAtual').textContent = new Date().toLocaleDateString('pt-BR',{weekday:'long',year:'numeric',month:'long',day:'2-digit'}); 
   _carregarUltimaAtualizacao();
   
-  // Botão de sincronização manual
-  const btnSync = document.getElementById('btnSync');
-  if (btnSync) {
-    btnSync.addEventListener('click', syncWithFirebase);
-  }
+  document.getElementById('btnSyncFirebase').addEventListener('click', syncFirebase);
 };
 </script>
 </body>
