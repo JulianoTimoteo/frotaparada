@@ -60,7 +60,7 @@ table{
   width:100%;
   border-collapse:collapse;
   min-width:860px;
-  table-layout:fixed;  /* CORREÇÃO CRUCIAL: força larguras fixas e evita que as linhas "quebrem" */
+  table-layout:fixed;
 }
 thead th{
   text-align:left;padding:12px 8px;
@@ -68,15 +68,14 @@ thead th{
   color:var(--muted);background:var(--s2);border-bottom:1px solid var(--border);
   white-space:nowrap;
 }
-/* Definindo larguras fixas e consistentes para cada coluna */
-thead th:nth-child(1){width:12%;}  /* Frota */
-thead th:nth-child(2){width:10%;}  /* Data Entrada */
-thead th:nth-child(3){width:22%;}  /* Motivo */
-thead th:nth-child(4){width:9%;}   /* Hora Parada */
-thead th:nth-child(5){width:10%;}  /* Duração */
-thead th:nth-child(6){width:10%;}  /* Retorno */
-thead th:nth-child(7){width:15%;}  /* Tempo Restante */
-thead th:nth-child(8){width:12%;}  /* Ações */
+thead th:nth-child(1){width:12%;}
+thead th:nth-child(2){width:10%;}
+thead th:nth-child(3){width:22%;}
+thead th:nth-child(4){width:9%;}
+thead th:nth-child(5){width:10%;}
+thead th:nth-child(6){width:10%;}
+thead th:nth-child(7){width:15%;}
+thead th:nth-child(8){width:12%;}
 
 tbody tr{border-bottom:1px solid rgba(255,255,255,.08);transition:background .12s;}
 tbody tr:last-child{border-bottom:none;}
@@ -87,10 +86,8 @@ tbody td{
   word-break:break-word;
   background-color:inherit;
 }
-/* Motivo alinhado à esquerda */
 tbody td:nth-child(3){text-align:left;}
 
-/* Linha não salva ainda */
 tbody tr[data-salvo="false"]{
   background:rgba(245,158,11,.08);
   border-left:3px solid rgba(245,158,11,.6);
@@ -137,7 +134,6 @@ td input::placeholder{
   color:#7a8899;
 }
 
-/* Indicador de Tempo Adicionado */
 .relogio-indicador {
   position: absolute;
   right: 2px;
@@ -151,14 +147,13 @@ td input::placeholder{
   padding:0 3px;
 }
 
-/* AUTOCOMPLETE */
 .ac-wrap{
   position:relative;
   width:100%;
 }
 .ac-wrap input{
   width:100%;
-  padding-right:22px; /* Espaço para o ícone do relógio */
+  padding-right:22px;
 }
 .ac-list{
   position:absolute;
@@ -186,7 +181,6 @@ td input::placeholder{
 .ac-item:hover,.ac-item.ativo{background:rgba(77,119,255,.2);color:#a5b8ff;}
 .ac-item mark{background:transparent;color:#60a5fa;font-weight:800;}
 
-/* CRONÔMETRO */
 .cronometro{
   font-weight:700;
   font-size:.81rem;
@@ -202,7 +196,6 @@ td input::placeholder{
 @keyframes pulsar{0%,100%{background:rgba(239,68,68,.03);}50%{background:rgba(239,68,68,.13);}}
 .linha-atrasada{animation:pulsar 1.5s infinite;}
 
-/* BOTÕES */
 .btn-add{
   display:inline-flex;align-items:center;gap:5px;
   margin:10px 20px 14px;padding:8px 16px;
@@ -234,7 +227,6 @@ td input::placeholder{
   main,.top-bar{padding-left:10px;padding-right:10px;}
 }
 
-/* TEMA CLARO — Cards brancos, cabeçalho colorido por grupo */
 body.light{
   --bg:#f4f6f8;--s1:#ffffff;--s2:#f0f2f5;--s3:#e8ebef;
   --border:#d0d5dd;--text:#000000;--muted:#000000;
@@ -242,26 +234,13 @@ body.light{
   --green:#0a7040;--purple:#5520b0;--orange:#d97000;
 }
 body.light{background:#f0f2f5;}
-
-body.light header{
-  background:#ffffff;
-  border-bottom:2px solid #d0d5dd;
-  box-shadow:0 2px 12px rgba(0,0,0,.08);
-  color:#000;
-}
+body.light header{background:#ffffff;border-bottom:2px solid #d0d5dd;box-shadow:0 2px 12px rgba(0,0,0,.08);color:#000;}
 body.light header h1{color:#000;}
 body.light #dataAtual{color:#222;font-weight:600;}
-
-body.light .card{
-  background:#ffffff;
-  border:1.5px solid #d0d5dd;
-  border-radius:14px;
-  box-shadow:0 3px 16px rgba(0,0,0,.07);
-}
+body.light .card{background:#ffffff;border:1.5px solid #d0d5dd;border-radius:14px;box-shadow:0 3px 16px rgba(0,0,0,.07);}
 body.light #sec-caminhao {border-top:4px solid #1a5cb8;}
 body.light #sec-colhedora{border-top:4px solid #0a7040;}
 body.light #sec-transbordo{border-top:4px solid #5520b0;}
-
 body.light .card-header{background:#ffffff;border-bottom:1px solid #e0e4ea;color:#000;}
 body.light .card-header:hover{background:#f5f7fa;}
 body.light .card-title{color:#000;font-weight:900;}
@@ -270,61 +249,34 @@ body.light .pill{color:#fff;font-weight:800;}
 body.light #pill-caminhao {background:#1a5cb8;border-color:#1a5cb8;}
 body.light #pill-colhedora{background:#0a7040;border-color:#0a7040;}
 body.light #pill-transbordo{background:#5520b0;border-color:#5520b0;}
-
-body.light .stat-card{
-  background:#ffffff;
-  border:1.5px solid #d0d5dd;
-  box-shadow:0 2px 10px rgba(0,0,0,.06);
-}
+body.light .stat-card{background:#ffffff;border:1.5px solid #d0d5dd;box-shadow:0 2px 10px rgba(0,0,0,.06);}
 body.light .stat-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.1);}
 body.light .stat-value{color:#000;font-weight:900;}
 body.light .stat-total .stat-value{color:#1a5cb8;}
 body.light .stat-label{color:#000;font-weight:800;}
-
-body.light .group{
-  background:#ffffff;
-  border:1px solid #e0e4ea;
-  border-radius:10px;
-  margin:10px 14px;
-  overflow:hidden;
-  box-shadow:0 1px 6px rgba(0,0,0,.05);
-}
-body.light .group-label{
-  font-size:.73rem;font-weight:900;letter-spacing:1px;
-  color:#ffffff !important;
-  padding:10px 18px;
-}
-body.light .group-label.blue-t  {background:linear-gradient(90deg,#1a5cb8,#2472d4);color:#fff !important;}
-body.light .group-label.amber-t {background:linear-gradient(90deg,#c86000,#e07820);color:#fff !important;}
-body.light .group-label.red-t   {background:linear-gradient(90deg,#b00018,#d01830);color:#fff !important;}
-body.light .group-label.green-t {background:linear-gradient(90deg,#0a6838,#0e8848);color:#fff !important;}
-body.light .group-label.purple-t{background:linear-gradient(90deg,#4a18a0,#6030c0);color:#fff !important;}
+body.light .group{background:#ffffff;border:1px solid #e0e4ea;border-radius:10px;margin:10px 14px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.05);}
+body.light .group-label{font-size:.73rem;font-weight:900;letter-spacing:1px;color:#ffffff !important;padding:10px 18px;}
+body.light .group-label.blue-t{background:linear-gradient(90deg,#1a5cb8,#2472d4);}
+body.light .group-label.amber-t{background:linear-gradient(90deg,#c86000,#e07820);}
+body.light .group-label.red-t{background:linear-gradient(90deg,#b00018,#d01830);}
+body.light .group-label.green-t{background:linear-gradient(90deg,#0a6838,#0e8848);}
+body.light .group-label.purple-t{background:linear-gradient(90deg,#4a18a0,#6030c0);}
 body.light .gc{color:#fff !important;background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.4);font-weight:800;}
-
 body.light thead th{color:#000;background:#f0f3f8;font-weight:900;border-bottom:2px solid #d0d5dd;}
 body.light tbody tr{border-bottom:1px solid #eaedf2;}
 body.light tbody tr:hover{background:#f0f5ff;}
 body.light tbody tr[data-salvo="false"]{background:#fffbf0;border-left:3px solid #d97000;}
-
-body.light td input[type="text"],
-body.light td input[type="time"]{color:#000;}
-body.light td input[type="text"]:hover,
-body.light td input[type="time"]:hover{background:#f0f4fc;border-color:#aabbdd;}
-body.light td input[type="text"]:focus,
-body.light td input[type="time"]:focus{background:#fff;border-color:#1a5cb8;box-shadow:0 0 0 2px rgba(26,92,184,.15);}
-body.light td input::placeholder{color:#778899;}
+body.light td input{color:#000;}
+body.light td input:hover{background:#f0f4fc;border-color:#aabbdd;}
+body.light td input:focus{background:#fff;border-color:#1a5cb8;box-shadow:0 0 0 2px rgba(26,92,184,.15);}
 body.light td input[readonly]{color:#334;background:#f8fafc;}
-
-body.light .cronometro-ativo     {color:#1a5cb8;background:#e8f0fc;border:1px solid #c0d0f0;}
-body.light .cronometro-atrasado  {color:#c01020;background:#fde8ea;border:1px solid #f0b0b8;}
-
+body.light .cronometro-ativo{color:#1a5cb8;background:#e8f0fc;border:1px solid #c0d0f0;}
+body.light .cronometro-atrasado{color:#c01020;background:#fde8ea;border:1px solid #f0b0b8;}
 body.light .btn-add{color:#1a5cb8;border:1px dashed #aabbdd;font-weight:700;}
 body.light .btn-add:hover{background:#e8f0fc;border-color:#1a5cb8;color:#000;}
 body.light .card-note{color:#444;font-style:italic;}
-
 body.light .ac-list{background:#fff;border:1.5px solid #1a5cb8;box-shadow:0 8px 24px rgba(26,92,184,.15);}
 body.light .ac-item:hover,body.light .ac-item.ativo{background:#e8f0fc;color:#000;}
-
 @keyframes pulsarLight{0%,100%{background:#fff5f5;}50%{background:#fed7d7;}}
 body.light .linha-atrasada{animation:pulsarLight 1.5s infinite;}
 
@@ -386,6 +338,8 @@ body.light .modal-content{background:#fff;color:#000;border-color:#ccc;}
 }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 </head>
 <body>
 
@@ -409,11 +363,13 @@ body.light .modal-content{background:#fff;color:#000;border-color:#ccc;}
       <span id="dataAtual" style="font-size:.8rem;font-weight:600;opacity:.9;"></span>
       <span style="color:var(--border);font-size:.9rem;">·</span>
       <span id="ultimaAtualizacao" style="font-size:.78rem;font-weight:700;"></span>
+      <span id="syncStatus" style="font-size:.7rem;color:#4ade80;">🟢 Sincronizado</span>
     </div>
   </div>
   <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+    <button id="btnSync" style="padding:7px 14px;border-radius:8px;border:none;background:var(--blue);color:#fff;cursor:pointer;font-size:.82rem;font-weight:700;">🔄 Sincronizar</button>
     <button onclick="exportarCSV()" style="padding:7px 14px;border-radius:8px;border:none;background:var(--orange);color:#fff;cursor:pointer;font-size:.82rem;font-weight:700;">📥 Exportar CSV</button>
-    <button id="btnPrint" onclick="tirarPrint()" style="padding:7px 14px;border-radius:8px;border:none;background:#25d366;color:#fff;cursor:pointer;font-size:.82rem;font-weight:700;white-space:nowrap;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'" title='Ctrl+P para imprimir ou salvar como PDF'>📷 Print</button>
+    <button id="btnPrint" onclick="tirarPrint()" style="padding:7px 14px;border-radius:8px;border:none;background:#25d366;color:#fff;cursor:pointer;font-size:.82rem;font-weight:700;white-space:nowrap;">📷 Print</button>
     <span style="color:var(--border);font-size:1.2rem;">|</span>
     <button id="btnTema" onclick="toggleTema()" style="padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:var(--s2);color:var(--text);cursor:pointer;font-size:.82rem;font-weight:700;">🌙 Escuro</button>
   </div>
@@ -441,7 +397,7 @@ body.light .modal-content{background:#fff;color:#000;border-color:#ccc;}
     <div class="card-body" id="body-caminhao">
       <div class="group"><div class="group-label blue-t">Próprio <span class="gc" id="gc-cam-proprio">0</span></div><div class="table-wrap"><table id="tabela-cam-proprio"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-cam-proprio')">＋ Adicionar</button></div>
       <div class="group"><div class="group-label amber-t">Terceiro <span class="gc" id="gc-cam-terceiro">0</span></div><div class="table-wrap"><table id="tabela-cam-terceiro"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-cam-terceiro')">＋ Adicionar</button></div>
-      <div class="group"><div class="group-label red-t">Borracharia <span class="gc" id="gc-cam-borracharia">0</span></div><div class="table-wrap"><table id="tabela-cam-borracharia"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-cam-borracharia')">＋ Adicionar</button></div>
+      <div class="group"><div class="group-label red-t">Borracharia <span class="gc" id="gc-cam-borracharia">0</span></div><div class="table-wrap"><table id="tabela-cam-borracharia"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante</th><th>Ações</th></tr></thead><tbody></tbody></td></div><button class="btn-add" onclick="adicionarLinha('tabela-cam-borracharia')">＋ Adicionar</button></div>
     </div>
   </section>
   <section class="card" id="sec-colhedora">
@@ -450,7 +406,7 @@ body.light .modal-content{background:#fff;color:#000;border-color:#ccc;}
       <span class="arrow">▼</span>
     </div>
     <div class="card-body" id="body-colhedora">
-      <div class="group"><div class="group-label green-t">Própria <span class="gc" id="gc-col-proprio">0</span></div><div class="table-wrap"><table id="tabela-col-proprio"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-col-proprio')">＋ Adicionar</button></div>
+      <div class="group"><div class="group-label green-t">Própria <span class="gc" id="gc-col-proprio">0</span></div><div class="table-wrap"><table id="tabela-col-proprio"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante</th><th>Ações</th></tr></thead><tbody></tbody><tr></div><button class="btn-add" onclick="adicionarLinha('tabela-col-proprio')">＋ Adicionar</button></div>
       <div class="group"><div class="group-label amber-t">Terceira <span class="gc" id="gc-col-terceiro">0</span></div><div class="table-wrap"><table id="tabela-col-terceiro"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-col-terceiro')">＋ Adicionar</button></div>
     </div>
   </section>
@@ -460,17 +416,124 @@ body.light .modal-content{background:#fff;color:#000;border-color:#ccc;}
       <span class="arrow">▼</span>
     </div>
     <div class="card-body" id="body-transbordo">
-      <div class="group"><div class="group-label purple-t">Terceiro <span class="gc" id="gc-transbordo">0</span></div><div class="table-wrap"><table id="tabela-transbordo"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-transbordo')">＋ Adicionar</button></div>
+      <div class="group"><div class="group-label purple-t">Terceiro <span class="gc" id="gc-transbordo">0</span></div><div class="table-wrap"><table id="tabela-transbordo"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante</th><th>Ações</th></tr></thead><tbody></tbody></tr></div><button class="btn-add" onclick="adicionarLinha('tabela-transbordo')">＋ Adicionar</button></div>
       <div class="card-note">⚠️ Transbordo possui somente grupo Terceiro.</div>
     </div>
   </section>
 </main>
 
 <script>
-// ══════════════════════════════════════════════════════════════════════════════
-//  STORAGE — localStorage como primário, JSON como backup
-// ══════════════════════════════════════════════════════════════════════════════
+// ==================== FIREBASE CONFIG ====================
+const firebaseConfig = {
+  apiKey: "AIzaSyBRvOpraQrwmXegstKtqLMDXkC9Uk0s4Hw",
+  authDomain: "frotasparadas.firebaseapp.com",
+  projectId: "frotasparadas",
+  storageBucket: "frotasparadas.firebasestorage.app",
+  messagingSenderId: "829660038659",
+  appId: "1:829660038659:web:d8b4b12de0446fa99e7036"
+};
 
+let db = null;
+let syncInProgress = false;
+
+// ==================== FIREBASE INIT ====================
+async function initFirebase() {
+  try {
+    let existingApp = firebase.apps.find(app => app.name === '[DEFAULT]');
+    if (existingApp) {
+      db = existingApp.firestore();
+    } else {
+      const app = firebase.initializeApp(firebaseConfig);
+      db = firebase.firestore();
+    }
+    db.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED });
+    console.log('✅ Firebase conectado');
+    document.getElementById('syncStatus').innerHTML = '🟢 Conectado';
+    return true;
+  } catch (error) {
+    console.error('Erro Firebase:', error);
+    document.getElementById('syncStatus').innerHTML = '🔴 Offline';
+    return false;
+  }
+}
+
+// ==================== SALVAR NO FIREBASE ====================
+async function salvarTodosDadosFirebase() {
+  if (!db || syncInProgress) return;
+  syncInProgress = true;
+  
+  try {
+    for (const id of TABELAS) {
+      const rows = [];
+      document.querySelector(`#${id} tbody`)?.querySelectorAll('tr[data-salvo="true"]').forEach(tr => {
+        rows.push({
+          frota: tr.querySelector('[data-campo="frota"]')?.value || '',
+          dataEntrada: tr.querySelector('[data-campo="data"]')?.value || '',
+          motivo: tr.querySelector('[data-campo="motivo"]')?.value || '',
+          horarioParada: tr.querySelector('[data-campo="parada"]')?.value || '',
+          previsaoRetorno: tr.querySelector('[data-campo="previsao"]')?.value || '',
+          horarioRetorno: tr.querySelector('[data-campo="retorno"]')?.value || '',
+          dataRetornoCompleta: tr.getAttribute('data-hora-retorno') || '',
+          tempoAdicionado: tr.dataset.tempoAdicionado === 'true'
+        });
+      });
+      await db.collection('frotas_ativas').doc(id).set({ registros: rows, ultima_atualizacao: new Date().toISOString() }, { merge: true });
+    }
+    document.getElementById('syncStatus').innerHTML = '🟢 Sincronizado';
+  } catch (error) {
+    console.error('Erro ao salvar:', error);
+    document.getElementById('syncStatus').innerHTML = '⚠️ Erro';
+  } finally {
+    syncInProgress = false;
+  }
+}
+
+// ==================== CARREGAR DO FIREBASE ====================
+async function carregarTodosDadosFirebase() {
+  if (!db || syncInProgress) return;
+  syncInProgress = true;
+  
+  try {
+    for (const id of TABELAS) {
+      const doc = await db.collection('frotas_ativas').doc(id).get();
+      if (doc.exists && doc.data().registros) {
+        const registros = doc.data().registros;
+        const tbody = document.querySelector(`#${id} tbody`);
+        if (tbody && registros.length > 0) {
+          tbody.innerHTML = '';
+          registros.forEach(l => _criarLinha(id, l, true));
+        }
+      }
+    }
+    atualizarTodosContadores();
+    document.getElementById('syncStatus').innerHTML = '🟢 Sincronizado';
+    showToast('✅ Dados carregados do Firebase!', 'ok');
+  } catch (error) {
+    console.error('Erro ao carregar:', error);
+    document.getElementById('syncStatus').innerHTML = '⚠️ Erro';
+  } finally {
+    syncInProgress = false;
+  }
+}
+
+// ==================== FUNÇÃO DE SINCRONIZAÇÃO MANUAL ====================
+async function syncWithFirebase() {
+  showToast('🔄 Sincronizando...', 'warn');
+  await salvarTodosDadosFirebase();
+  await carregarTodosDadosFirebase();
+  showToast('✅ Sincronização concluída!', 'ok');
+}
+
+// ==================== SOBRESCREVER _salvarDados ORIGINAL ====================
+const _salvarDadosOriginal = _salvarDados;
+function _salvarDados(id) {
+  _salvarDadosOriginal(id);
+  if (db) {
+    setTimeout(() => salvarTodosDadosFirebase(), 500);
+  }
+}
+
+// ==================== SEU CÓDIGO ORIGINAL COMPLETO ====================
 const FROTAS_DISPONIVEIS = {
   'tabela-cam-proprio': ['311025','311115','311125','31115','311215','31125','311325','311425','311525','311625','311725','311825','311925','312025','31215','31225','31315','31316','31325','31415','31425','31515','31525','31615','31625','31725','31825','31925','31815','311225'],
   'tabela-cam-terceiro': ['91065','91203','91207','91209','91210','91277','91280','91282','91284','91286','91291','91301','91374','91375','91376','91378','91379','91380','91383','91393','91394','91396','91397','91398','91399','91400','91410','91411','91412','91413'],
@@ -520,7 +583,8 @@ function _ativarListeners(tr,id,salvo){ const inpData=tr.querySelector('[data-ca
 function _confirmarLinha(tr,id){ const f=tr.querySelector('[data-campo="frota"]').value.trim(); if(!f){showToast('⚠️ Preencha a frota','warn');tr.querySelector('[data-campo="frota"]').focus();return;} if(!_prefixoValido(f,id)){showToast('❌ Frota '+f+' inválida para '+NOMES_TABELA[id],'err');tr.querySelector('[data-campo="frota"]').focus();return;} _autoCadastrarFrota(f,id); tr.setAttribute('data-salvo','true'); const btnS=tr.querySelector('.btn-salvar'); if(btnS)btnS.remove(); const inpMotivo=tr.querySelector('[data-campo="motivo"]'), inpFrota=tr.querySelector('[data-campo="frota"]'); inpMotivo.addEventListener('input',()=>_salvarDados(id)); inpFrota.addEventListener('input',()=>_salvarDados(id)); _salvarDados(id); atualizarTodosContadores(); showToast('✅ Frota '+f+' registrada!','ok');}
 function _criarLinha(id,d,salvo){ const tbody=document.querySelector(`#${id} tbody`), tr=document.createElement('tr'); tr.setAttribute('data-salvo',salvo?'true':'false'); if(d.dataRetornoCompleta)tr.setAttribute('data-hora-retorno',d.dataRetornoCompleta); if(d.tempoAdicionado)tr.setAttribute('data-tempo-adicionado','true'); const tdF=document.createElement('td'); tdF.style.position='relative'; const inpF=document.createElement('input'); inpF.type='text'; inpF.dataset.campo='frota'; inpF.placeholder='Ex: 311015'; inpF.value=d.frota||''; if(salvo)inpF.addEventListener('input',()=>_salvarDados(id)); tdF.appendChild(inpF); tr.appendChild(tdF); const tpl=document.createElement('template'); tpl.innerHTML=`<td><input type="text" data-campo="data" placeholder="dd/mm/aaaa" maxlength="10" value="${d.dataEntrada||''}"></td><td><input type="text" data-campo="motivo" placeholder="Descreva o motivo" value="${(d.motivo||'').replace(/"/g,'&quot;')}"></td><td><input type="time" data-campo="parada" value="${d.horarioParada||''}"></td><td><input type="text" data-campo="previsao" placeholder="Ex: 130 = 1h30" maxlength="5" value="${d.previsaoRetorno||''}"></td><td><input type="text" data-campo="retorno" readonly placeholder="Calculado" value="${d.horarioRetorno||''}"></td><td><span class="cronometro">--:--</span></td><td><div class="acoes-cell">${salvo?'':'<button class="btn-salvar">✔ Salvar</button>'}<button class="btn-del">Remover</button></div></td>`; while(tpl.content.firstChild)tr.appendChild(tpl.content.firstChild); tbody.appendChild(tr); _ativarListeners(tr,id,salvo); _criarAutocomplete(inpF,id); _renderizarIconeRelogio(tr);}
 function adicionarLinha(id){ const hoje=new Date(); const data=`${String(hoje.getDate()).padStart(2,'0')}/${String(hoje.getMonth()+1).padStart(2,'0')}/${hoje.getFullYear()}`; _criarLinha(id,{dataEntrada:data},false);}
-function _salvarDados(id){ const rows=[]; document.querySelector(`#${id} tbody`)?.querySelectorAll('tr[data-salvo="true"]').forEach(tr=>rows.push({frota:tr.querySelector('[data-campo="frota"]')?.value||'',dataEntrada:tr.querySelector('[data-campo="data"]')?.value||'',motivo:tr.querySelector('[data-campo="motivo"]')?.value||'',horarioParada:tr.querySelector('[data-campo="parada"]')?.value||'',previsaoRetorno:tr.querySelector('[data-campo="previsao"]')?.value||'',horarioRetorno:tr.querySelector('[data-campo="retorno"]')?.value||'',dataRetornoCompleta:tr.getAttribute('data-hora-retorno')||'',tempoAdicionado:tr.dataset.tempoAdicionado==='true'})); localStorage.setItem(id,JSON.stringify(rows)); _registrarUltimaAtualizacao();}
+function _salvarDadosOriginalImpl(id){ const rows=[]; document.querySelector(`#${id} tbody`)?.querySelectorAll('tr[data-salvo="true"]').forEach(tr=>rows.push({frota:tr.querySelector('[data-campo="frota"]')?.value||'',dataEntrada:tr.querySelector('[data-campo="data"]')?.value||'',motivo:tr.querySelector('[data-campo="motivo"]')?.value||'',horarioParada:tr.querySelector('[data-campo="parada"]')?.value||'',previsaoRetorno:tr.querySelector('[data-campo="previsao"]')?.value||'',horarioRetorno:tr.querySelector('[data-campo="retorno"]')?.value||'',dataRetornoCompleta:tr.getAttribute('data-hora-retorno')||'',tempoAdicionado:tr.dataset.tempoAdicionado==='true'})); localStorage.setItem(id,JSON.stringify(rows)); _registrarUltimaAtualizacao();}
+function _salvarDados(id){ _salvarDadosOriginalImpl(id); if(db){ setTimeout(()=>salvarTodosDadosFirebase(), 500); } }
 function _registrarUltimaAtualizacao(){ const agora=new Date(), ts=agora.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'}); localStorage.setItem('_frotas_ultima_atualizacao',ts); const el=document.getElementById('ultimaAtualizacao'); if(el){el.textContent='🕐 Última atualização: '+ts;el.style.color='var(--green)';}}
 function _carregarUltimaAtualizacao(){ const ts=localStorage.getItem('_frotas_ultima_atualizacao'), el=document.getElementById('ultimaAtualizacao'); if(!el)return; if(ts){el.textContent='🕐 Última atualização: '+ts;el.style.color='var(--green)';}else{el.textContent='🕐 Nenhum dado salvo ainda';el.style.color='var(--muted)';}}
 function atualizarTodosContadores(){ let foraBorr=0,geral=0; const pills={'pill-caminhao':0,'pill-colhedora':0,'pill-transbordo':0}; TABELAS.forEach(id=>{ const n=document.querySelector(`#${id} tbody`)?.querySelectorAll('tr[data-salvo="true"]').length||0; const cel=document.getElementById(CONTADORES[id]), gc=document.getElementById(GCS[id]); if(cel)cel.textContent=n; if(gc)gc.textContent=n; pills[PILLS[id]]=(pills[PILLS[id]]||0)+n; geral+=n; if(SEM_BORRACHARIA.includes(id))foraBorr+=n; }); Object.entries(pills).forEach(([id,n])=>{const el=document.getElementById(id);if(el)el.textContent=n;}); document.getElementById('tot-fora').textContent=foraBorr; document.getElementById('tot-geral').textContent=geral;}
@@ -532,7 +596,47 @@ function tirarPrint(){ if(window!==window.top){showToast('⚠️ Abra no navegad
 function _downloadFallback(b,btn,orig){ const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='frotas-'+new Date().toLocaleDateString('pt-BR').replace(/\//g,'-')+'.png'; document.body.appendChild(a); a.click(); document.body.removeChild(a); showToast('📥 Imagem baixada!','warn'); btn.innerHTML=orig; btn.style.background='#25d366'; btn.disabled=false;}
 document.addEventListener('keydown',e=>{ if(e.key!=='Tab'&&e.key!=='Enter')return; const active=document.activeElement; if(!active||active.tagName!=='INPUT'||active.readOnly)return; if(!active.closest('tbody'))return; e.preventDefault(); const tr=active.closest('tr'), id=active.closest('table')?.id; if(active.dataset.campo==='previsao'){_interpretarDuracao(active);_recalcular(active);if(tr?.dataset.salvo==='true'&&id)_salvarDados(id);const btnSalvar=tr?.querySelector('.btn-salvar'), btnDel=tr?.querySelector('.btn-del'); if(btnSalvar){btnSalvar.focus();return;} if(btnDel){btnDel.focus();return;}} const allInputs=Array.from(document.querySelectorAll('tbody tr td input:not([readonly])')).filter(inp=>inp.offsetParent!==null); const idx=allInputs.indexOf(active); if(idx===-1)return; const next=(e.shiftKey&&e.key==='Tab')?allInputs[idx-1]:allInputs[idx+1]; if(next){next.focus();next.select?.();}});
 document.addEventListener('keydown',e=>{ if(e.key==='F10'){e.preventDefault(); const a=document.activeElement; if(a&&a.dataset.campo==='parada'){const n=new Date(); a.value=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0'); a.dispatchEvent(new Event('input',{bubbles:true}));}}});
-window.onload=function(){ _carregarFrotasCustom(); TABELAS.forEach(id=>{ const salvo=localStorage.getItem(id); const linhas=salvo?JSON.parse(salvo):[]; document.querySelector(`#${id} tbody`).innerHTML=''; linhas.forEach(l=>_criarLinha(id,l,true)); document.querySelectorAll(`#${id} tbody tr[data-salvo="true"] [data-campo="frota"]`).forEach(inp=>_validarInputFrota(inp,id));}); atualizarTodosCronometros(); atualizarTodosContadores(); if(localStorage.getItem('tema')==='light'){document.body.classList.add('light');document.getElementById('btnTema').textContent='☀️ Claro';} document.getElementById('dataAtual').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',year:'numeric',month:'long',day:'2-digit'}); _carregarUltimaAtualizacao();};
+
+// ==================== INICIALIZAÇÃO ====================
+window.onload = async function(){ 
+  _carregarFrotasCustom(); 
+  
+  // Inicializar Firebase
+  await initFirebase();
+  
+  // Carregar dados do Firebase (se houver)
+  if (db) {
+    await carregarTodosDadosFirebase();
+  }
+  
+  // Carregar dados do localStorage (fallback)
+  TABELAS.forEach(id=>{ 
+    const salvo = localStorage.getItem(id); 
+    const linhas = salvo ? JSON.parse(salvo) : []; 
+    const tbody = document.querySelector(`#${id} tbody`);
+    if (tbody && tbody.children.length === 0) {
+      linhas.forEach(l=>_criarLinha(id,l,true)); 
+    }
+    document.querySelectorAll(`#${id} tbody tr[data-salvo="true"] [data-campo="frota"]`).forEach(inp=>_validarInputFrota(inp,id));
+  }); 
+  
+  atualizarTodosCronometros(); 
+  atualizarTodosContadores(); 
+  
+  if(localStorage.getItem('tema')==='light'){
+    document.body.classList.add('light');
+    document.getElementById('btnTema').textContent='☀️ Claro';
+  } 
+  
+  document.getElementById('dataAtual').textContent = new Date().toLocaleDateString('pt-BR',{weekday:'long',year:'numeric',month:'long',day:'2-digit'}); 
+  _carregarUltimaAtualizacao();
+  
+  // Botão de sincronização manual
+  const btnSync = document.getElementById('btnSync');
+  if (btnSync) {
+    btnSync.addEventListener('click', syncWithFirebase);
+  }
+};
 </script>
 </body>
 </html>
