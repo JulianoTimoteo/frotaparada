@@ -7,6 +7,7 @@
 <link rel="apple-touch-icon" href="https://usinapitangueiras.com.br/wp-content/uploads/2020/10/cropped-favicon-180x180.png">
 <title>Frotas Paradas</title>
 <style>
+/* ========== CSS ORIGINAL COM AJUSTES (table-layout:auto, min-width:1200px) ========== */
 :root {
   --bg:#0d1117; --s1:#161b22; --s2:#1c2128; --s3:#21262d;
   --border:#30363d; --text:#ffffff; --muted:#ffffff;
@@ -59,8 +60,8 @@ main{max-width:1600px;margin:0 auto;padding:16px 24px 50px;display:grid;gap:18px
 table{
   width:100%;
   border-collapse:collapse;
-  min-width:860px;
-  table-layout:fixed;
+  min-width:1200px;
+  table-layout:auto;
 }
 thead th{
   text-align:left;padding:12px 8px;
@@ -80,7 +81,7 @@ thead th:nth-child(8){width:12%;}
 tbody tr{border-bottom:1px solid rgba(255,255,255,.08);transition:background .12s;}
 tbody tr:last-child{border-bottom:none;}
 tbody td{
-  padding:8px 6px;
+  padding:10px 8px;
   vertical-align:middle;
   text-align:center;
   word-break:break-word;
@@ -423,7 +424,7 @@ body.light .modal-content{background:#fff;color:#000;border-color:#ccc;}
 </main>
 
 <script>
-// ==================== FIREBASE CONFIG ====================
+// ========== FIREBASE E LÓGICA ORIGINAL ==========
 const firebaseConfig = {
   apiKey: "AIzaSyBRvOpraQrwmXegstKtqLMDXkC9Uk0s4Hw",
   authDomain: "frotasparadas.firebaseapp.com",
@@ -436,24 +437,18 @@ const firebaseConfig = {
 let db = null;
 let sincronizando = false;
 
-// Inicializar Firebase
 async function initFirebase() {
   try {
-    if (firebase.apps.length === 0) {
-      firebase.initializeApp(firebaseConfig);
-    }
+    if (firebase.apps.length === 0) firebase.initializeApp(firebaseConfig);
     db = firebase.firestore();
-    console.log('✅ Firebase conectado!');
     document.getElementById('syncStatus').innerHTML = '🟢 Firebase OK';
     return true;
   } catch (error) {
-    console.error('Erro Firebase:', error);
     document.getElementById('syncStatus').innerHTML = '🔴 Firebase Offline';
     return false;
   }
 }
 
-// Salvar UMA tabela no Firebase
 async function salvarTabelaFirebase(tableId) {
   if (!db) return;
   const registros = [];
@@ -471,75 +466,50 @@ async function salvarTabelaFirebase(tableId) {
   });
   try {
     await db.collection('frotas_ativas').doc(tableId).set({ registros, atualizado: new Date().toISOString() }, { merge: true });
-    console.log(`✅ Salvo ${tableId}: ${registros.length} registros`);
     return true;
-  } catch (error) {
-    console.error(`Erro ao salvar ${tableId}:`, error);
-    return false;
-  }
+  } catch (error) { return false; }
 }
 
-// Salvar TODAS as tabelas no Firebase
 async function salvarTudoFirebase() {
   if (!db || sincronizando) return;
   sincronizando = true;
   showToast('💾 Salvando no Firebase...', 'warn');
   let ok = true;
-  for (const id of TABELAS) {
-    const result = await salvarTabelaFirebase(id);
-    if (!result) ok = false;
-  }
-  if (ok) {
-    showToast('✅ Dados salvos no Firebase!', 'ok');
-    document.getElementById('syncStatus').innerHTML = '🟢 Sincronizado';
-  } else {
-    showToast('⚠️ Erro ao salvar no Firebase', 'err');
-  }
+  for (const id of TABELAS) { if (!(await salvarTabelaFirebase(id))) ok = false; }
+  if (ok) { showToast('✅ Dados salvos no Firebase!', 'ok'); document.getElementById('syncStatus').innerHTML = '🟢 Sincronizado'; }
+  else showToast('⚠️ Erro ao salvar no Firebase', 'err');
   sincronizando = false;
 }
 
-// Carregar UMA tabela do Firebase
 async function carregarTabelaFirebase(tableId) {
   if (!db) return [];
   try {
     const doc = await db.collection('frotas_ativas').doc(tableId).get();
-    if (doc.exists && doc.data().registros) {
-      return doc.data().registros;
-    }
-  } catch (error) {
-    console.error(`Erro ao carregar ${tableId}:`, error);
-  }
+    if (doc.exists && doc.data().registros) return doc.data().registros;
+  } catch (error) {}
   return [];
 }
 
-// Carregar TODAS as tabelas do Firebase
 async function carregarTudoFirebase() {
   if (!db || sincronizando) return;
   sincronizando = true;
   showToast('🔄 Carregando do Firebase...', 'warn');
   for (const id of TABELAS) {
     const registros = await carregarTabelaFirebase(id);
-    const _tbl = document.getElementById(id);
-    const tbody = _tbl ? _tbl.querySelector('tbody') : null;
+    const tbody = document.querySelector(`#${id} tbody`);
     if (!tbody) continue;
     tbody.innerHTML = '';
     registros.forEach(l => _criarLinha(id, l, true));
     localStorage.setItem(id, JSON.stringify(registros));
   }
-  atualizarTodosCronometros();
-  atualizarTodosContadores();
+  atualizarTodosCronometros(); atualizarTodosContadores();
   showToast('✅ Dados carregados do Firebase!', 'ok');
   document.getElementById('syncStatus').innerHTML = '🟢 Sincronizado';
   sincronizando = false;
 }
 
-// Função de sincronização manual
-async function syncFirebase() {
-  await salvarTudoFirebase();
-  await carregarTudoFirebase();
-}
+async function syncFirebase() { await salvarTudoFirebase(); await carregarTudoFirebase(); }
 
-// ==================== HISTORICO DE REMOCOES ====================
 const NOMES_TABELA_HIST = {
   'tabela-cam-proprio':'Caminhao Proprio','tabela-cam-terceiro':'Caminhao Terceiro',
   'tabela-cam-borracharia':'Borracharia','tabela-col-proprio':'Colhedora Propria',
@@ -559,9 +529,6 @@ function salvarHistorico(tr, idTabela) {
   db.collection('historico_paradas').add({frota,tipo,dataEntrada,motivo,parada,previsaoRetorno:previsao,horarioRetorno:retorno,duracao,timestamp:new Date().toISOString(),data:new Date().toLocaleDateString('pt-BR')}).catch(e=>console.warn('hist:',e));
 }
 
-// _salvarDados unificado definido abaixo junto ao código principal
-
-// ==================== SEU CÓDIGO ORIGINAL COMPLETO ====================
 const FROTAS_DISPONIVEIS = {
   'tabela-cam-proprio': ['311015','311025','311115','311125','31115','311215','31125','311325','311425','311525','311625','311725','311825','311925','312025','31215','31225','31315','31316','31325','31415','31425','31515','31525','31615','31625','31725','31825','31925','31815','311225'],
   'tabela-cam-terceiro': ['91015','91065','91203','91207','91209','91210','91277','91280','91282','91284','91286','91291','91301','91374','91375','91376','91378','91379','91380','91383','91393','91394','91396','91397','91398','91399','91400','91410','91411','91412','91413'],
@@ -620,19 +587,161 @@ function toggleSec(k){ document.getElementById('body-'+k)?.classList.toggle('hid
 function exportarCSV(){const NOMES={'tabela-cam-proprio':'Caminhão Próprio','tabela-cam-terceiro':'Caminhão Terceiro','tabela-cam-borracharia':'Borracharia','tabela-col-proprio':'Colhedora Própria','tabela-col-terceiro':'Colhedora Terceira','tabela-transbordo':'Transbordo Terceiro'}; let csv='\uFEFF'; TABELAS.forEach(id=>{csv+=NOMES[id]+'\n'; csv+='Frota,Data Entrada,Motivo,Hora Parada,Previsão Retorno,Horário Retorno\n'; const linhas=JSON.parse(localStorage.getItem(id)||'[]'); linhas.forEach(l=>{csv+=`${l.frota||''},${l.dataEntrada||''},${l.motivo||''},${l.horarioParada||''},${l.previsaoRetorno||''},${l.horarioRetorno||''}\n`;}); csv+='\n';}); const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'})); a.download='frotas_paradas.csv'; a.click();}
 function toggleTema(){ const l=document.body.classList.toggle('light'); document.getElementById('btnTema').textContent=l?'☀️ Claro':'🌙 Escuro'; localStorage.setItem('tema',l?'light':'dark');}
 function showToast(msg,t='ok'){ const tst=document.getElementById('toast'); tst.textContent=msg; tst.className='show '+t; clearTimeout(tst._t); tst._t=setTimeout(()=>{tst.className='';},3500);}
-function tirarPrint(){ if(window!==window.top){showToast('⚠️ Abra no navegador para usar print.','warn');return;} const btn=document.getElementById('btnPrint'), orig=btn.innerHTML; btn.innerHTML='⏳';btn.disabled=true; const hdr=document.querySelector('header'), hdrPos=hdr.style.position; hdr.style.position='relative'; window.scrollTo(0,0); const bg=document.body.classList.contains('light')?'#f0f2f5':'#0d1117'; setTimeout(()=>{html2canvas(document.body,{backgroundColor:bg,scale:1.5,useCORS:true,allowTaint:true,logging:false,scrollX:0,scrollY:0,windowWidth:document.documentElement.scrollWidth,windowHeight:document.documentElement.scrollHeight}).then(canvas=>{hdr.style.position=hdrPos||''; canvas.toBlob(blob=>{if(navigator.clipboard&&window.ClipboardItem){navigator.clipboard.write([new ClipboardItem({'image/png':blob})]).then(()=>{btn.innerHTML='✅';btn.style.background='#16a34a';showToast('✅ Copiado! Cole Ctrl+V','ok');setTimeout(()=>{btn.innerHTML=orig;btn.style.background='#25d366';btn.disabled=false;},2500);}).catch(()=>_downloadFallback(blob,btn,orig));}else{_downloadFallback(blob,btn,orig);}},'image/png');}).catch(err=>{hdr.style.position=hdrPos||'';btn.innerHTML=orig;btn.disabled=false;showToast('Erro: '+err.message,'err');});},250);}
-function _downloadFallback(b,btn,orig){ const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='frotas-'+new Date().toLocaleDateString('pt-BR').replace(/\//g,'-')+'.png'; document.body.appendChild(a); a.click(); document.body.removeChild(a); showToast('📥 Imagem baixada!','warn'); btn.innerHTML=orig; btn.style.background='#25d366'; btn.disabled=false;}
+
+// ========== FUNÇÃO DE PRINT CAPTURANDO APENAS O <main> (SEM HEADER, SEM LATERAIS, TEMA CLARO FORÇADO) ==========
+async function tirarPrint() {
+  if (window !== window.top) {
+    showToast('⚠️ Abra no navegador para usar print.', 'warn');
+    return;
+  }
+  const btn = document.getElementById('btnPrint');
+  const original = btn.innerHTML;
+  btn.innerHTML = '⏳';
+  btn.disabled = true;
+
+  try {
+    // Capturar o elemento principal <main>
+    const mainElement = document.querySelector('main');
+    if (!mainElement) throw new Error('Elemento <main> não encontrado');
+
+    // Clonar o <main> e todo seu conteúdo
+    const clone = mainElement.cloneNode(true);
+    
+    // Forçar tema claro no clone (fundos brancos, texto preto)
+    clone.style.backgroundColor = '#ffffff';
+    clone.style.color = '#000000';
+    clone.style.padding = '20px';
+    clone.style.margin = '0 auto';
+    clone.style.maxWidth = '1600px';
+    
+    // Ajustar todos os cards, groups e tabelas para fundo claro
+    clone.querySelectorAll('.card, .group, .table-wrap, .card-body').forEach(el => {
+      el.style.backgroundColor = '#ffffff';
+      el.style.color = '#000000';
+      el.style.border = '1px solid #ccc';
+    });
+    
+    // Remover botões de ação (.btn-add, .btn-del, .btn-salvar, .acoes-cell)
+    clone.querySelectorAll('.btn-add, .btn-del, .btn-salvar, .acoes-cell, .card-header .arrow').forEach(el => el.remove());
+    
+    // Nos inputs, substituir por spans com o valor (para garantir legibilidade sem cortes)
+    clone.querySelectorAll('input').forEach(inp => {
+      const span = document.createElement('div');
+      span.textContent = inp.value || inp.placeholder || '';
+      span.style.minHeight = '38px';
+      span.style.padding = '8px 10px';
+      span.style.display = 'flex';
+      span.style.alignItems = 'center';
+      span.style.justifyContent = inp.dataset.campo === 'motivo' ? 'flex-start' : 'center';
+      span.style.width = '100%';
+      span.style.fontSize = '15px';
+      span.style.fontWeight = '700';
+      span.style.color = '#000000';
+      span.style.backgroundColor = '#f9f9f9';
+      span.style.border = '1px solid #ddd';
+      span.style.borderRadius = '7px';
+      span.style.boxSizing = 'border-box';
+      span.style.whiteSpace = 'nowrap';
+      span.style.overflow = 'visible';
+      inp.parentNode.replaceChild(span, inp);
+    });
+    
+    // Ajustar tabelas para layout auto e largura adequada
+    clone.querySelectorAll('table').forEach(tbl => {
+      tbl.style.tableLayout = 'auto';
+      tbl.style.width = '100%';
+      tbl.style.minWidth = '1200px';
+    });
+    clone.querySelectorAll('td, th').forEach(td => {
+      td.style.whiteSpace = 'nowrap';
+      td.style.overflow = 'visible';
+    });
+    
+    // Expandir todos os cards
+    clone.querySelectorAll('.card-body').forEach(body => {
+      body.classList.remove('hidden');
+    });
+    
+    // Criar um container externo para captura
+    const wrapper = document.createElement('div');
+    wrapper.style.position = 'fixed';
+    wrapper.style.left = '-99999px';
+    wrapper.style.top = '0';
+    wrapper.style.backgroundColor = '#ffffff';
+    wrapper.style.padding = '0';
+    wrapper.appendChild(clone);
+    document.body.appendChild(wrapper);
+    
+    // Aguardar reflow
+    await new Promise(r => setTimeout(r, 200));
+    
+    // Capturar com html2canvas
+    const canvas = await html2canvas(wrapper, {
+      backgroundColor: '#ffffff',
+      useCORS: true,
+      allowTaint: true,
+      logging: false,
+      scale: Math.max(window.devicePixelRatio, 3),
+      windowWidth: clone.scrollWidth,
+      windowHeight: clone.scrollHeight,
+      width: clone.scrollWidth,
+      height: clone.scrollHeight
+    });
+    
+    // Remover wrapper
+    document.body.removeChild(wrapper);
+    
+    // Copiar ou baixar a imagem
+    canvas.toBlob(async blob => {
+      if (navigator.clipboard && window.ClipboardItem) {
+        try {
+          await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+          btn.innerHTML = '✅';
+          btn.style.background = '#16a34a';
+          showToast('✅ Print copiado (somente cards, tema claro)!', 'ok');
+        } catch {
+          baixarImagem(blob);
+        }
+      } else {
+        baixarImagem(blob);
+      }
+      setTimeout(() => {
+        btn.innerHTML = original;
+        btn.style.background = '#25d366';
+        btn.disabled = false;
+      }, 2500);
+    }, 'image/png');
+  } catch (err) {
+    console.error(err);
+    showToast('Erro ao gerar print: ' + err.message, 'err');
+    btn.innerHTML = original;
+    btn.disabled = false;
+  }
+}
+
+function baixarImagem(blob) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'frotas-cards-' + new Date().toLocaleDateString('pt-BR').replace(/\//g, '-') + '.png';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  showToast('📥 Imagem baixada!', 'warn');
+}
+// =================================================================
+
+// Eventos e inicialização (originais)
 document.addEventListener('keydown',e=>{ if(e.key!=='Tab'&&e.key!=='Enter')return; const active=document.activeElement; if(!active||active.tagName!=='INPUT'||active.readOnly)return; if(!active.closest('tbody'))return; e.preventDefault(); const tr=active.closest('tr'), id=active.closest('table')?.id; if(active.dataset.campo==='previsao'){_interpretarDuracao(active);_recalcular(active);if(tr?.dataset.salvo==='true'&&id)_salvarDados(id);const btnSalvar=tr?.querySelector('.btn-salvar'), btnDel=tr?.querySelector('.btn-del'); if(btnSalvar){btnSalvar.focus();return;} if(btnDel){btnDel.focus();return;}} const allInputs=Array.from(document.querySelectorAll('tbody tr td input:not([readonly])')).filter(inp=>inp.offsetParent!==null); const idx=allInputs.indexOf(active); if(idx===-1)return; const next=(e.shiftKey&&e.key==='Tab')?allInputs[idx-1]:allInputs[idx+1]; if(next){next.focus();next.select?.();}});
 document.addEventListener('keydown',e=>{ if(e.key==='F10'){e.preventDefault(); const a=document.activeElement; if(a&&a.dataset.campo==='parada'){const n=new Date(); a.value=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0'); a.dispatchEvent(new Event('input',{bubbles:true}));}}});
 
-// ==================== INICIALIZAÇÃO ====================
 window.onload = async function(){ 
   await initFirebase();
   _carregarFrotasCustom(); 
   TABELAS.forEach(id=>{ 
     const salvo = localStorage.getItem(id); 
     const linhas = salvo ? JSON.parse(salvo) : []; 
-    document.querySelector(`#${id} tbody`).innerHTML = ''; 
+    const tbody = document.querySelector(`#${id} tbody`);
+    if (tbody) tbody.innerHTML = '';
     linhas.forEach(l=>_criarLinha(id,l,true)); 
     document.querySelectorAll(`#${id} tbody tr[data-salvo="true"] [data-campo="frota"]`).forEach(inp=>_validarInputFrota(inp,id));
   }); 
@@ -645,7 +754,6 @@ window.onload = async function(){
   } 
   document.getElementById('dataAtual').textContent = new Date().toLocaleDateString('pt-BR',{weekday:'long',year:'numeric',month:'long',day:'2-digit'}); 
   _carregarUltimaAtualizacao();
-  
   document.getElementById('btnSyncFirebase').addEventListener('click', syncFirebase);
 };
 </script>
