@@ -28,7 +28,6 @@ header{
 header h1{font-size:1.1rem;font-weight:800;}
 #dataAtual{color:#ffffff;font-size:.83rem;}
 
-.top-bar{max-width:1600px;margin:0 auto;padding:0;}
 main{max-width:1600px;margin:0 auto;padding:16px 24px 50px;display:grid;gap:18px;}
 
 .card{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:0 6px 20px rgba(0,0,0,.3);}
@@ -191,9 +190,13 @@ td input::placeholder{
   display:inline-block;
   width:100%;
   text-align:center;
+  border: 1px solid transparent;
 }
 .cronometro-ativo    {color:#60a5fa;background:rgba(59,130,246,.12);}
 .cronometro-atrasado {color:#f87171;background:rgba(239,68,68,.12);}
+/* Estilo para Tempo Parado em Vermelho */
+.cronometro-parado   {color:var(--red);background:rgba(239,68,68,.12);border-color:rgba(239,68,68,0.2);}
+
 @keyframes pulsar{0%,100%{background:rgba(239,68,68,.03);}50%{background:rgba(239,68,68,.13);}}
 .linha-atrasada{animation:pulsar 1.5s infinite;}
 
@@ -224,8 +227,7 @@ td input::placeholder{
 .card-note{padding:8px 20px 14px;color:var(--muted);font-size:.79rem;font-style:italic;border-top:1px solid rgba(255,255,255,.04);}
 
 @media(max-width:700px){
-  thead th:nth-child(6),tbody td:nth-child(6){display:none;}
-  main,.top-bar{padding-left:10px;padding-right:10px;}
+  thead th:nth-child(6),tbody td:nth-child(6){display:none;} /* Duração */
 }
 
 body.light{
@@ -273,6 +275,7 @@ body.light td input:focus{background:#fff;border-color:#1a5cb8;box-shadow:0 0 0 
 body.light td input[readonly]{color:#334;background:#f8fafc;}
 body.light .cronometro-ativo{color:#1a5cb8;background:#e8f0fc;border:1px solid #c0d0f0;}
 body.light .cronometro-atrasado{color:#c01020;background:#fde8ea;border:1px solid #f0b0b8;}
+body.light .cronometro-parado{color:#c01020;background:#fde8ea;border:1px solid #f0b0b8;}
 body.light .btn-add{color:#1a5cb8;border:1px dashed #aabbdd;font-weight:700;}
 body.light .btn-add:hover{background:#e8f0fc;border-color:#1a5cb8;color:#000;}
 body.light .card-note{color:#444;font-style:italic;}
@@ -282,9 +285,40 @@ body.light .ac-item:hover,body.light .ac-item.ativo{background:#e8f0fc;color:#00
 body.light .linha-atrasada{animation:pulsarLight 1.5s infinite;}
 
 .stat-grid{
+  /* Mantido para o layout interno das abas */
   display:grid;grid-template-columns:repeat(4,1fr);gap:12px;
   padding:16px 24px 12px;width:100%;
 }
+
+/* Estilos para as abas */
+.tab-nav-container {
+  background: var(--s1);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.2);
+}
+.tab-nav-wrapper {
+  max-width: 1600px;
+  margin: 0 auto;
+  display: flex;
+  gap: 10px;
+  padding: 10px 0;
+}
+.tab-button {
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--s2);
+  color: var(--muted);
+  font-size: .88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .15s;
+  white-space: nowrap;
+}
+.tab-button:hover { background: var(--s3); color: var(--text); }
+.tab-button.active { background: var(--blue); border-color: var(--blue); color: #fff; box-shadow: 0 2px 8px rgba(59,130,246,.3); }
+.tab-content.hidden { display: none; }
 .stat-card{
   background:var(--s1);border:1px solid var(--border);
   border-left:4px solid var(--accent,var(--blue));
@@ -302,6 +336,20 @@ body.light .stat-value{color:#000000;}
 body.light .stat-total .stat-value{color:#000000;}
 body.light .stat-label{color:#000000;}
 @media(max-width:900px){.stat-grid{grid-template-columns:repeat(2,1fr);}}
+
+/* Light theme adjustments for tabs */
+body.light .tab-nav-container {
+  background: #ffffff;
+  border-bottom: 2px solid #d0d5dd;
+  box-shadow: 0 2px 12px rgba(0,0,0,.08);
+}
+body.light .tab-button {
+  background: #f0f2f5;
+  border-color: #d0d5dd;
+  color: #444;
+}
+body.light .tab-button:hover { background: #e8ebef; color: #000; }
+body.light .tab-button.active { background: #1a5cb8; border-color: #1a5cb8; color: #fff; box-shadow: 0 2px 8px rgba(26,92,184,.2); }
 @media(max-width:500px){.stat-grid{grid-template-columns:repeat(1,1fr);}}
 
 #toast{
@@ -376,51 +424,66 @@ body.light .modal-content{background:#fff;color:#000;border-color:#ccc;}
   </div>
 </header>
 
-<div class="top-bar">
-  <div class="stat-grid">
-    <div class="stat-card" style="--accent:var(--blue)"><div class="stat-icon">🚛</div><div class="stat-info"><span class="stat-label">Cam. Próprio</span><span class="stat-value" id="contador-cam-proprio">0</span></div></div>
-    <div class="stat-card" style="--accent:var(--amber)"><div class="stat-icon">🚛</div><div class="stat-info"><span class="stat-label">Cam. Terceiro</span><span class="stat-value" id="contador-cam-terceiro">0</span></div></div>
-    <div class="stat-card" style="--accent:var(--red)"><div class="stat-icon">🔧</div><div class="stat-info"><span class="stat-label">Borracharia</span><span class="stat-value" id="contador-cam-borracharia">0</span></div></div>
-    <div class="stat-card" style="--accent:var(--green)"><div class="stat-icon">🌾</div><div class="stat-info"><span class="stat-label">Col. Própria</span><span class="stat-value" id="contador-col-proprio">0</span></div></div>
-    <div class="stat-card" style="--accent:var(--amber)"><div class="stat-icon">🌾</div><div class="stat-info"><span class="stat-label">Col. Terceira</span><span class="stat-value" id="contador-col-terceiro">0</span></div></div>
-    <div class="stat-card" style="--accent:var(--purple)"><div class="stat-icon">🔄</div><div class="stat-info"><span class="stat-label">Transbordo</span><span class="stat-value" id="contador-transbordo">0</span></div></div>
-    <div class="stat-card" style="--accent:#64748b"><div class="stat-icon">📊</div><div class="stat-info"><span class="stat-label">Fora Borracharia</span><span class="stat-value" id="tot-fora">0</span></div></div>
-    <div class="stat-card stat-total" style="--accent:#4d77ff"><div class="stat-icon">🚜</div><div class="stat-info"><span class="stat-label">Total Geral</span><span class="stat-value" id="tot-geral">0</span></div></div>
+<!-- Nova navegação de abas -->
+<div class="tab-nav-container">
+  <div class="tab-nav-wrapper">
+    <button class="tab-button active" onclick="showTab('tab-caminhoes', this)">🚛 Caminhões</button>
+    <button class="tab-button" onclick="showTab('tab-colhedoras', this)">🌾 Colhedoras e Transbordo</button>
   </div>
 </div>
 
 <main>
-  <section class="card" id="sec-caminhao">
-    <div class="card-header" id="hdr-caminhao" onclick="toggleSec('caminhao')">
-      <div class="card-title">🚛 Caminhões Parados <span class="pill" id="pill-caminhao">0</span></div>
-      <span class="arrow">▼</span>
+  <!-- Conteúdo da aba Caminhões -->
+  <div id="tab-caminhoes" class="tab-content active">
+    <div class="stat-grid">
+      <div class="stat-card" style="--accent:var(--blue)"><div class="stat-icon">🚛</div><div class="stat-info"><span class="stat-label">Cam. Próprio</span><span class="stat-value" id="contador-cam-proprio">0</span></div></div>
+      <div class="stat-card" style="--accent:var(--amber)"><div class="stat-icon">🚛</div><div class="stat-info"><span class="stat-label">Cam. Terceiro</span><span class="stat-value" id="contador-cam-terceiro">0</span></div></div>
+      <div class="stat-card" style="--accent:var(--red)"><div class="stat-icon">🔧</div><div class="stat-info"><span class="stat-label">Borracharia</span><span class="stat-value" id="contador-cam-borracharia">0</span></div></div>
+      <div class="stat-card" style="--accent:#64748b"><div class="stat-icon">📊</div><div class="stat-info"><span class="stat-label">Fora Borracharia</span><span class="stat-value" id="tot-fora">0</span></div></div>
+      <div class="stat-card stat-total" style="--accent:#4d77ff"><div class="stat-icon">🚜</div><div class="stat-info"><span class="stat-label">Total Geral</span><span class="stat-value" id="tot-geral">0</span></div></div>
     </div>
-    <div class="card-body" id="body-caminhao">
-      <div class="group"><div class="group-label blue-t">Próprio <span class="gc" id="gc-cam-proprio">0</span></div><div class="table-wrap"><table id="tabela-cam-proprio"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-cam-proprio')">＋ Adicionar</button></div>
-      <div class="group"><div class="group-label amber-t">Terceiro <span class="gc" id="gc-cam-terceiro">0</span></div><div class="table-wrap"><table id="tabela-cam-terceiro"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-cam-terceiro')">＋ Adicionar</button></div>
-      <div class="group"><div class="group-label red-t">Borracharia <span class="gc" id="gc-cam-borracharia">0</span></div><div class="table-wrap"><table id="tabela-cam-borracharia"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-cam-borracharia')">＋ Adicionar</button></div>
+    <section class="card" id="sec-caminhao">
+      <div class="card-header" id="hdr-caminhao" onclick="toggleSec('caminhao')">
+        <div class="card-title">🚛 Caminhões Parados <span class="pill" id="pill-caminhao">0</span></div>
+        <span class="arrow">▼</span>
+      </div>
+      <div class="card-body" id="body-caminhao">
+        <div class="group"><div class="group-label blue-t">Próprio <span class="gc" id="gc-cam-proprio">0</span></div><div class="table-wrap"><table id="tabela-cam-proprio"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante / Parado</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-cam-proprio')">＋ Adicionar</button></div>
+        <div class="group"><div class="group-label amber-t">Terceiro <span class="gc" id="gc-cam-terceiro">0</span></div><div class="table-wrap"><table id="tabela-cam-terceiro"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante / Parado</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-cam-terceiro')">＋ Adicionar</button></div>
+        <div class="group"><div class="group-label red-t">Borracharia <span class="gc" id="gc-cam-borracharia">0</span></div><div class="table-wrap"><table id="tabela-cam-borracharia"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante / Parado</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-cam-borracharia')">＋ Adicionar</button></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Conteúdo da aba Colhedoras e Transbordo -->
+  <div id="tab-colhedoras" class="tab-content hidden">
+    <div class="stat-grid">
+      <div class="stat-card" style="--accent:var(--green)"><div class="stat-icon">🌾</div><div class="stat-info"><span class="stat-label">Col. Própria</span><span class="stat-value" id="contador-col-proprio">0</span></div></div>
+      <div class="stat-card" style="--accent:var(--amber)"><div class="stat-icon">🌾</div><div class="stat-info"><span class="stat-label">Col. Terceira</span><span class="stat-value" id="contador-col-terceiro">0</span></div></div>
+      <div class="stat-card" style="--accent:var(--purple)"><div class="stat-icon">🔄</div><div class="stat-info"><span class="stat-label">Transbordo</span><span class="stat-value" id="contador-transbordo">0</span></div></div>
+      <div class="stat-card stat-total" style="--accent:var(--green)"><div class="stat-icon">🌾</div><div class="stat-info"><span class="stat-label">Total Geral</span><span class="stat-value" id="tot-geral-col">0</span></div></div>
     </div>
-  </section>
-  <section class="card" id="sec-colhedora">
-    <div class="card-header" id="hdr-colhedora" onclick="toggleSec('colhedora')">
-      <div class="card-title">🌾 Colhedoras Paradas <span class="pill" id="pill-colhedora">0</span></div>
-      <span class="arrow">▼</span>
-    </div>
-    <div class="card-body" id="body-colhedora">
-      <div class="group"><div class="group-label green-t">Própria <span class="gc" id="gc-col-proprio">0</span></div><div class="table-wrap"><table id="tabela-col-proprio"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-col-proprio')">＋ Adicionar</button></div>
-      <div class="group"><div class="group-label amber-t">Terceira <span class="gc" id="gc-col-terceiro">0</span></div><div class="table-wrap"><table id="tabela-col-terceiro"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-col-terceiro')">＋ Adicionar</button></div>
-    </div>
-  </section>
-  <section class="card" id="sec-transbordo">
-    <div class="card-header" id="hdr-transbordo" onclick="toggleSec('transbordo')">
-      <div class="card-title">🔄 Transbordos Parados <span class="pill" id="pill-transbordo">0</span></div>
-      <span class="arrow">▼</span>
-    </div>
-    <div class="card-body" id="body-transbordo">
-      <div class="group"><div class="group-label purple-t">Terceiro <span class="gc" id="gc-transbordo">0</span></div><div class="table-wrap"><table id="tabela-transbordo"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-transbordo')">＋ Adicionar</button></div>
-      <div class="card-note">⚠️ Transbordo possui somente grupo Terceiro.</div>
-    </div>
-  </section>
+    <section class="card" id="sec-colhedora">
+      <div class="card-header" id="hdr-colhedora" onclick="toggleSec('colhedora')">
+        <div class="card-title">🌾 Colhedoras Paradas <span class="pill" id="pill-colhedora">0</span></div>
+        <span class="arrow">▼</span>
+      </div>
+      <div class="card-body" id="body-colhedora">
+        <div class="group"><div class="group-label green-t">Própria <span class="gc" id="gc-col-proprio">0</span></div><div class="table-wrap"><table id="tabela-col-proprio"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante / Parado</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-col-proprio')">＋ Adicionar</button></div>
+        <div class="group"><div class="group-label amber-t">Terceira <span class="gc" id="gc-col-terceiro">0</span></div><div class="table-wrap"><table id="tabela-col-terceiro"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante / Parado</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-col-terceiro')">＋ Adicionar</button></div>
+      </div>
+    </section>
+    <section class="card" id="sec-transbordo">
+      <div class="card-header" id="hdr-transbordo" onclick="toggleSec('transbordo')">
+        <div class="card-title">🔄 Transbordos Parados <span class="pill" id="pill-transbordo">0</span></div>
+        <span class="arrow">▼</span>
+      </div>
+      <div class="card-body" id="body-transbordo">
+        <div class="group"><div class="group-label purple-t">Terceiro <span class="gc" id="gc-transbordo">0</span></div><div class="table-wrap"><table id="tabela-transbordo"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante / Parado</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-transbordo')">＋ Adicionar</button></div>
+        <div class="card-note">⚠️ Transbordo possui somente grupo Terceiro.</div>
+      </div>
+    </section>
+  </div>
 </main>
 
 <script>
@@ -568,9 +631,54 @@ function tocarAlarme(){try{const c=new (AudioContext||webkitAudioContext)();[0,0
 function _renderizarIconeRelogio(tr){ const td=tr.querySelector('td'); if(tr.dataset.tempoAdicionado==='true' && !td.querySelector('.relogio-indicador')){const s=document.createElement('span');s.className='relogio-indicador';s.innerHTML='🕒';s.title='Tempo extra adicionado';td.appendChild(s);} }
 function _mascaraData(inp){ let v=inp.value.replace(/\D/g,''); if(v.length>2)v=v.slice(0,2)+'/'+v.slice(2); if(v.length>5)v=v.slice(0,5)+'/'+v.slice(5); inp.value=v.slice(0,10);}
 function _interpretarDuracao(inp){ let v=inp.value.replace(/\D/g,'').slice(0,4); if(!v){inp.value='';return;} let hh,mm; if(v.length<=2){hh=0;mm=parseInt(v,10);}else{mm=parseInt(v.slice(-2),10);hh=parseInt(v.slice(0,v.length-2),10);} if(mm>59){hh+=Math.floor(mm/60);mm=mm%60;} const result=String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0'); if(result==='00:00'){inp.value='';return;} inp.value=result;}
-function _dataBase(tr){ const v=tr.querySelector('[data-campo="data"]').value.trim(), m=v.match(/^(\d{2})\/(\d{2})\/(\d{2,4})$/); if(!m)return null; const [_,d,mo,a]=m, af=a.length===2?'20'+a:a, t=new Date(`${af}-${mo}-${d}`); return (t.getDate()===parseInt(d)&&t.getMonth()+1===parseInt(mo))?`${af}-${mo}-${d}`:null;}
-function _recalcular(inp){ const tr=inp.closest('tr'), idT=inp.closest('table').id, parada=tr.querySelector('[data-campo="parada"]').value, previsao=tr.querySelector('[data-campo="previsao"]').value.trim(), inpRet=tr.querySelector('[data-campo="retorno"]'), span=tr.querySelector('.cronometro'), valida=/^\d{1,2}:\d{2}$/.test(previsao); const previsaoZero = previsao==='00:00'||previsao==='0:00'; if(!parada||!valida||previsaoZero){ tr.removeAttribute('data-hora-retorno'); inpRet.value=''; if(span){span.textContent='--:--';span.className='cronometro';} tr.classList.remove('linha-atrasada'); return;} let dataISO=_dataBase(tr); if(!dataISO){const hj=new Date(); dataISO=`${hj.getFullYear()}-${String(hj.getMonth()+1).padStart(2,'0')}-${String(hj.getDate()).padStart(2,'0')}`;} const [hP,mP]=parada.split(':').map(Number), [hPv,mPv]=previsao.split(':').map(Number), total=hP*60+mP+hPv*60+mPv, dias=Math.floor(total/1440), hR=Math.floor((total%1440)/60), mR=total%60; inpRet.value=`${String(hR).padStart(2,'0')}:${String(mR).padStart(2,'0')}`; const dt=new Date(dataISO+'T00:00:00'); dt.setDate(dt.getDate()+dias); dt.setHours(hR,mR,0,0); tr.setAttribute('data-hora-retorno',dt.toISOString()); _atualizarCronometroLinha(tr);}
-function _atualizarCronometroLinha(tr){ const iso=tr.getAttribute('data-hora-retorno'), span=tr.querySelector('.cronometro'); if(!span)return; if(!iso){span.textContent='--:--';span.className='cronometro';tr.classList.remove('linha-atrasada');return;} const frota=tr.querySelector('[data-campo="frota"]')?.value||'', diff=new Date(iso)-new Date(); if(diff<=0){ const a=Math.abs(diff), h=Math.floor(a/3600000), m=Math.floor((a%3600000)/60000); span.textContent=`Atrasado ${h}h ${m}min`; span.className='cronometro cronometro-atrasado'; tr.classList.add('linha-atrasada'); const key=frota+'|'+iso; if(frota&&!_alarmeSet.has(key)){_alarmeSet.add(key);tocarAlarme();if(tr.dataset.salvo==='true')mostrarModalAtraso(tr,tr.closest('table').id); showToast(`🔔 Frota ${frota} com retorno atrasado!`,'warn');} }else{ const h=Math.floor(diff/3600000), m=Math.floor((diff%3600000)/60000); span.textContent=`Falta ${h}h ${m}min`; span.className='cronometro cronometro-ativo'; tr.classList.remove('linha-atrasada');} }
+function _dataBase(tr){
+  const v=tr.querySelector('[data-campo="data"]').value.trim(), m=v.match(/^(\d{2})\/(\d{2})\/(\d{2,4})$/);
+  if(!m)return null;
+  const [_,d,mo,a]=m, af=a.length===2?'20'+a:a;
+  const day=parseInt(d,10), month=parseInt(mo,10), year=parseInt(af,10);
+  const t=new Date(year, month - 1, day);
+  if(t.getFullYear()===year && (t.getMonth()+1)===month && t.getDate()===day){
+    return `${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+  }
+  return null;
+}
+function _recalcular(inp){
+  const tr=inp.closest('tr'), idT=inp.closest('table').id, parada=tr.querySelector('[data-campo="parada"]').value, previsao=tr.querySelector('[data-campo="previsao"]').value.trim(), inpRet=tr.querySelector('[data-campo="retorno"]'), span=tr.querySelector('.cronometro'), valida=/^\d{1,2}:\d{2}$/.test(previsao);
+  const previsaoZero = previsao==='00:00'||previsao==='0:00';
+  if(!parada||!valida||previsaoZero){
+    tr.removeAttribute('data-hora-retorno'); inpRet.value=''; tr.classList.remove('linha-atrasada');
+    _atualizarCronometroLinha(tr);
+    return;
+  }
+  let dataISO=_dataBase(tr); if(!dataISO){const hj=new Date(); dataISO=`${hj.getFullYear()}-${String(hj.getMonth()+1).padStart(2,'0')}-${String(hj.getDate()).padStart(2,'0')}`;}
+  const [hP,mP]=parada.split(':').map(Number), [hPv,mPv]=previsao.split(':').map(Number), total=hP*60+mP+hPv*60+mPv, dias=Math.floor(total/1440), hR=Math.floor((total%1440)/60), mR=total%60;
+  inpRet.value=`${String(hR).padStart(2,'0')}:${String(mR).padStart(2,'0')}`;
+  const dt=new Date(dataISO+'T00:00:00'); dt.setDate(dt.getDate()+dias); dt.setHours(hR,mR,0,0);
+  tr.setAttribute('data-hora-retorno',dt.toISOString()); _atualizarCronometroLinha(tr);
+}
+function _atualizarCronometroLinha(tr){
+  const iso=tr.getAttribute('data-hora-retorno'), span=tr.querySelector('.cronometro');
+  if(!span)return;
+  if(!iso){
+    const parada=tr.querySelector('[data-campo="parada"]')?.value;
+    const dataISO=_dataBase(tr);
+    if(parada && dataISO){
+      const [h,m]=parada.split(':').map(Number), [y, mon, d]=dataISO.split('-').map(Number);
+      const dtS=new Date(y, mon - 1, d, h, m, 0);
+      const diff=new Date()-dtS;
+      if(diff>0){
+        const hh=Math.floor(diff/3600000), mm=Math.floor((diff%3600000)/60000);
+        span.textContent=`Parado ${hh}h ${mm}min`;
+        span.className='cronometro cronometro-parado';
+        tr.classList.remove('linha-atrasada');
+        return;
+      }
+    }
+    span.textContent='--:--';span.className='cronometro';tr.classList.remove('linha-atrasada');
+    return;
+  }
+  const frota=tr.querySelector('[data-campo="frota"]')?.value||'', diff=new Date(iso)-new Date(); if(diff<=0){ const a=Math.abs(diff), h=Math.floor(a/3600000), m=Math.floor((a%3600000)/60000); span.textContent=`Atrasado ${h}h ${m}min`; span.className='cronometro cronometro-atrasado'; tr.classList.add('linha-atrasada'); const key=frota+'|'+iso; if(frota&&!_alarmeSet.has(key)){_alarmeSet.add(key);tocarAlarme();if(tr.dataset.salvo==='true')mostrarModalAtraso(tr,tr.closest('table').id); showToast(`🔔 Frota ${frota} com retorno atrasado!`,'warn');} }else{ const h=Math.floor(diff/3600000), m=Math.floor((diff%3600000)/60000); span.textContent=`Falta ${h}h ${m}min`; span.className='cronometro cronometro-ativo'; tr.classList.remove('linha-atrasada');}
+}
 function atualizarTodosCronometros(){ TABELAS.forEach(id=>{document.querySelector(`#${id} tbody`)?.querySelectorAll('tr[data-salvo="true"]').forEach(_atualizarCronometroLinha);});}
 setInterval(()=>{ atualizarTodosCronometros(); atualizarTodosContadores(); },1000);
 function _criarAutocomplete(inp,id){ const lista=FROTAS_DISPONIVEIS[id]||[], wrap=document.createElement('div');wrap.className='ac-wrap';inp.parentNode.insertBefore(wrap,inp);wrap.appendChild(inp);const drop=document.createElement('div');drop.className='ac-list';wrap.appendChild(drop);let idx=-1; const filtrar=q=>{drop.innerHTML='';idx=-1;if(!q){drop.classList.remove('show');return;}const m=lista.filter(f=>f.includes(q)).slice(0,12);if(!m.length){drop.classList.remove('show');return;}m.forEach(f=>{const it=document.createElement('div');it.className='ac-item';it.innerHTML=f.replace(q,`<mark>${q}</mark>`);it.addEventListener('mousedown',e=>{e.preventDefault();inp.value=f;inp.dispatchEvent(new Event('input',{bubbles:true}));drop.classList.remove('show');});drop.appendChild(it);});drop.classList.add('show');}; inp.addEventListener('input',()=>filtrar(inp.value.trim())); inp.addEventListener('focus',()=>{if(inp.value.trim())filtrar(inp.value.trim());}); inp.addEventListener('keydown',e=>{const its=drop.querySelectorAll('.ac-item');if(!its.length)return;if(e.key==='ArrowDown'){e.preventDefault();idx=Math.min(idx+1,its.length-1);its.forEach((it,i)=>it.classList.toggle('ativo',i===idx));}else if(e.key==='ArrowUp'){e.preventDefault();idx=Math.max(idx-1,0);its.forEach((it,i)=>it.classList.toggle('ativo',i===idx));}else if(e.key==='Enter'&&idx>=0){e.preventDefault();inp.value=its[idx].textContent;inp.dispatchEvent(new Event('input',{bubbles:true}));drop.classList.remove('show');}else if(e.key==='Escape')drop.classList.remove('show');}); document.addEventListener('click',e=>{if(!wrap.contains(e.target))drop.classList.remove('show');});}
@@ -582,13 +690,34 @@ function _salvarDadosOriginalImpl(id){ const rows=[]; document.querySelector(`#$
 function _salvarDados(id){ _salvarDadosOriginalImpl(id); if(db){ setTimeout(()=>salvarTabelaFirebase(id), 100); } }
 function _registrarUltimaAtualizacao(){ const agora=new Date(), ts=agora.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'}); localStorage.setItem('_frotas_ultima_atualizacao',ts); const el=document.getElementById('ultimaAtualizacao'); if(el){el.textContent='🕐 Última atualização: '+ts;el.style.color='var(--green)';}}
 function _carregarUltimaAtualizacao(){ const ts=localStorage.getItem('_frotas_ultima_atualizacao'), el=document.getElementById('ultimaAtualizacao'); if(!el)return; if(ts){el.textContent='🕐 Última atualização: '+ts;el.style.color='var(--green)';}else{el.textContent='🕐 Nenhum dado salvo ainda';el.style.color='var(--muted)';}}
-function atualizarTodosContadores(){ let foraBorr=0,geral=0; const pills={'pill-caminhao':0,'pill-colhedora':0,'pill-transbordo':0}; TABELAS.forEach(id=>{ const n=document.querySelector(`#${id} tbody`)?.querySelectorAll('tr[data-salvo="true"]').length||0; const cel=document.getElementById(CONTADORES[id]), gc=document.getElementById(GCS[id]); if(cel)cel.textContent=n; if(gc)gc.textContent=n; pills[PILLS[id]]=(pills[PILLS[id]]||0)+n; geral+=n; if(SEM_BORRACHARIA.includes(id))foraBorr+=n; }); Object.entries(pills).forEach(([id,n])=>{const el=document.getElementById(id);if(el)el.textContent=n;}); document.getElementById('tot-fora').textContent=foraBorr; document.getElementById('tot-geral').textContent=geral;}
+function atualizarTodosContadores(){ let foraBorr=0,geral=0,totCol=0; const pills={'pill-caminhao':0,'pill-colhedora':0,'pill-transbordo':0}; TABELAS.forEach(id=>{ const n=document.querySelector(`#${id} tbody`)?.querySelectorAll('tr[data-salvo="true"]').length||0; const cel=document.getElementById(CONTADORES[id]), gc=document.getElementById(GCS[id]); if(cel)cel.textContent=n; if(gc)gc.textContent=n; pills[PILLS[id]]=(pills[PILLS[id]]||0)+n; geral+=n; if(SEM_BORRACHARIA.includes(id))foraBorr+=n; if(['tabela-col-proprio','tabela-col-terceiro','tabela-transbordo'].includes(id))totCol+=n; }); Object.entries(pills).forEach(([id,n])=>{const el=document.getElementById(id);if(el)el.textContent=n;}); document.getElementById('tot-fora').textContent=foraBorr; document.getElementById('tot-geral').textContent=geral; const elCol=document.getElementById('tot-geral-col'); if(elCol)elCol.textContent=totCol;}
 function toggleSec(k){ document.getElementById('body-'+k)?.classList.toggle('hidden'); document.getElementById('hdr-'+k)?.classList.toggle('collapsed');}
 function exportarCSV(){const NOMES={'tabela-cam-proprio':'Caminhão Próprio','tabela-cam-terceiro':'Caminhão Terceiro','tabela-cam-borracharia':'Borracharia','tabela-col-proprio':'Colhedora Própria','tabela-col-terceiro':'Colhedora Terceira','tabela-transbordo':'Transbordo Terceiro'}; let csv='\uFEFF'; TABELAS.forEach(id=>{csv+=NOMES[id]+'\n'; csv+='Frota,Data Entrada,Motivo,Hora Parada,Previsão Retorno,Horário Retorno\n'; const linhas=JSON.parse(localStorage.getItem(id)||'[]'); linhas.forEach(l=>{csv+=`${l.frota||''},${l.dataEntrada||''},${l.motivo||''},${l.horarioParada||''},${l.previsaoRetorno||''},${l.horarioRetorno||''}\n`;}); csv+='\n';}); const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'})); a.download='frotas_paradas.csv'; a.click();}
 function toggleTema(){ const l=document.body.classList.toggle('light'); document.getElementById('btnTema').textContent=l?'☀️ Claro':'🌙 Escuro'; localStorage.setItem('tema',l?'light':'dark');}
 function showToast(msg,t='ok'){ const tst=document.getElementById('toast'); tst.textContent=msg; tst.className='show '+t; clearTimeout(tst._t); tst._t=setTimeout(()=>{tst.className='';},3500);}
 
-// ========== FUNÇÃO DE PRINT CAPTURANDO APENAS O <main> (SEM HEADER, SEM LATERAIS, TEMA CLARO FORÇADO) ==========
+// ========== Lógica de Abas ==========
+function showTab(tabId, clickedButton) {
+  document.querySelectorAll('.tab-content').forEach(content => {
+    content.classList.add('hidden');
+  });
+  document.querySelectorAll('.tab-button').forEach(button => {
+    button.classList.remove('active');
+  });
+
+  const selectedTab = document.getElementById(tabId);
+  if (selectedTab) {
+    selectedTab.classList.remove('hidden');
+  }
+  if (clickedButton) {
+    clickedButton.classList.add('active');
+  }
+  // Re-renderizar cronômetros e contadores para a aba recém-visível
+  atualizarTodosCronometros();
+  atualizarTodosContadores();
+}
+
+// ========== FUNÇÃO DE PRINT CAPTURANDO APENAS A ABA ATIVA (SEM HEADER, SEM LATERAIS, TEMA CLARO FORÇADO) ==========
 async function tirarPrint() {
   if (window !== window.top) {
     showToast('⚠️ Abra no navegador para usar print.', 'warn');
@@ -600,13 +729,16 @@ async function tirarPrint() {
   btn.disabled = true;
 
   try {
-    // Capturar o elemento principal <main>
-    const mainElement = document.querySelector('main');
-    if (!mainElement) throw new Error('Elemento <main> não encontrado');
+    // Capturar o conteúdo da aba ativa
+    const activeTabContent = document.querySelector('.tab-content:not(.hidden)');
+    if (!activeTabContent) throw new Error('Nenhum conteúdo de aba ativa encontrado para imprimir.');
 
-    // Clonar o <main> e todo seu conteúdo
-    const clone = mainElement.cloneNode(true);
+    // Clonar o conteúdo da aba ativa
+    const clone = activeTabContent.cloneNode(true);
     
+    // Aplicar estilos de main ao clone para manter o layout
+    clone.style.cssText = window.getComputedStyle(document.querySelector('main')).cssText;
+
     // Forçar tema claro no clone (fundos brancos, texto preto)
     clone.style.backgroundColor = '#ffffff';
     clone.style.color = '#000000';
@@ -735,6 +867,8 @@ document.addEventListener('keydown',e=>{ if(e.key!=='Tab'&&e.key!=='Enter')retur
 document.addEventListener('keydown',e=>{ if(e.key==='F10'){e.preventDefault(); const a=document.activeElement; if(a&&a.dataset.campo==='parada'){const n=new Date(); a.value=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0'); a.dispatchEvent(new Event('input',{bubbles:true}));}}});
 
 window.onload = async function(){ 
+  // Ajustar o main para não ser grid diretamente, mas sim os tab-contents
+  document.querySelector('main').style.display = 'block'; // Ou flex, dependendo do layout desejado para o container das abas
   await initFirebase();
   _carregarFrotasCustom(); 
   TABELAS.forEach(id=>{ 
@@ -745,7 +879,8 @@ window.onload = async function(){
     linhas.forEach(l=>_criarLinha(id,l,true)); 
     document.querySelectorAll(`#${id} tbody tr[data-salvo="true"] [data-campo="frota"]`).forEach(inp=>_validarInputFrota(inp,id));
   }); 
-  await carregarTudoFirebase();
+  await carregarTudoFirebase(); // Carrega todos os dados, mesmo os de abas não ativas
+  showTab('tab-caminhoes', document.querySelector('.tab-button.active')); // Exibe a aba de caminhões por padrão
   atualizarTodosCronometros(); 
   atualizarTodosContadores(); 
   if(localStorage.getItem('tema')==='light'){
