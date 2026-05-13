@@ -7,7 +7,7 @@
 <link rel="apple-touch-icon" href="https://usinapitangueiras.com.br/wp-content/uploads/2020/10/cropped-favicon-180x180.png">
 <title>Frotas Paradas</title>
 <style>
-/* ========== CSS ORIGINAL COM AJUSTES (table-layout:auto, min-width:1200px) ========== */
+/* ========== CSS ORIGINAL COM AJUSTES ========== */
 :root {
   --bg:#0d1117; --s1:#161b22; --s2:#1c2128; --s3:#21262d;
   --border:#30363d; --text:#ffffff; --muted:#ffffff;
@@ -23,6 +23,7 @@ header{
   background:rgba(22,27,34,.97);backdrop-filter:blur(10px);
   border-bottom:1px solid var(--border);
   padding:14px 24px;display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:10px;
   box-shadow:0 4px 20px rgba(0,0,0,.5);
 }
 header h1{font-size:1.1rem;font-weight:800;}
@@ -194,7 +195,6 @@ td input::placeholder{
 }
 .cronometro-ativo    {color:#60a5fa;background:rgba(59,130,246,.12);}
 .cronometro-atrasado {color:#f87171;background:rgba(239,68,68,.12);}
-/* Estilo para Tempo Parado em Vermelho */
 .cronometro-parado   {color:var(--red);background:rgba(239,68,68,.12);border-color:rgba(239,68,68,0.2);}
 
 @keyframes pulsar{0%,100%{background:rgba(239,68,68,.03);}50%{background:rgba(239,68,68,.13);}}
@@ -227,7 +227,7 @@ td input::placeholder{
 .card-note{padding:8px 20px 14px;color:var(--muted);font-size:.79rem;font-style:italic;border-top:1px solid rgba(255,255,255,.04);}
 
 @media(max-width:700px){
-  thead th:nth-child(6),tbody td:nth-child(6){display:none;} /* Duração */
+  thead th:nth-child(6),tbody td:nth-child(6){display:none;}
 }
 
 body.light{
@@ -285,12 +285,10 @@ body.light .ac-item:hover,body.light .ac-item.ativo{background:#e8f0fc;color:#00
 body.light .linha-atrasada{animation:pulsarLight 1.5s infinite;}
 
 .stat-grid{
-  /* Mantido para o layout interno das abas */
   display:grid;grid-template-columns:repeat(4,1fr);gap:12px;
   padding:16px 24px 12px;width:100%;
 }
 
-/* Estilos para as abas */
 .tab-nav-container {
   background: var(--s1);
   border-bottom: 1px solid var(--border);
@@ -336,8 +334,6 @@ body.light .stat-value{color:#000000;}
 body.light .stat-total .stat-value{color:#000000;}
 body.light .stat-label{color:#000000;}
 @media(max-width:900px){.stat-grid{grid-template-columns:repeat(2,1fr);}}
-
-/* Light theme adjustments for tabs */
 body.light .tab-nav-container {
   background: #ffffff;
   border-bottom: 2px solid #d0d5dd;
@@ -364,27 +360,78 @@ body.light .tab-button.active { background: #1a5cb8; border-color: #1a5cb8; colo
 #toast.warn{background:#f59e0b;color:#000;}
 
 .modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:10000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
-.modal-content{background:var(--s1);padding:24px;border-radius:var(--radius);border:1px solid var(--border);text-align:center;max-width:380px;box-shadow:0 20px 50px rgba(0,0,0,0.5);}
+.modal-content{background:var(--s1);padding:24px;border-radius:var(--radius);border:1px solid var(--border);text-align:center;max-width:500px;width:90%;box-shadow:0 20px 50px rgba(0,0,0,0.5);}
 .modal-content h3{margin-bottom:12px;font-size:1.2rem;}
-.modal-content p{margin-bottom:20px;font-size:0.9rem;opacity:0.8;}
-.modal-btns{display:flex;gap:12px;justify-content:center;}
+.modal-btns{display:flex;gap:12px;justify-content:center;margin-top:20px;}
 body.light .modal{background:rgba(0,0,0,0.4);}
 body.light .modal-content{background:#fff;color:#000;border-color:#ccc;}
 
-@media print {
-  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-  header { position: relative !important; box-shadow: none !important; }
-  .btn-add, .btn-del, .btn-salvar, .acoes-cell, thead th:last-child, tbody td:last-child,
-  #btnPrint, #btnTema, [onclick="exportarCSV()"], #toast { display: none !important; }
-  body { background: #fff !important; }
-  body.light { background: #fff !important; }
-  .card { box-shadow: none !important; border: 1px solid #ccc !important; page-break-inside: avoid; }
-  .group { box-shadow: none !important; border: 1px solid #ddd !important; margin: 6px 0 !important; page-break-inside: avoid; }
-  .stat-grid { display: grid !important; grid-template-columns: repeat(4,1fr) !important; gap: 6px !important; }
-  main { padding: 8px !important; }
-  table { min-width: unset !important; font-size: .75rem !important; }
-  td input { border: none !important; background: transparent !important; padding: 2px 4px !important; }
+/* Estilos do calendário para CSV */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  margin: 15px 0;
 }
+.calendar-day {
+  padding: 8px 4px;
+  text-align: center;
+  border-radius: 8px;
+  cursor: pointer;
+  background: var(--s2);
+  border: 1px solid var(--border);
+  font-size: .8rem;
+}
+.calendar-day:hover { background: var(--blue); color: white; }
+.calendar-day.has-data { background: rgba(59,130,246,0.3); border-color: var(--blue); font-weight: bold; }
+.calendar-day.selected { background: var(--blue); color: white; }
+.calendar-weekday {
+  font-weight: bold;
+  font-size: .7rem;
+  text-align: center;
+  padding: 5px;
+  color: var(--muted);
+}
+.periodo-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 15px 0;
+}
+.btn-periodo {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--s2);
+  color: var(--text);
+  cursor: pointer;
+  font-size: .75rem;
+}
+.btn-periodo:hover { background: var(--blue); border-color: var(--blue); }
+.data-range {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin: 15px 0;
+}
+.data-range input {
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--s2);
+  color: var(--text);
+}
+.btn-csv {
+  background: var(--orange);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+.btn-csv:hover { opacity: 0.9; }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -403,6 +450,29 @@ body.light .modal-content{background:#fff;color:#000;border-color:#ccc;}
   </div>
 </div>
 
+<!-- Modal para seleção de data do CSV -->
+<div id="modalCSV" class="modal">
+  <div class="modal-content">
+    <h3>📊 Exportar Relatório CSV</h3>
+    <div class="periodo-buttons">
+      <button class="btn-periodo" onclick="setPeriodo('ultimas24h')">🕐 Últimas 24h</button>
+      <button class="btn-periodo" onclick="setPeriodo('ontem')">📅 Ontem</button>
+      <button class="btn-periodo" onclick="setPeriodo('estaSemana')">📆 Esta Semana</button>
+      <button class="btn-periodo" onclick="setPeriodo('esteMes')">📆 Este Mês</button>
+    </div>
+    <div class="data-range">
+      <input type="date" id="dataInicioCSV" placeholder="Data Início">
+      <span>até</span>
+      <input type="date" id="dataFimCSV" placeholder="Data Fim">
+    </div>
+    <div id="calendarContainer"></div>
+    <div class="modal-btns">
+      <button onclick="gerarCSVComFiltro()" class="btn-csv">📥 Gerar CSV</button>
+      <button onclick="fecharModalCSV()" class="btn-del">Cancelar</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <header>
@@ -417,14 +487,13 @@ body.light .modal-content{background:#fff;color:#000;border-color:#ccc;}
   </div>
   <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
     <button id="btnSyncFirebase" style="padding:7px 14px;border-radius:8px;border:none;background:var(--blue);color:#fff;cursor:pointer;font-size:.82rem;font-weight:700;">🔄 Sincronizar</button>
-    <button onclick="exportarCSV()" style="padding:7px 14px;border-radius:8px;border:none;background:var(--orange);color:#fff;cursor:pointer;font-size:.82rem;font-weight:700;">📥 Exportar CSV</button>
+    <button id="btnExportCSV" onclick="abrirModalCSV()" style="padding:7px 14px;border-radius:8px;border:none;background:var(--orange);color:#fff;cursor:pointer;font-size:.82rem;font-weight:700;">📥 Exportar CSV</button>
     <button id="btnPrint" onclick="tirarPrint()" style="padding:7px 14px;border-radius:8px;border:none;background:#25d366;color:#fff;cursor:pointer;font-size:.82rem;font-weight:700;white-space:nowrap;">📷 Print</button>
     <span style="color:var(--border);font-size:1.2rem;">|</span>
     <button id="btnTema" onclick="toggleTema()" style="padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:var(--s2);color:var(--text);cursor:pointer;font-size:.82rem;font-weight:700;">🌙 Escuro</button>
   </div>
 </header>
 
-<!-- Nova navegação de abas -->
 <div class="tab-nav-container">
   <div class="tab-nav-wrapper">
     <button class="tab-button active" onclick="showTab('tab-caminhoes', this)">🚛 Caminhões</button>
@@ -433,7 +502,6 @@ body.light .modal-content{background:#fff;color:#000;border-color:#ccc;}
 </div>
 
 <main>
-  <!-- Conteúdo da aba Caminhões -->
   <div id="tab-caminhoes" class="tab-content active">
     <div class="stat-grid">
       <div class="stat-card" style="--accent:var(--blue)"><div class="stat-icon">🚛</div><div class="stat-info"><span class="stat-label">Cam. Próprio</span><span class="stat-value" id="contador-cam-proprio">0</span></div></div>
@@ -455,7 +523,6 @@ body.light .modal-content{background:#fff;color:#000;border-color:#ccc;}
     </section>
   </div>
 
-  <!-- Conteúdo da aba Colhedoras e Transbordo -->
   <div id="tab-colhedoras" class="tab-content hidden">
     <div class="stat-grid">
       <div class="stat-card" style="--accent:var(--green)"><div class="stat-icon">🌾</div><div class="stat-info"><span class="stat-label">Col. Própria</span><span class="stat-value" id="contador-col-proprio">0</span></div></div>
@@ -469,7 +536,7 @@ body.light .modal-content{background:#fff;color:#000;border-color:#ccc;}
         <span class="arrow">▼</span>
       </div>
       <div class="card-body" id="body-colhedora">
-        <div class="group"><div class="group-label green-t">Própria <span class="gc" id="gc-col-proprio">0</span></div><div class="table-wrap"><table id="tabela-col-proprio"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante / Parado</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-col-proprio')">＋ Adicionar</button></div>
+        <div class="group"><div class="group-label green-t">Própria <span class="gc" id="gc-col-proprio">0</span></div><div class="table-wrap"><table id="tabela-col-proprio"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante / Parado</th><th>Ações</th></table></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-col-proprio')">＋ Adicionar</button></div>
         <div class="group"><div class="group-label amber-t">Terceira <span class="gc" id="gc-col-terceiro">0</span></div><div class="table-wrap"><table id="tabela-col-terceiro"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante / Parado</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-col-terceiro')">＋ Adicionar</button></div>
       </div>
     </section>
@@ -499,12 +566,14 @@ const firebaseConfig = {
 
 let db = null;
 let sincronizando = false;
+let datasDisponiveis = new Set();
 
 async function initFirebase() {
   try {
     if (firebase.apps.length === 0) firebase.initializeApp(firebaseConfig);
     db = firebase.firestore();
     document.getElementById('syncStatus').innerHTML = '🟢 Firebase OK';
+    await carregarDatasDisponiveis();
     return true;
   } catch (error) {
     document.getElementById('syncStatus').innerHTML = '🔴 Firebase Offline';
@@ -512,72 +581,288 @@ async function initFirebase() {
   }
 }
 
-async function salvarTabelaFirebase(tableId) {
+async function carregarDatasDisponiveis() {
   if (!db) return;
-  const registros = [];
-  document.querySelectorAll(`#${tableId} tbody tr[data-salvo="true"]`).forEach(tr => {
-    registros.push({
-      frota: tr.querySelector('[data-campo="frota"]')?.value || '',
-      dataEntrada: tr.querySelector('[data-campo="data"]')?.value || '',
-      motivo: tr.querySelector('[data-campo="motivo"]')?.value || '',
-      horarioParada: tr.querySelector('[data-campo="parada"]')?.value || '',
-      previsaoRetorno: tr.querySelector('[data-campo="previsao"]')?.value || '',
-      horarioRetorno: tr.querySelector('[data-campo="retorno"]')?.value || '',
-      dataRetornoCompleta: tr.getAttribute('data-hora-retorno') || '',
-      tempoAdicionado: tr.dataset.tempoAdicionado === 'true'
+  try {
+    const snapshot = await db.collection('historico_paradas').get();
+    datasDisponiveis.clear();
+    snapshot.forEach(doc => {
+      const data = doc.data().data;
+      if (data) datasDisponiveis.add(data);
     });
-  });
-  try {
-    await db.collection('frotas_ativas').doc(tableId).set({ registros, atualizado: new Date().toISOString() }, { merge: true });
-    return true;
-  } catch (error) { return false; }
+  } catch (e) { console.warn('Erro ao carregar datas:', e); }
 }
 
-async function salvarTudoFirebase() {
-  if (!db || sincronizando) return;
-  sincronizando = true;
-  showToast('💾 Salvando no Firebase...', 'warn');
-  let ok = true;
-  for (const id of TABELAS) { if (!(await salvarTabelaFirebase(id))) ok = false; }
-  if (ok) { showToast('✅ Dados salvos no Firebase!', 'ok'); document.getElementById('syncStatus').innerHTML = '🟢 Sincronizado'; }
-  else showToast('⚠️ Erro ao salvar no Firebase', 'err');
-  sincronizando = false;
+// Funções para o modal CSV
+function abrirModalCSV() {
+  const hoje = new Date();
+  const dataInicio = new Date(hoje);
+  dataInicio.setDate(hoje.getDate() - 7);
+  document.getElementById('dataInicioCSV').value = formatDateForInput(dataInicio);
+  document.getElementById('dataFimCSV').value = formatDateForInput(hoje);
+  document.getElementById('modalCSV').style.display = 'flex';
+  renderCalendar();
 }
 
-async function carregarTabelaFirebase(tableId) {
-  if (!db) return [];
-  try {
-    const doc = await db.collection('frotas_ativas').doc(tableId).get();
-    if (doc.exists && doc.data().registros) return doc.data().registros;
-  } catch (error) {}
-  return [];
+function fecharModalCSV() {
+  document.getElementById('modalCSV').style.display = 'none';
 }
 
-async function carregarTudoFirebase() {
-  if (!db || sincronizando) return;
-  sincronizando = true;
-  showToast('🔄 Carregando do Firebase...', 'warn');
-  for (const id of TABELAS) {
-    const registros = await carregarTabelaFirebase(id);
-    const tbody = document.querySelector(`#${id} tbody`);
-    if (!tbody) continue;
-    tbody.innerHTML = '';
-    registros.forEach(l => _criarLinha(id, l, true));
-    localStorage.setItem(id, JSON.stringify(registros));
+function formatDateForInput(date) {
+  return date.toISOString().split('T')[0];
+}
+
+function formatDateForDisplay(dateStr) {
+  const [y, m, d] = dateStr.split('-');
+  return `${d}/${m}/${y}`;
+}
+
+function setPeriodo(tipo) {
+  const hoje = new Date();
+  let inicio, fim;
+  
+  switch(tipo) {
+    case 'ultimas24h':
+      inicio = new Date(hoje);
+      inicio.setDate(hoje.getDate() - 1);
+      fim = hoje;
+      break;
+    case 'ontem':
+      inicio = new Date(hoje);
+      inicio.setDate(hoje.getDate() - 1);
+      fim = new Date(hoje);
+      fim.setDate(hoje.getDate() - 1);
+      break;
+    case 'estaSemana':
+      inicio = new Date(hoje);
+      inicio.setDate(hoje.getDate() - hoje.getDay());
+      fim = hoje;
+      break;
+    case 'esteMes':
+      inicio = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+      fim = hoje;
+      break;
+    default: return;
   }
-  atualizarTodosCronometros(); atualizarTodosContadores();
-  showToast('✅ Dados carregados do Firebase!', 'ok');
-  document.getElementById('syncStatus').innerHTML = '🟢 Sincronizado';
-  sincronizando = false;
+  
+  document.getElementById('dataInicioCSV').value = formatDateForInput(inicio);
+  document.getElementById('dataFimCSV').value = formatDateForInput(fim);
+  renderCalendar();
 }
 
-async function syncFirebase() { await salvarTudoFirebase(); await carregarTudoFirebase(); }
+function renderCalendar() {
+  const container = document.getElementById('calendarContainer');
+  const inicioStr = document.getElementById('dataInicioCSV').value;
+  const fimStr = document.getElementById('dataFimCSV').value;
+  
+  if (!inicioStr || !fimStr) {
+    container.innerHTML = '<p style="text-align:center;">Selecione as datas acima</p>';
+    return;
+  }
+  
+  const inicio = new Date(inicioStr);
+  const fim = new Date(fimStr);
+  const current = new Date(inicio);
+  const diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+  
+  let html = '<div class="calendar-grid">';
+  diasSemana.forEach(dia => html += `<div class="calendar-weekday">${dia}</div>`);
+  
+  const primeiroDiaMes = new Date(inicio.getFullYear(), inicio.getMonth(), 1);
+  const offset = primeiroDiaMes.getDay();
+  
+  // Mês atual
+  html += renderMonthCalendar(inicio.getFullYear(), inicio.getMonth(), inicioStr, fimStr);
+  
+  // Se o período abrange mais de um mês, renderiza os próximos meses
+  if (inicio.getMonth() !== fim.getMonth() || inicio.getFullYear() !== fim.getFullYear()) {
+    let nextMonth = new Date(inicio.getFullYear(), inicio.getMonth() + 1, 1);
+    while (nextMonth <= fim) {
+      html += renderMonthCalendar(nextMonth.getFullYear(), nextMonth.getMonth(), inicioStr, fimStr);
+      nextMonth.setMonth(nextMonth.getMonth() + 1);
+    }
+  }
+  
+  html += '</div>';
+  container.innerHTML = html;
+}
 
+function renderMonthCalendar(year, month, inicioStr, fimStr) {
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  const startOffset = firstDay.getDay();
+  const daysInMonth = lastDay.getDate();
+  const inicio = new Date(inicioStr);
+  const fim = new Date(fimStr);
+  
+  let html = `<div style="grid-column:1/-1; text-align:center; margin:10px 0; font-weight:bold;">${firstDay.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}</div>`;
+  
+  // Dias vazios do início
+  for (let i = 0; i < startOffset; i++) {
+    html += `<div class="calendar-day" style="background:transparent;"></div>`;
+  }
+  
+  for (let d = 1; d <= daysInMonth; d++) {
+    const date = new Date(year, month, d);
+    const dateStr = `${String(d).padStart(2,'0')}/${String(month+1).padStart(2,'0')}/${year}`;
+    const isInRange = date >= inicio && date <= fim;
+    const hasData = datasDisponiveis.has(dateStr);
+    const isSelected = isInRange;
+    
+    html += `<div class="calendar-day ${hasData ? 'has-data' : ''} ${isSelected ? 'selected' : ''}"
+                 onclick="selectDateRange('${formatDateForInput(date)}')"
+                 title="${hasData ? '📊 Possui dados' : ''}">
+              ${d}
+            </div>`;
+  }
+  
+  return html;
+}
+
+function selectDateRange(dataStr) {
+  const inicioInput = document.getElementById('dataInicioCSV');
+  const fimInput = document.getElementById('dataFimCSV');
+  
+  if (!inicioInput.value || (inicioInput.value && fimInput.value && inicioInput.value === fimInput.value)) {
+    inicioInput.value = dataStr;
+    fimInput.value = '';
+  } else if (!fimInput.value || new Date(dataStr) >= new Date(inicioInput.value)) {
+    fimInput.value = dataStr;
+  } else {
+    fimInput.value = inicioInput.value;
+    inicioInput.value = dataStr;
+  }
+  renderCalendar();
+}
+
+async function gerarCSVComFiltro() {
+  const inicioStr = document.getElementById('dataInicioCSV').value;
+  const fimStr = document.getElementById('dataFimCSV').value;
+  
+  if (!inicioStr || !fimStr) {
+    showToast('⚠️ Selecione o período', 'warn');
+    return;
+  }
+  
+  const inicio = new Date(inicioStr);
+  const fim = new Date(fimStr);
+  fim.setHours(23, 59, 59);
+  
+  showToast('🔄 Gerando relatório...', 'warn');
+  
+  try {
+    let todosRegistros = [];
+    
+    if (db) {
+      // Buscar do Firebase
+      const snapshot = await db.collection('historico_paradas').get();
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const dataRegistro = parseDateBR(data.data);
+        if (dataRegistro && dataRegistro >= inicio && dataRegistro <= fim) {
+          todosRegistros.push(data);
+        }
+      });
+    } else {
+      // Buscar do localStorage
+      TABELAS.forEach(tabelaId => {
+        const registros = JSON.parse(localStorage.getItem(tabelaId) || '[]');
+        registros.forEach(reg => {
+          const dataRegistro = parseDateBR(reg.dataEntrada);
+          if (dataRegistro && dataRegistro >= inicio && dataRegistro <= fim) {
+            todosRegistros.push({
+              frota: reg.frota,
+              tipo: NOMES_TABELA_HIST[tabelaId] || tabelaId,
+              dataEntrada: reg.dataEntrada,
+              motivo: reg.motivo,
+              parada: reg.horarioParada,
+              previsaoRetorno: reg.previsaoRetorno,
+              horarioRetorno: reg.horarioRetorno,
+              duracao: reg.duracao || ''
+            });
+          }
+        });
+      });
+    }
+    
+    if (todosRegistros.length === 0) {
+      showToast('⚠️ Nenhum registro encontrado no período', 'warn');
+      return;
+    }
+    
+    // Gerar CSV
+    const nomeArquivo = `relatorio_paradas_${formatDateForDisplay(inicioStr)}_a_${formatDateForDisplay(fimStr)}.csv`;
+    let csv = '\uFEFF'; // BOM para UTF-8
+    
+    // Cabeçalho
+    csv += 'Data,Horário Parada,Frota,Tipo,Parada/Motivo,Previsão Retorno,Horário Retorno,Duração Total\n';
+    
+    // Ordenar por data e horário
+    todosRegistros.sort((a, b) => {
+      const dataA = parseDateBR(a.dataEntrada || a.data);
+      const dataB = parseDateBR(b.dataEntrada || b.data);
+      if (dataA - dataB !== 0) return dataA - dataB;
+      return (a.parada || '').localeCompare(b.parada || '');
+    });
+    
+    todosRegistros.forEach(reg => {
+      const data = reg.dataEntrada || reg.data || '';
+      const horarioParada = reg.parada || '';
+      const frota = reg.frota || '';
+      const tipo = reg.tipo || '';
+      const motivo = (reg.motivo || '').replace(/"/g, '""');
+      const previsao = reg.previsaoRetorno || '';
+      const retorno = reg.horarioRetorno || '';
+      const duracao = reg.duracao || calcularDuracao(horarioParada, retorno);
+      
+      csv += `"${data}","${horarioParada}","${frota}","${tipo}","${motivo}","${previsao}","${retorno}","${duracao}"\n`;
+    });
+    
+    // Download
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = nomeArquivo;
+    link.click();
+    URL.revokeObjectURL(link.href);
+    
+    fecharModalCSV();
+    showToast(`✅ Relatório gerado! ${todosRegistros.length} registros`, 'ok');
+  } catch (err) {
+    console.error(err);
+    showToast('❌ Erro ao gerar relatório', 'err');
+  }
+}
+
+function parseDateBR(dateStr) {
+  if (!dateStr) return null;
+  const partes = dateStr.split('/');
+  if (partes.length === 3) {
+    return new Date(partes[2], partes[1] - 1, partes[0]);
+  }
+  return null;
+}
+
+function calcularDuracao(parada, retorno) {
+  if (!parada || !retorno) return '';
+  try {
+    const [h1, m1] = parada.split(':').map(Number);
+    const [h2, m2] = retorno.split(':').map(Number);
+    let totalMin = (h2 * 60 + m2) - (h1 * 60 + m1);
+    if (totalMin < 0) totalMin += 24 * 60;
+    const h = Math.floor(totalMin / 60);
+    const m = totalMin % 60;
+    return `${h}h ${m}min`;
+  } catch(e) { return ''; }
+}
+
+// ========== RESTANTE DO CÓDIGO ORIGINAL (mantido) ==========
 const NOMES_TABELA_HIST = {
   'tabela-cam-proprio':'Caminhao Proprio','tabela-cam-terceiro':'Caminhao Terceiro',
   'tabela-cam-borracharia':'Borracharia','tabela-col-proprio':'Colhedora Propria',
   'tabela-col-terceiro':'Colhedora Terceira','tabela-transbordo':'Transbordo'
 };
+
 function salvarHistorico(tr, idTabela) {
   if (!db || !tr) return;
   const frota=tr.querySelector('[data-campo="frota"]')?.value||'';
@@ -590,6 +875,7 @@ function salvarHistorico(tr, idTabela) {
   let duracao='';
   try{if(parada){const hoje=new Date();const[hP,mP]=parada.split(':').map(Number);const base=new Date(hoje.getFullYear(),hoje.getMonth(),hoje.getDate(),hP,mP,0);const diffMs=hoje-base;if(diffMs>0){const h=Math.floor(diffMs/3600000);const m=Math.floor((diffMs%3600000)/60000);duracao=h+'h '+m+'min';}}}catch(e){}
   db.collection('historico_paradas').add({frota,tipo,dataEntrada,motivo,parada,previsaoRetorno:previsao,horarioRetorno:retorno,duracao,timestamp:new Date().toISOString(),data:new Date().toLocaleDateString('pt-BR')}).catch(e=>console.warn('hist:',e));
+  carregarDatasDisponiveis();
 }
 
 const FROTAS_DISPONIVEIS = {
@@ -684,7 +970,7 @@ setInterval(()=>{ atualizarTodosCronometros(); atualizarTodosContadores(); },100
 function _criarAutocomplete(inp,id){ const lista=FROTAS_DISPONIVEIS[id]||[], wrap=document.createElement('div');wrap.className='ac-wrap';inp.parentNode.insertBefore(wrap,inp);wrap.appendChild(inp);const drop=document.createElement('div');drop.className='ac-list';wrap.appendChild(drop);let idx=-1; const filtrar=q=>{drop.innerHTML='';idx=-1;if(!q){drop.classList.remove('show');return;}const m=lista.filter(f=>f.includes(q)).slice(0,12);if(!m.length){drop.classList.remove('show');return;}m.forEach(f=>{const it=document.createElement('div');it.className='ac-item';it.innerHTML=f.replace(q,`<mark>${q}</mark>`);it.addEventListener('mousedown',e=>{e.preventDefault();inp.value=f;inp.dispatchEvent(new Event('input',{bubbles:true}));drop.classList.remove('show');});drop.appendChild(it);});drop.classList.add('show');}; inp.addEventListener('input',()=>filtrar(inp.value.trim())); inp.addEventListener('focus',()=>{if(inp.value.trim())filtrar(inp.value.trim());}); inp.addEventListener('keydown',e=>{const its=drop.querySelectorAll('.ac-item');if(!its.length)return;if(e.key==='ArrowDown'){e.preventDefault();idx=Math.min(idx+1,its.length-1);its.forEach((it,i)=>it.classList.toggle('ativo',i===idx));}else if(e.key==='ArrowUp'){e.preventDefault();idx=Math.max(idx-1,0);its.forEach((it,i)=>it.classList.toggle('ativo',i===idx));}else if(e.key==='Enter'&&idx>=0){e.preventDefault();inp.value=its[idx].textContent;inp.dispatchEvent(new Event('input',{bubbles:true}));drop.classList.remove('show');}else if(e.key==='Escape')drop.classList.remove('show');}); document.addEventListener('click',e=>{if(!wrap.contains(e.target))drop.classList.remove('show');});}
 function _ativarListeners(tr,id,salvo){ const inpData=tr.querySelector('[data-campo="data"]'), inpMotivo=tr.querySelector('[data-campo="motivo"]'), inpParada=tr.querySelector('[data-campo="parada"]'), inpPrevisao=tr.querySelector('[data-campo="previsao"]'), inpFrota=tr.querySelector('[data-campo="frota"]'); inpData.addEventListener('input',()=>{_mascaraData(inpData);_recalcular(inpData);if(tr.dataset.salvo==='true')_salvarDados(id);}); inpParada.addEventListener('input',()=>{_recalcular(inpParada);if(tr.dataset.salvo==='true')_salvarDados(id);}); inpPrevisao.addEventListener('input',()=>{_recalcular(inpPrevisao);if(tr.dataset.salvo==='true')_salvarDados(id);}); inpPrevisao.addEventListener('blur',()=>{_interpretarDuracao(inpPrevisao);_recalcular(inpPrevisao);if(tr.dataset.salvo==='true')_salvarDados(id);}); if(salvo){inpMotivo.addEventListener('input',()=>_salvarDados(id));inpFrota.addEventListener('input',()=>_salvarDados(id));} const inpFrotaEl=tr.querySelector('[data-campo="frota"]'); if(inpFrotaEl){ inpFrotaEl.addEventListener('input',()=>_validarInputFrota(inpFrotaEl,id)); inpFrotaEl.addEventListener('blur',()=>_validarInputFrota(inpFrotaEl,id));} const btnSalvar=tr.querySelector('.btn-salvar'); if(btnSalvar)btnSalvar.addEventListener('click',()=>_confirmarLinha(tr,id)); tr.querySelector('.btn-del').addEventListener('click',()=>{ const f=tr.querySelector('[data-campo="frota"]').value.trim()||'este registro'; salvarHistorico(tr,id); tr.remove(); if(tr.dataset.salvo==='true')_salvarDados(id); atualizarTodosContadores(); showToast('Frota '+f+' removida.','ok');});}
 function _confirmarLinha(tr,id){ const f=tr.querySelector('[data-campo="frota"]').value.trim(); if(!f){showToast('⚠️ Preencha a frota','warn');tr.querySelector('[data-campo="frota"]').focus();return;} if(!_prefixoValido(f,id)){showToast('❌ Frota '+f+' inválida para '+NOMES_TABELA[id],'err');tr.querySelector('[data-campo="frota"]').focus();return;} _autoCadastrarFrota(f,id); tr.setAttribute('data-salvo','true'); const btnS=tr.querySelector('.btn-salvar'); if(btnS)btnS.remove(); const inpMotivo=tr.querySelector('[data-campo="motivo"]'), inpFrota=tr.querySelector('[data-campo="frota"]'); inpMotivo.addEventListener('input',()=>_salvarDados(id)); inpFrota.addEventListener('input',()=>_salvarDados(id)); _salvarDadosOriginalImpl(id); if(db){ salvarTabelaFirebase(id).then(ok=>{ if(ok){showToast('✅ Frota '+f+' salva no Firebase!','ok'); document.getElementById('syncStatus').innerHTML='🟢 Salvo';}else{showToast('⚠️ Firebase falhou, salvo local.','warn');} }); }else{ showToast('✅ Frota '+f+' registrada (offline)!','ok'); } atualizarTodosContadores();}
-function _criarLinha(id,d,salvo){ const _tbl=document.getElementById(id); const tbody=_tbl?_tbl.querySelector('tbody'):null; if(!tbody){console.error('tbody nao encontrado:',id);return;} const tr=document.createElement('tr'); tr.setAttribute('data-salvo',salvo?'true':'false'); if(d.dataRetornoCompleta)tr.setAttribute('data-hora-retorno',d.dataRetornoCompleta); if(d.tempoAdicionado)tr.setAttribute('data-tempo-adicionado','true'); const tdF=document.createElement('td'); tdF.style.position='relative'; const inpF=document.createElement('input'); inpF.type='text'; inpF.dataset.campo='frota'; inpF.placeholder=({'tabela-cam-proprio':'Ex: 311015','tabela-cam-terceiro':'Ex: 91015','tabela-cam-borracharia':'Ex: 311015 ou 91015','tabela-col-proprio':'Ex: 80224','tabela-col-terceiro':'Ex: 93059','tabela-transbordo':'Ex: 92079'})[id]||'Ex: frota'; inpF.value=d.frota||''; if(salvo)inpF.addEventListener('input',()=>_salvarDados(id)); tdF.appendChild(inpF); tr.appendChild(tdF); const tpl=document.createElement('template'); tpl.innerHTML=`<td><input type="text" data-campo="data" placeholder="dd/mm/aaaa" maxlength="10" value="${d.dataEntrada||''}"></td><td><input type="text" data-campo="motivo" placeholder="Descreva o motivo" value="${(d.motivo||'').replace(/"/g,'&quot;')}"></td><td><input type="time" data-campo="parada" value="${d.horarioParada||''}"></td><td><input type="text" data-campo="previsao" placeholder="Ex: 130 = 1h30" maxlength="5" value="${d.previsaoRetorno||''}"></td><td><input type="text" data-campo="retorno" readonly placeholder="Calculado" value="${d.horarioRetorno||''}"></td><td><span class="cronometro">--:--</span></td><td><div class="acoes-cell">${salvo?'':'<button class="btn-salvar">✔ Salvar</button>'}<button class="btn-del">Remover</button></div></td>`; while(tpl.content.firstChild)tr.appendChild(tpl.content.firstChild); tbody.appendChild(tr); _ativarListeners(tr,id,salvo); _criarAutocomplete(inpF,id); _renderizarIconeRelogio(tr);}
+function _criarLinha(id,d,salvo){ const _tbl=document.getElementById(id); const tbody=_tbl?_tbl.querySelector('tbody'):null; if(!tbody){console.error('tbody nao encontrado:',id);return;} const tr=document.createElement('tr'); tr.setAttribute('data-salvo',salvo?'true':'false'); if(d.dataRetornoCompleta)tr.setAttribute('data-hora-retorno',d.dataRetornoCompleta); if(d.tempoAdicionado)tr.setAttribute('data-tempo-adicionado','true'); const tdF=document.createElement('td'); tdF.style.position='relative'; const inpF=document.createElement('input'); inpF.type='text'; inpF.dataset.campo='frota'; inpF.placeholder=({'tabela-cam-proprio':'Ex: 311015','tabela-cam-terceiro':'Ex: 91015','tabela-cam-borracharia':'Ex: 311015 ou 91015','tabela-col-proprio':'Ex: 80224','tabela-col-terceiro':'Ex: 93059','tabela-transbordo':'Ex: 92079'})[id]||'Ex: frota'; inpF.value=d.frota||''; if(salvo)inpF.addEventListener('input',()=>_salvarDados(id)); tdF.appendChild(inpF); tr.appendChild(tdF); const tpl=document.createElement('template'); tpl.innerHTML=`<td><input type="text" data-campo="data" placeholder="dd/mm/aaaa" maxlength="10" value="${d.dataEntrada||''}"></td><td><input type="text" data-campo="motivo" placeholder="Descreva o motivo" value="${(d.motivo||'').replace(/"/g,'&quot;')}"></td><td><input type="time" data-campo="parada" value="${d.horarioParada||''}"></td><td><input type="text" data-campo="previsao" placeholder="Ex: 130 = 1h30" maxlength="5" value="${d.previsaoRetorno||''}"></td><td><input type="text" data-campo="retorno" readonly placeholder="Calculado" value="${d.horarioRetorno||''}"></td><td><span class="cronometro">--:--</span></td><td><div class="acoes-cell">${salvo?'':'<button class="btn-salvar">✔ Salvar</button>'}<button class="btn-del">Remover</button></div></table>`; while(tpl.content.firstChild)tr.appendChild(tpl.content.firstChild); tbody.appendChild(tr); _ativarListeners(tr,id,salvo); _criarAutocomplete(inpF,id); _renderizarIconeRelogio(tr);}
 function adicionarLinha(id){ const hoje=new Date(); const data=`${String(hoje.getDate()).padStart(2,'0')}/${String(hoje.getMonth()+1).padStart(2,'0')}/${hoje.getFullYear()}`; _criarLinha(id,{dataEntrada:data},false);}
 function _salvarDadosOriginalImpl(id){ const rows=[]; document.querySelector(`#${id} tbody`)?.querySelectorAll('tr[data-salvo="true"]').forEach(tr=>rows.push({frota:tr.querySelector('[data-campo="frota"]')?.value||'',dataEntrada:tr.querySelector('[data-campo="data"]')?.value||'',motivo:tr.querySelector('[data-campo="motivo"]')?.value||'',horarioParada:tr.querySelector('[data-campo="parada"]')?.value||'',previsaoRetorno:tr.querySelector('[data-campo="previsao"]')?.value||'',horarioRetorno:tr.querySelector('[data-campo="retorno"]')?.value||'',dataRetornoCompleta:tr.getAttribute('data-hora-retorno')||'',tempoAdicionado:tr.dataset.tempoAdicionado==='true'})); localStorage.setItem(id,JSON.stringify(rows)); _registrarUltimaAtualizacao();}
 function _salvarDados(id){ _salvarDadosOriginalImpl(id); if(db){ setTimeout(()=>salvarTabelaFirebase(id), 100); } }
@@ -692,71 +978,104 @@ function _registrarUltimaAtualizacao(){ const agora=new Date(), ts=agora.toLocal
 function _carregarUltimaAtualizacao(){ const ts=localStorage.getItem('_frotas_ultima_atualizacao'), el=document.getElementById('ultimaAtualizacao'); if(!el)return; if(ts){el.textContent='🕐 Última atualização: '+ts;el.style.color='var(--green)';}else{el.textContent='🕐 Nenhum dado salvo ainda';el.style.color='var(--muted)';}}
 function atualizarTodosContadores(){ let foraBorr=0,geral=0,totCol=0; const pills={'pill-caminhao':0,'pill-colhedora':0,'pill-transbordo':0}; TABELAS.forEach(id=>{ const n=document.querySelector(`#${id} tbody`)?.querySelectorAll('tr[data-salvo="true"]').length||0; const cel=document.getElementById(CONTADORES[id]), gc=document.getElementById(GCS[id]); if(cel)cel.textContent=n; if(gc)gc.textContent=n; pills[PILLS[id]]=(pills[PILLS[id]]||0)+n; geral+=n; if(SEM_BORRACHARIA.includes(id))foraBorr+=n; if(['tabela-col-proprio','tabela-col-terceiro','tabela-transbordo'].includes(id))totCol+=n; }); Object.entries(pills).forEach(([id,n])=>{const el=document.getElementById(id);if(el)el.textContent=n;}); document.getElementById('tot-fora').textContent=foraBorr; document.getElementById('tot-geral').textContent=geral; const elCol=document.getElementById('tot-geral-col'); if(elCol)elCol.textContent=totCol;}
 function toggleSec(k){ document.getElementById('body-'+k)?.classList.toggle('hidden'); document.getElementById('hdr-'+k)?.classList.toggle('collapsed');}
-function exportarCSV(){const NOMES={'tabela-cam-proprio':'Caminhão Próprio','tabela-cam-terceiro':'Caminhão Terceiro','tabela-cam-borracharia':'Borracharia','tabela-col-proprio':'Colhedora Própria','tabela-col-terceiro':'Colhedora Terceira','tabela-transbordo':'Transbordo Terceiro'}; let csv='\uFEFF'; TABELAS.forEach(id=>{csv+=NOMES[id]+'\n'; csv+='Frota,Data Entrada,Motivo,Hora Parada,Previsão Retorno,Horário Retorno\n'; const linhas=JSON.parse(localStorage.getItem(id)||'[]'); linhas.forEach(l=>{csv+=`${l.frota||''},${l.dataEntrada||''},${l.motivo||''},${l.horarioParada||''},${l.previsaoRetorno||''},${l.horarioRetorno||''}\n`;}); csv+='\n';}); const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'})); a.download='frotas_paradas.csv'; a.click();}
 function toggleTema(){ const l=document.body.classList.toggle('light'); document.getElementById('btnTema').textContent=l?'☀️ Claro':'🌙 Escuro'; localStorage.setItem('tema',l?'light':'dark');}
 function showToast(msg,t='ok'){ const tst=document.getElementById('toast'); tst.textContent=msg; tst.className='show '+t; clearTimeout(tst._t); tst._t=setTimeout(()=>{tst.className='';},3500);}
 
-// ========== Lógica de Abas ==========
-function showTab(tabId, clickedButton) {
-  document.querySelectorAll('.tab-content').forEach(content => {
-    content.classList.add('hidden');
+// Funções Firebase
+async function salvarTabelaFirebase(tableId) {
+  if (!db) return;
+  const registros = [];
+  document.querySelectorAll(`#${tableId} tbody tr[data-salvo="true"]`).forEach(tr => {
+    registros.push({
+      frota: tr.querySelector('[data-campo="frota"]')?.value || '',
+      dataEntrada: tr.querySelector('[data-campo="data"]')?.value || '',
+      motivo: tr.querySelector('[data-campo="motivo"]')?.value || '',
+      horarioParada: tr.querySelector('[data-campo="parada"]')?.value || '',
+      previsaoRetorno: tr.querySelector('[data-campo="previsao"]')?.value || '',
+      horarioRetorno: tr.querySelector('[data-campo="retorno"]')?.value || '',
+      dataRetornoCompleta: tr.getAttribute('data-hora-retorno') || '',
+      tempoAdicionado: tr.dataset.tempoAdicionado === 'true'
+    });
   });
-  document.querySelectorAll('.tab-button').forEach(button => {
-    button.classList.remove('active');
-  });
+  try {
+    await db.collection('frotas_ativas').doc(tableId).set({ registros, atualizado: new Date().toISOString() }, { merge: true });
+    return true;
+  } catch (error) { return false; }
+}
 
+async function salvarTudoFirebase() {
+  if (!db || sincronizando) return;
+  sincronizando = true;
+  showToast('💾 Salvando no Firebase...', 'warn');
+  let ok = true;
+  for (const id of TABELAS) { if (!(await salvarTabelaFirebase(id))) ok = false; }
+  if (ok) { showToast('✅ Dados salvos no Firebase!', 'ok'); document.getElementById('syncStatus').innerHTML = '🟢 Sincronizado'; }
+  else showToast('⚠️ Erro ao salvar no Firebase', 'err');
+  sincronizando = false;
+}
+
+async function carregarTabelaFirebase(tableId) {
+  if (!db) return [];
+  try {
+    const doc = await db.collection('frotas_ativas').doc(tableId).get();
+    if (doc.exists && doc.data().registros) return doc.data().registros;
+  } catch (error) {}
+  return [];
+}
+
+async function carregarTudoFirebase() {
+  if (!db || sincronizando) return;
+  sincronizando = true;
+  showToast('🔄 Carregando do Firebase...', 'warn');
+  for (const id of TABELAS) {
+    const registros = await carregarTabelaFirebase(id);
+    const tbody = document.querySelector(`#${id} tbody`);
+    if (!tbody) continue;
+    tbody.innerHTML = '';
+    registros.forEach(l => _criarLinha(id, l, true));
+    localStorage.setItem(id, JSON.stringify(registros));
+  }
+  atualizarTodosCronometros(); atualizarTodosContadores();
+  showToast('✅ Dados carregados do Firebase!', 'ok');
+  document.getElementById('syncStatus').innerHTML = '🟢 Sincronizado';
+  sincronizando = false;
+}
+
+async function syncFirebase() { await salvarTudoFirebase(); await carregarTudoFirebase(); await carregarDatasDisponiveis(); }
+
+// Funções de aba e print
+function showTab(tabId, clickedButton) {
+  document.querySelectorAll('.tab-content').forEach(content => { content.classList.add('hidden'); });
+  document.querySelectorAll('.tab-button').forEach(button => { button.classList.remove('active'); });
   const selectedTab = document.getElementById(tabId);
-  if (selectedTab) {
-    selectedTab.classList.remove('hidden');
-  }
-  if (clickedButton) {
-    clickedButton.classList.add('active');
-  }
-  // Re-renderizar cronômetros e contadores para a aba recém-visível
+  if (selectedTab) selectedTab.classList.remove('hidden');
+  if (clickedButton) clickedButton.classList.add('active');
   atualizarTodosCronometros();
   atualizarTodosContadores();
 }
 
-// ========== FUNÇÃO DE PRINT CAPTURANDO APENAS A ABA ATIVA (SEM HEADER, SEM LATERAIS, TEMA CLARO FORÇADO) ==========
 async function tirarPrint() {
-  if (window !== window.top) {
-    showToast('⚠️ Abra no navegador para usar print.', 'warn');
-    return;
-  }
+  if (window !== window.top) { showToast('⚠️ Abra no navegador para usar print.', 'warn'); return; }
   const btn = document.getElementById('btnPrint');
   const original = btn.innerHTML;
   btn.innerHTML = '⏳';
   btn.disabled = true;
-
   try {
-    // Capturar o conteúdo da aba ativa
     const activeTabContent = document.querySelector('.tab-content:not(.hidden)');
-    if (!activeTabContent) throw new Error('Nenhum conteúdo de aba ativa encontrado para imprimir.');
-
-    // Clonar o conteúdo da aba ativa
+    if (!activeTabContent) throw new Error('Nenhum conteúdo de aba ativa encontrado.');
     const clone = activeTabContent.cloneNode(true);
-    
-    // Aplicar estilos de main ao clone para manter o layout
     clone.style.cssText = window.getComputedStyle(document.querySelector('main')).cssText;
-
-    // Forçar tema claro no clone (fundos brancos, texto preto)
     clone.style.backgroundColor = '#ffffff';
     clone.style.color = '#000000';
     clone.style.padding = '20px';
     clone.style.margin = '0 auto';
     clone.style.maxWidth = '1600px';
-    
-    // Ajustar todos os cards, groups e tabelas para fundo claro
     clone.querySelectorAll('.card, .group, .table-wrap, .card-body').forEach(el => {
       el.style.backgroundColor = '#ffffff';
       el.style.color = '#000000';
       el.style.border = '1px solid #ccc';
     });
-    
-    // Remover botões de ação (.btn-add, .btn-del, .btn-salvar, .acoes-cell)
     clone.querySelectorAll('.btn-add, .btn-del, .btn-salvar, .acoes-cell, .card-header .arrow').forEach(el => el.remove());
-    
-    // Nos inputs, substituir por spans com o valor (para garantir legibilidade sem cortes)
     clone.querySelectorAll('input').forEach(inp => {
       const span = document.createElement('div');
       span.textContent = inp.value || inp.placeholder || '';
@@ -774,74 +1093,41 @@ async function tirarPrint() {
       span.style.borderRadius = '7px';
       span.style.boxSizing = 'border-box';
       span.style.whiteSpace = 'nowrap';
-      span.style.overflow = 'visible';
       inp.parentNode.replaceChild(span, inp);
     });
-    
-    // Ajustar tabelas para layout auto e largura adequada
     clone.querySelectorAll('table').forEach(tbl => {
       tbl.style.tableLayout = 'auto';
       tbl.style.width = '100%';
       tbl.style.minWidth = '1200px';
     });
-    clone.querySelectorAll('td, th').forEach(td => {
-      td.style.whiteSpace = 'nowrap';
-      td.style.overflow = 'visible';
-    });
-    
-    // Expandir todos os cards
-    clone.querySelectorAll('.card-body').forEach(body => {
-      body.classList.remove('hidden');
-    });
-    
-    // Criar um container externo para captura
+    clone.querySelectorAll('td, th').forEach(td => td.style.whiteSpace = 'nowrap');
+    clone.querySelectorAll('.card-body').forEach(body => body.classList.remove('hidden'));
     const wrapper = document.createElement('div');
     wrapper.style.position = 'fixed';
     wrapper.style.left = '-99999px';
     wrapper.style.top = '0';
     wrapper.style.backgroundColor = '#ffffff';
-    wrapper.style.padding = '0';
     wrapper.appendChild(clone);
     document.body.appendChild(wrapper);
-    
-    // Aguardar reflow
     await new Promise(r => setTimeout(r, 200));
-    
-    // Capturar com html2canvas
     const canvas = await html2canvas(wrapper, {
       backgroundColor: '#ffffff',
       useCORS: true,
-      allowTaint: true,
-      logging: false,
       scale: Math.max(window.devicePixelRatio, 3),
-      windowWidth: clone.scrollWidth,
-      windowHeight: clone.scrollHeight,
       width: clone.scrollWidth,
       height: clone.scrollHeight
     });
-    
-    // Remover wrapper
     document.body.removeChild(wrapper);
-    
-    // Copiar ou baixar a imagem
     canvas.toBlob(async blob => {
       if (navigator.clipboard && window.ClipboardItem) {
         try {
           await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
           btn.innerHTML = '✅';
           btn.style.background = '#16a34a';
-          showToast('✅ Print copiado (somente cards, tema claro)!', 'ok');
-        } catch {
-          baixarImagem(blob);
-        }
-      } else {
-        baixarImagem(blob);
-      }
-      setTimeout(() => {
-        btn.innerHTML = original;
-        btn.style.background = '#25d366';
-        btn.disabled = false;
-      }, 2500);
+          showToast('✅ Print copiado!', 'ok');
+        } catch { baixarImagem(blob); }
+      } else { baixarImagem(blob); }
+      setTimeout(() => { btn.innerHTML = original; btn.style.background = '#25d366'; btn.disabled = false; }, 2500);
     }, 'image/png');
   } catch (err) {
     console.error(err);
@@ -860,15 +1146,10 @@ function baixarImagem(blob) {
   document.body.removeChild(a);
   showToast('📥 Imagem baixada!', 'warn');
 }
-// =================================================================
 
-// Eventos e inicialização (originais)
-document.addEventListener('keydown',e=>{ if(e.key!=='Tab'&&e.key!=='Enter')return; const active=document.activeElement; if(!active||active.tagName!=='INPUT'||active.readOnly)return; if(!active.closest('tbody'))return; e.preventDefault(); const tr=active.closest('tr'), id=active.closest('table')?.id; if(active.dataset.campo==='previsao'){_interpretarDuracao(active);_recalcular(active);if(tr?.dataset.salvo==='true'&&id)_salvarDados(id);const btnSalvar=tr?.querySelector('.btn-salvar'), btnDel=tr?.querySelector('.btn-del'); if(btnSalvar){btnSalvar.focus();return;} if(btnDel){btnDel.focus();return;}} const allInputs=Array.from(document.querySelectorAll('tbody tr td input:not([readonly])')).filter(inp=>inp.offsetParent!==null); const idx=allInputs.indexOf(active); if(idx===-1)return; const next=(e.shiftKey&&e.key==='Tab')?allInputs[idx-1]:allInputs[idx+1]; if(next){next.focus();next.select?.();}});
-document.addEventListener('keydown',e=>{ if(e.key==='F10'){e.preventDefault(); const a=document.activeElement; if(a&&a.dataset.campo==='parada'){const n=new Date(); a.value=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0'); a.dispatchEvent(new Event('input',{bubbles:true}));}}});
-
+// Inicialização
 window.onload = async function(){ 
-  // Ajustar o main para não ser grid diretamente, mas sim os tab-contents
-  document.querySelector('main').style.display = 'block'; // Ou flex, dependendo do layout desejado para o container das abas
+  document.querySelector('main').style.display = 'block';
   await initFirebase();
   _carregarFrotasCustom(); 
   TABELAS.forEach(id=>{ 
@@ -879,8 +1160,8 @@ window.onload = async function(){
     linhas.forEach(l=>_criarLinha(id,l,true)); 
     document.querySelectorAll(`#${id} tbody tr[data-salvo="true"] [data-campo="frota"]`).forEach(inp=>_validarInputFrota(inp,id));
   }); 
-  await carregarTudoFirebase(); // Carrega todos os dados, mesmo os de abas não ativas
-  showTab('tab-caminhoes', document.querySelector('.tab-button.active')); // Exibe a aba de caminhões por padrão
+  await carregarTudoFirebase();
+  showTab('tab-caminhoes', document.querySelector('.tab-button.active'));
   atualizarTodosCronometros(); 
   atualizarTodosContadores(); 
   if(localStorage.getItem('tema')==='light'){
