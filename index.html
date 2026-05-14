@@ -325,6 +325,33 @@ body.light .stat-label{color:#000000;}
 }
 .modal-btns{display:flex;gap:12px;justify-content:center;margin-top:20px;}
 
+/* Input para adicionar tempo personalizado */
+.input-tempo-container {
+  margin: 15px 0;
+  text-align: center;
+}
+.input-tempo-container label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+.input-tempo-container input {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--s2);
+  color: var(--text);
+  width: 150px;
+  text-align: center;
+  font-size: 1rem;
+}
+.input-tempo-container small {
+  display: block;
+  margin-top: 5px;
+  font-size: 0.7rem;
+  color: var(--muted);
+}
+
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -421,9 +448,14 @@ body.light .btn-add:hover{background:#e8f0fc;}
   <div class="modal-content">
     <h3>⚠️ Frota <span id="modalFrotaNum"></span></h3>
     <p>O tempo previsto encerrou. O que deseja fazer?</p>
+    <div class="input-tempo-container">
+      <label>⏱️ Adicionar minutos extras:</label>
+      <input type="number" id="tempoExtraMinutos" placeholder="Digite os minutos" min="1" step="1">
+      <small>Ex: 30 = 30 minutos, 60 = 1 hora, 90 = 1h30</small>
+    </div>
     <div class="modal-btns">
-      <button id="btnMaisTempo" class="btn-salvar" style="padding:10px 15px;">＋ Adicionar +2 Horas</button>
-      <button id="btnRemoverTempo" class="btn-del" style="padding:10px 15px;">❌ Remover Frota</button>
+      <button id="btnAdicionarTempo" class="btn-salvar" style="padding:10px 15px;">＋ Adicionar Tempo</button>
+      <button id="btnRemoverFrota" class="btn-del" style="padding:10px 15px;">❌ Remover Frota</button>
     </div>
   </div>
 </div>
@@ -484,8 +516,7 @@ body.light .btn-add:hover{background:#e8f0fc;}
       <div class="stat-card" style="--accent:var(--blue)"><div class="stat-icon">🚛</div><div><div class="stat-label">Cam. Próprio</div><div class="stat-value" id="contador-cam-proprio">0</div></div></div>
       <div class="stat-card" style="--accent:var(--amber)"><div class="stat-icon">🚛</div><div><div class="stat-label">Cam. Terceiro</div><div class="stat-value" id="contador-cam-terceiro">0</div></div></div>
       <div class="stat-card" style="--accent:var(--red)"><div class="stat-icon">🔧</div><div><div class="stat-label">Borracharia</div><div class="stat-value" id="contador-cam-borracharia">0</div></div></div>
-      <div class="stat-card" style="--accent:#64748b"><div class="stat-icon">📊</div><div><div class="stat-label">Fora Borracharia</div><div class="stat-value" id="tot-fora">0</div></div></div>
-      <div class="stat-card stat-total" style="--accent:#4d77ff"><div class="stat-icon">🚜</div><div><div class="stat-label">Total Geral</div><div class="stat-value" id="tot-geral">0</div></div></div>
+      <div class="stat-card stat-total" style="--accent:#4d77ff"><div class="stat-icon">🚜</div><div><div class="stat-label">Total Caminhões</div><div class="stat-value" id="tot-geral-caminhao">0</div></div></div>
     </div>
     <section class="card" id="sec-caminhao">
       <div class="card-header" id="hdr-caminhao" onclick="toggleSec('caminhao')">
@@ -493,9 +524,9 @@ body.light .btn-add:hover{background:#e8f0fc;}
         <span class="arrow">▼</span>
       </div>
       <div class="card-body" id="body-caminhao">
-        <div class="group"><div class="group-label blue-t">Próprio <span class="gc" id="gc-cam-proprio">0</span></div><div class="table-wrap"><table id="tabela-cam-proprio"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Status</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-cam-proprio')">＋ Adicionar</button></div>
-        <div class="group"><div class="group-label amber-t">Terceiro <span class="gc" id="gc-cam-terceiro">0</span></div><div class="table-wrap"><table id="tabela-cam-terceiro"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Status</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-cam-terceiro')">＋ Adicionar</button></div>
-        <div class="group"><div class="group-label red-t">Borracharia <span class="gc" id="gc-cam-borracharia">0</span></div><div class="table-wrap"><table id="tabela-cam-borracharia"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Status</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-cam-borracharia')">＋ Adicionar</button></div>
+        <div class="group"><div class="group-label blue-t">Próprio <span class="gc" id="gc-cam-proprio">0</span></div><div class="table-wrap"><table id="tabela-cam-proprio"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração (min)</th><th>Retorno</th><th>Status</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-cam-proprio')">＋ Adicionar</button></div>
+        <div class="group"><div class="group-label amber-t">Terceiro <span class="gc" id="gc-cam-terceiro">0</span></div><div class="table-wrap"><table id="tabela-cam-terceiro"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração (min)</th><th>Retorno</th><th>Status</th><th>Ações</th></tr></thead><tbody></tbody></td></div><button class="btn-add" onclick="adicionarLinha('tabela-cam-terceiro')">＋ Adicionar</button></div>
+        <div class="group"><div class="group-label red-t">Borracharia <span class="gc" id="gc-cam-borracharia">0</span></div><div class="table-wrap"><table id="tabela-cam-borracharia"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração (min)</th><th>Retorno</th><th>Status</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-cam-borracharia')">＋ Adicionar</button></div>
       </div>
     </section>
   </div>
@@ -505,7 +536,7 @@ body.light .btn-add:hover{background:#e8f0fc;}
       <div class="stat-card" style="--accent:var(--green)"><div class="stat-icon">🌾</div><div><div class="stat-label">Col. Própria</div><div class="stat-value" id="contador-col-proprio">0</div></div></div>
       <div class="stat-card" style="--accent:var(--amber)"><div class="stat-icon">🌾</div><div><div class="stat-label">Col. Terceira</div><div class="stat-value" id="contador-col-terceiro">0</div></div></div>
       <div class="stat-card" style="--accent:var(--purple)"><div class="stat-icon">🔄</div><div><div class="stat-label">Transbordo</div><div class="stat-value" id="contador-transbordo">0</div></div></div>
-      <div class="stat-card stat-total" style="--accent:var(--green)"><div class="stat-icon">🌾</div><div><div class="stat-label">Total Geral</div><div class="stat-value" id="tot-geral-col">0</div></div></div>
+      <div class="stat-card stat-total" style="--accent:var(--green)"><div class="stat-icon">🌾</div><div><div class="stat-label">Total Colhedoras</div><div class="stat-value" id="tot-geral-col">0</div></div></div>
     </div>
     <section class="card" id="sec-colhedora">
       <div class="card-header" id="hdr-colhedora" onclick="toggleSec('colhedora')">
@@ -513,8 +544,8 @@ body.light .btn-add:hover{background:#e8f0fc;}
         <span class="arrow">▼</span>
       </div>
       <div class="card-body" id="body-colhedora">
-        <div class="group"><div class="group-label green-t">Própria <span class="gc" id="gc-col-proprio">0</span></div><div class="table-wrap"><table id="tabela-col-proprio"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Status</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-col-proprio')">＋ Adicionar</button></div>
-        <div class="group"><div class="group-label amber-t">Terceira <span class="gc" id="gc-col-terceiro">0</span></div><div class="table-wrap"><table id="tabela-col-terceiro"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Status</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-col-terceiro')">＋ Adicionar</button></div>
+        <div class="group"><div class="group-label green-t">Própria <span class="gc" id="gc-col-proprio">0</span></div><div class="table-wrap"><table id="tabela-col-proprio"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração (min)</th><th>Retorno</th><th>Status</th><th>Ações</th><tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-col-proprio')">＋ Adicionar</button></div>
+        <div class="group"><div class="group-label amber-t">Terceira <span class="gc" id="gc-col-terceiro">0</span></div><div class="table-wrap"><table id="tabela-col-terceiro"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração (min)</th><th>Retorno</th><th>Status</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-col-terceiro')">＋ Adicionar</button></div>
       </div>
     </section>
     <section class="card" id="sec-transbordo">
@@ -523,7 +554,7 @@ body.light .btn-add:hover{background:#e8f0fc;}
         <span class="arrow">▼</span>
       </div>
       <div class="card-body" id="body-transbordo">
-        <div class="group"><div class="group-label purple-t">Transbordo <span class="gc" id="gc-transbordo">0</span></div><div class="table-wrap"><table id="tabela-transbordo"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Status</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-transbordo')">＋ Adicionar</button></div>
+        <div class="group"><div class="group-label purple-t">Transbordo <span class="gc" id="gc-transbordo">0</span></div><div class="table-wrap"><table id="tabela-transbordo"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração (min)</th><th>Retorno</th><th>Status</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-transbordo')">＋ Adicionar</button></div>
       </div>
     </section>
   </div>
@@ -545,6 +576,7 @@ let sincronizando = false;
 let datasDisponiveis = new Set();
 let trPendente = null, tabelaPendente = null;
 const _alarmeSet = new Set();
+let contadorAlteracoes = new Map(); // Para contar alterações de duração por frota
 
 async function initFirebase() {
   try {
@@ -738,10 +770,11 @@ const NOMES_TABELA = {
 };
 
 const TABELAS = ['tabela-cam-proprio','tabela-cam-terceiro','tabela-cam-borracharia','tabela-col-proprio','tabela-col-terceiro','tabela-transbordo'];
+const CAMINHOES_TABELAS = ['tabela-cam-proprio','tabela-cam-terceiro','tabela-cam-borracharia'];
+const COLHEDORAS_TABELAS = ['tabela-col-proprio','tabela-col-terceiro','tabela-transbordo'];
 const CONTADORES = {'tabela-cam-proprio':'contador-cam-proprio','tabela-cam-terceiro':'contador-cam-terceiro','tabela-cam-borracharia':'contador-cam-borracharia','tabela-col-proprio':'contador-col-proprio','tabela-col-terceiro':'contador-col-terceiro','tabela-transbordo':'contador-transbordo'};
 const GCS = {'tabela-cam-proprio':'gc-cam-proprio','tabela-cam-terceiro':'gc-cam-terceiro','tabela-cam-borracharia':'gc-cam-borracharia','tabela-col-proprio':'gc-col-proprio','tabela-col-terceiro':'gc-col-terceiro','tabela-transbordo':'gc-transbordo'};
 const PILLS = {'tabela-cam-proprio':'pill-caminhao','tabela-cam-terceiro':'pill-caminhao','tabela-cam-borracharia':'pill-caminhao','tabela-col-proprio':'pill-colhedora','tabela-col-terceiro':'pill-colhedora','tabela-transbordo':'pill-transbordo'};
-const SEM_BORRACHARIA = ['tabela-cam-proprio','tabela-cam-terceiro','tabela-col-proprio','tabela-col-terceiro','tabela-transbordo'];
 
 // ========== FUNÇÕES AUXILIARES ==========
 function _prefixoValido(frota, idTabela) { const p = PREFIXOS_VALIDOS[idTabela]||[]; return p.some(pr=>frota.startsWith(pr)); }
@@ -749,67 +782,55 @@ function _autoCadastrarFrota(frota, idTabela) { if(!frota||frota.length<4||!_pre
 function _carregarFrotasCustom() { TABELAS.forEach(id=>{const c=JSON.parse(localStorage.getItem('_frotas_custom_'+id)||'[]');c.forEach(f=>{if(!FROTAS_DISPONIVEIS[id].includes(f))FROTAS_DISPONIVEIS[id].push(f);});FROTAS_DISPONIVEIS[id].sort();});}
 function _validarInputFrota(inp,id){ const f=inp.value.trim(); if(!f){inp.style.borderColor='transparent';return true;} if(_prefixoValido(f,id)){inp.style.borderColor='rgba(16,185,129,.6)';inp.style.background='rgba(16,185,129,.06)';return true;}else{inp.style.borderColor='#ef4444';inp.style.background='rgba(239,68,68,.08)';return false;} }
 function tocarAlarme(){try{const c=new (AudioContext||webkitAudioContext)();[0,0.4,0.8].forEach(d=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.setValueAtTime(880,c.currentTime+d);g.gain.setValueAtTime(0.5,c.currentTime+d);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+d+0.35);o.start(c.currentTime+d);o.stop(c.currentTime+d+0.35);});}catch(e){}}
-function _renderizarIconeRelogio(tr){ const td=tr.querySelector('td'); if(tr.dataset.tempoAdicionado==='true' && !td.querySelector('.relogio-indicador')){const s=document.createElement('span');s.className='relogio-indicador';s.innerHTML='🕒';s.title='Tempo extra adicionado';td.appendChild(s);} }
 function _mascaraData(inp){ let v=inp.value.replace(/\D/g,''); if(v.length>2)v=v.slice(0,2)+'/'+v.slice(2); if(v.length>5)v=v.slice(0,5)+'/'+v.slice(5); inp.value=v.slice(0,10);}
 function _dataBase(tr){ const v=tr.querySelector('[data-campo="data"]').value.trim(), m=v.match(/^(\d{2})\/(\d{2})\/(\d{2,4})$/); if(!m)return null; const [_,d,mo,a]=m, af=a.length===2?'20'+a:a; const day=parseInt(d,10), month=parseInt(mo,10), year=parseInt(af,10); const t=new Date(year, month-1, day); if(t.getFullYear()===year && (t.getMonth()+1)===month && t.getDate()===day) return `${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`; return null; }
 function showToast(msg,t='ok'){ const tst=document.getElementById('toast'); tst.textContent=msg; tst.className='show '+t; clearTimeout(tst._t); tst._t=setTimeout(()=>{tst.className='';},3500); }
 
-function duracaoParaMinutos(valor) {
-  if (!valor) return 0;
-  if (typeof valor === 'string' && valor.includes(':')) {
-    const [h, m] = valor.split(':').map(Number);
-    return (h || 0) * 60 + (m || 0);
-  }
-  return parseFloat(valor) * 60;
-}
-
+// Converte minutos para formato HH:MM
 function minutosParaHora(minutos) {
+  if (minutos < 0) minutos = 0;
   const h = Math.floor(minutos / 60);
   const m = minutos % 60;
   return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
 }
 
+// Converte duração em minutos (1 = 1 minuto, 60 = 1 hora)
+function duracaoParaMinutos(valor) {
+  if (!valor) return 0;
+  let num = parseInt(valor);
+  if (isNaN(num)) return 0;
+  return num; // Agora o valor é direto em minutos (1 = 1 minuto)
+}
+
 function _interpretarDuracao(inp){ 
-  let v = inp.value.replace(/[^0-9:]/g, '');
-  if (!v) { inp.value=''; return; }
-  if (v.includes(':')) {
-    const partes = v.split(':');
-    let h = parseInt(partes[0]) || 0;
-    let m = parseInt(partes[1]) || 0;
-    if (m >= 60) { h += Math.floor(m/60); m = m % 60; }
-    inp.value = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
-  } else {
-    let num = parseFloat(v);
-    if (isNaN(num)) { inp.value=''; return; }
-    const h = Math.floor(num);
-    const m = Math.round((num - h) * 60);
-    inp.value = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
-  }
+  let v = inp.value.replace(/[^0-9]/g, '');
+  if (!v) { inp.value = ''; return; }
+  let num = parseInt(v);
+  if (isNaN(num)) num = 0;
+  inp.value = num;
 }
 
 function _recalcular(inp){
-  const tr=inp.closest('tr');
-  const parada=tr.querySelector('[data-campo="parada"]').value;
-  let previsaoRaw=tr.querySelector('[data-campo="previsao"]').value.trim();
-  const inpRet=tr.querySelector('[data-campo="retorno"]');
+  const tr = inp.closest('tr');
+  const parada = tr.querySelector('[data-campo="parada"]').value;
+  let duracaoMinutos = parseInt(tr.querySelector('[data-campo="previsao"]').value) || 0;
+  const inpRet = tr.querySelector('[data-campo="retorno"]');
   
-  if(!parada || !previsaoRaw){
-    tr.removeAttribute('data-hora-retorno'); inpRet.value=''; tr.classList.remove('linha-atrasada');
+  if(!parada || duracaoMinutos <= 0){
+    tr.removeAttribute('data-hora-retorno'); 
+    inpRet.value = ''; 
+    tr.classList.remove('linha-atrasada');
     _atualizarCronometroLinha(tr);
     return;
   }
   
-  let duracaoMinutos = duracaoParaMinutos(previsaoRaw);
-  if(duracaoMinutos <= 0){
-    tr.removeAttribute('data-hora-retorno'); inpRet.value=''; tr.classList.remove('linha-atrasada');
-    _atualizarCronometroLinha(tr);
-    return;
+  let dataISO = _dataBase(tr); 
+  if(!dataISO){ 
+    const hj = new Date(); 
+    dataISO = `${hj.getFullYear()}-${String(hj.getMonth()+1).padStart(2,'0')}-${String(hj.getDate()).padStart(2,'0')}`;
   }
   
-  let dataISO=_dataBase(tr); 
-  if(!dataISO){ const hj=new Date(); dataISO=`${hj.getFullYear()}-${String(hj.getMonth()+1).padStart(2,'0')}-${String(hj.getDate()).padStart(2,'0')}`; }
-  
-  const [hP,mP]=parada.split(':').map(Number);
+  const [hP, mP] = parada.split(':').map(Number);
   const minutosParada = hP * 60 + mP;
   const minutosRetorno = minutosParada + duracaoMinutos;
   const dias = Math.floor(minutosRetorno / 1440);
@@ -825,27 +846,29 @@ function _recalcular(inp){
 }
 
 function _atualizarCronometroLinha(tr){
-  const iso=tr.getAttribute('data-hora-retorno'), span=tr.querySelector('.cronometro');
-  if(!span)return;
+  const iso = tr.getAttribute('data-hora-retorno'), span = tr.querySelector('.cronometro');
+  if(!span) return;
+  
   if(!iso){
-    const parada=tr.querySelector('[data-campo="parada"]')?.value;
-    const dataISO=_dataBase(tr);
+    const parada = tr.querySelector('[data-campo="parada"]')?.value;
+    const dataISO = _dataBase(tr);
     if(parada && dataISO){
-      const [h,m]=parada.split(':').map(Number), [y, mon, d]=dataISO.split('-').map(Number);
-      const dtS=new Date(y, mon-1, d, h, m, 0);
-      const diff=new Date()-dtS;
-      if(diff>0){
-        const hh=Math.floor(diff/3600000), mm=Math.floor((diff%3600000)/60000);
-        span.textContent=`Parado ${hh}h ${mm}min`;
-        span.className='cronometro cronometro-parado';
+      const [h,m] = parada.split(':').map(Number), [y, mon, d] = dataISO.split('-').map(Number);
+      const dtS = new Date(y, mon-1, d, h, m, 0);
+      const diff = new Date() - dtS;
+      if(diff > 0){
+        const hh = Math.floor(diff/3600000), mm = Math.floor((diff%3600000)/60000);
+        span.textContent = `Parado ${hh}h ${mm}min`;
+        span.className = 'cronometro cronometro-parado';
         tr.classList.remove('linha-atrasada');
         return;
       }
     }
-    span.textContent='--:--';span.className='cronometro';tr.classList.remove('linha-atrasada');
+    span.textContent = '--:--'; span.className = 'cronometro'; tr.classList.remove('linha-atrasada');
     return;
   }
-  const frota=tr.querySelector('[data-campo="frota"]')?.value||''; 
+  
+  const frota = tr.querySelector('[data-campo="frota"]')?.value || ''; 
   const agora = new Date();
   const retorno = new Date(iso);
   const diff = retorno - agora;
@@ -854,82 +877,82 @@ function _atualizarCronometroLinha(tr){
     const atraso = Math.abs(diff);
     const h = Math.floor(atraso/3600000); 
     const m = Math.floor((atraso%3600000)/60000); 
-    span.textContent=`Atrasado ${h}h ${m}min`; 
-    span.className='cronometro cronometro-atrasado'; 
+    span.textContent = `Atrasado ${h}h ${m}min`; 
+    span.className = 'cronometro cronometro-atrasado'; 
     tr.classList.add('linha-atrasada'); 
-    const key=frota+'|'+iso; 
-    if(frota && !_alarmeSet.has(key) && tr.dataset.salvo==='true'){
+    const key = frota + '|' + iso; 
+    if(frota && !_alarmeSet.has(key) && tr.dataset.salvo === 'true'){
       _alarmeSet.add(key); 
       tocarAlarme(); 
       mostrarModalAtraso(tr, tr.closest('table').id); 
-      showToast(`🔔 Frota ${frota} com retorno atrasado!`,'warn');
+      showToast(`🔔 Frota ${frota} com retorno atrasado!`, 'warn');
     } 
   } else { 
     const h = Math.floor(diff/3600000); 
     const m = Math.floor((diff%3600000)/60000); 
-    span.textContent=`Falta ${h}h ${m}min`; 
-    span.className='cronometro cronometro-ativo'; 
+    span.textContent = `Falta ${h}h ${m}min`; 
+    span.className = 'cronometro cronometro-ativo'; 
     tr.classList.remove('linha-atrasada');
   }
 }
 
 function _criarAutocomplete(inp,id){ const lista=FROTAS_DISPONIVEIS[id]||[], wrap=document.createElement('div');wrap.className='ac-wrap';inp.parentNode.insertBefore(wrap,inp);wrap.appendChild(inp);const drop=document.createElement('div');drop.className='ac-list';wrap.appendChild(drop);let idx=-1; const filtrar=q=>{drop.innerHTML='';idx=-1;if(!q){drop.classList.remove('show');return;}const m=lista.filter(f=>f.includes(q)).slice(0,12);if(!m.length){drop.classList.remove('show');return;}m.forEach(f=>{const it=document.createElement('div');it.className='ac-item';it.innerHTML=f.replace(q,`<mark>${q}</mark>`);it.addEventListener('mousedown',e=>{e.preventDefault();inp.value=f;inp.dispatchEvent(new Event('input',{bubbles:true}));drop.classList.remove('show');});drop.appendChild(it);});drop.classList.add('show');}; inp.addEventListener('input',()=>filtrar(inp.value.trim())); inp.addEventListener('focus',()=>{if(inp.value.trim())filtrar(inp.value.trim());}); inp.addEventListener('keydown',e=>{const its=drop.querySelectorAll('.ac-item');if(!its.length)return;if(e.key==='ArrowDown'){e.preventDefault();idx=Math.min(idx+1,its.length-1);its.forEach((it,i)=>it.classList.toggle('ativo',i===idx));}else if(e.key==='ArrowUp'){e.preventDefault();idx=Math.max(idx-1,0);its.forEach((it,i)=>it.classList.toggle('ativo',i===idx));}else if(e.key==='Enter'&&idx>=0){e.preventDefault();inp.value=its[idx].textContent;inp.dispatchEvent(new Event('input',{bubbles:true}));drop.classList.remove('show');}else if(e.key==='Escape')drop.classList.remove('show');}); document.addEventListener('click',e=>{if(!wrap.contains(e.target))drop.classList.remove('show');});}
 
-// ========== FUNÇÃO DE EDIÇÃO MANUAL DO RETORNO (CTRL + DUPLO CLIQUE) ==========
+// ========== FUNÇÃO DE EDIÇÃO MANUAL DO RETORNO ==========
 function habilitarEdicaoManualRetorno(inpRetorno, tr) {
   if (!inpRetorno || !tr) return;
   
-  // Verifica se já está em modo de edição manual
   if (tr.dataset.retornoManual === 'true') {
-    // Se já está editando, cancela a edição manual e volta ao automático
+    // Desativa modo manual
     tr.dataset.retornoManual = 'false';
     tr.dataset.retornoAlterado = 'false';
     inpRetorno.readOnly = true;
     inpRetorno.classList.remove('retorno-editavel');
-    
-    // Remove o indicador visual
     const wrapper = inpRetorno.parentElement;
     const indicador = wrapper.querySelector('.retorno-manual-indicador');
     if (indicador) indicador.remove();
-    
-    // Recalcula com base na duração atual
     const inpPrevisao = tr.querySelector('[data-campo="previsao"]');
     _recalcular(inpPrevisao);
     _salvarDados(tr.closest('table').id);
     showToast('🔄 Modo automático restaurado', 'ok');
   } else {
-    // Ativa o modo de edição manual
+    // Ativa modo manual
     tr.dataset.retornoManual = 'true';
     tr.dataset.retornoAlterado = 'false';
     inpRetorno.readOnly = false;
     inpRetorno.classList.add('retorno-editavel');
-    
-    // Adiciona indicador visual
-    const wrapper = inpRetorno.parentElement;
-    wrapper.style.position = 'relative';
-    const existingIndicator = wrapper.querySelector('.retorno-manual-indicador');
-    if (!existingIndicator) {
-      const indicador = document.createElement('div');
-      indicador.className = 'retorno-manual-indicador';
-      indicador.title = 'Retorno editado manualmente (CTRL+Duplo Clique para desativar)';
-      wrapper.appendChild(indicador);
-    }
-    
+    inpRetorno.placeholder = 'Digite o horário (ex: 14:30)';
+    inpRetorno.value = '';
     inpRetorno.focus();
-    inpRetorno.select();
-    showToast('✏️ Modo edição manual ativado. Digite o horário e pressione Enter ou Tab', 'warn');
+    showToast('✏️ Digite o horário de retorno (formato HH:MM)', 'warn');
   }
 }
 
 function processarRetornoManual(inpRetorno, tr) {
-  if (!inpRetorno.value || tr.dataset.retornoManual !== 'true' || tr.dataset.retornoAlterado === 'true') return;
+  if (!inpRetorno.value || tr.dataset.retornoManual !== 'true') return;
   
-  tr.dataset.retornoAlterado = 'true';
-  const horarioDigitado = inpRetorno.value.trim();
+  let horarioDigitado = inpRetorno.value.trim();
+  // Adiciona os dois pontos automaticamente se necessário
+  if (horarioDigitado.length === 4 && !horarioDigitado.includes(':')) {
+    horarioDigitado = horarioDigitado.substring(0,2) + ':' + horarioDigitado.substring(2,4);
+    inpRetorno.value = horarioDigitado;
+  }
   
   if (horarioDigitado && /^\d{1,2}:\d{2}$/.test(horarioDigitado)) {
     const [hR, mR] = horarioDigitado.split(':').map(Number);
     if (hR >= 0 && hR <= 23 && mR >= 0 && mR <= 59) {
+      tr.dataset.retornoAlterado = 'true';
+      
+      // Adiciona indicador visual de que foi alterado manualmente
+      const wrapper = inpRetorno.parentElement;
+      let indicador = wrapper.querySelector('.retorno-manual-indicador');
+      if (!indicador) {
+        indicador = document.createElement('div');
+        indicador.className = 'retorno-manual-indicador';
+        indicador.title = 'Retorno editado manualmente (CTRL+Duplo Clique para desativar)';
+        wrapper.appendChild(indicador);
+      }
+      
       const dataISO = _dataBase(tr);
       if (dataISO) {
         const dt = new Date(dataISO + 'T00:00:00');
@@ -942,9 +965,16 @@ function processarRetornoManual(inpRetorno, tr) {
           const [hP, mP] = parada.split(':').map(Number);
           let totalMin = (hR * 60 + mR) - (hP * 60 + mP);
           if (totalMin < 0) totalMin += 24 * 60;
-          const duracaoHoras = (totalMin / 60).toFixed(1);
           const inpPrevisao = tr.querySelector('[data-campo="previsao"]');
-          inpPrevisao.value = duracaoHoras;
+          inpPrevisao.value = totalMin;
+          
+          // Incrementa contador de alterações
+          const frotaId = tr.querySelector('[data-campo="frota"]')?.value || 'unknown';
+          const count = (contadorAlteracoes.get(frotaId) || 0) + 1;
+          contadorAlteracoes.set(frotaId, count);
+          tr.dataset.tempoAdicionado = "true";
+          tr.dataset.vezesAdicionado = count;
+          _renderizarIconeRelogio(tr, count);
         }
         
         _atualizarCronometroLinha(tr);
@@ -961,32 +991,70 @@ function processarRetornoManual(inpRetorno, tr) {
   }
 }
 
+function _renderizarIconeRelogio(tr, count){ 
+  const td = tr.querySelector('td'); 
+  if(tr.dataset.tempoAdicionado === 'true') {
+    const existingIcon = td.querySelector('.relogio-indicador');
+    const vezes = count || parseInt(tr.dataset.vezesAdicionado) || 1;
+    if(!existingIcon) {
+      const s = document.createElement('span');
+      s.className = 'relogio-indicador';
+      s.innerHTML = '🕒';
+      s.title = `Duração alterada ${vezes} vez(es)`;
+      td.appendChild(s);
+    } else {
+      existingIcon.title = `Duração alterada ${vezes} vez(es)`;
+    }
+  } 
+}
+
 // ========== LISTENERS E CRIAÇÃO DE LINHA ==========
 function _ativarListeners(tr, id, salvo) { 
-  const inpData=tr.querySelector('[data-campo="data"]');
-  const inpMotivo=tr.querySelector('[data-campo="motivo"]');
-  const inpParada=tr.querySelector('[data-campo="parada"]');
-  const inpPrevisao=tr.querySelector('[data-campo="previsao"]');
-  const inpRetorno=tr.querySelector('[data-campo="retorno"]');
-  const inpFrota=tr.querySelector('[data-campo="frota"]');
+  const inpData = tr.querySelector('[data-campo="data"]');
+  const inpMotivo = tr.querySelector('[data-campo="motivo"]');
+  const inpParada = tr.querySelector('[data-campo="parada"]');
+  const inpPrevisao = tr.querySelector('[data-campo="previsao"]');
+  const inpRetorno = tr.querySelector('[data-campo="retorno"]');
+  const inpFrota = tr.querySelector('[data-campo="frota"]');
   
   inpData.addEventListener('input',()=>{_mascaraData(inpData); _recalcular(inpData); if(tr.dataset.salvo==='true') _salvarDados(id);}); 
-  inpParada.addEventListener('input',()=>{_recalcular(inpParada); if(tr.dataset.salvo==='true') _salvarDados(id);}); 
-  inpPrevisao.addEventListener('input',()=>{_recalcular(inpPrevisao); if(tr.dataset.salvo==='true') _salvarDados(id);}); 
-  inpPrevisao.addEventListener('blur',()=>{_interpretarDuracao(inpPrevisao); _recalcular(inpPrevisao); if(tr.dataset.salvo==='true') _salvarDados(id);}); 
+  
+  // Hora Parada - NUNCA MAIS PODE SER ALTERADA após salvar
+  if (!salvo) {
+    inpParada.addEventListener('input', () => { _recalcular(inpParada); if(tr.dataset.salvo==='true') _salvarDados(id); });
+  } else {
+    inpParada.readOnly = true;
+    inpParada.style.background = 'rgba(255,255,255,0.05)';
+  }
+  
+  inpPrevisao.addEventListener('input', () => {
+    _interpretarDuracao(inpPrevisao);
+    _recalcular(inpPrevisao);
+    if(tr.dataset.salvo==='true') {
+      // Incrementa contador de alterações
+      const frotaId = tr.querySelector('[data-campo="frota"]')?.value || 'unknown';
+      const count = (contadorAlteracoes.get(frotaId) || 0) + 1;
+      contadorAlteracoes.set(frotaId, count);
+      tr.dataset.tempoAdicionado = "true";
+      tr.dataset.vezesAdicionado = count;
+      _renderizarIconeRelogio(tr, count);
+      _salvarDados(id);
+    }
+  });
+  inpPrevisao.addEventListener('blur', () => { _interpretarDuracao(inpPrevisao); _recalcular(inpPrevisao); if(tr.dataset.salvo==='true') _salvarDados(id); });
   
   if(salvo){
     inpMotivo.addEventListener('input',()=>_salvarDados(id));
     inpFrota.addEventListener('input',()=>_salvarDados(id));
   }
   
-  const inpFrotaEl=tr.querySelector('[data-campo="frota"]'); 
+  const inpFrotaEl = tr.querySelector('[data-campo="frota"]'); 
   if(inpFrotaEl){ 
     inpFrotaEl.addEventListener('input',()=>_validarInputFrota(inpFrotaEl,id)); 
     inpFrotaEl.addEventListener('blur',()=>_validarInputFrota(inpFrotaEl,id));
   }
   
-  // ========== FUNÇÃO DE EDIÇÃO MANUAL DO RETORNO (CTRL + DUPLO CLIQUE) ==========
+  // Edição manual do retorno (CTRL + Duplo Clique)
   if (inpRetorno) {
     inpRetorno.addEventListener('dblclick', (e) => {
       if (e.ctrlKey) {
@@ -996,46 +1064,53 @@ function _ativarListeners(tr, id, salvo) {
     });
     
     inpRetorno.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && tr.dataset.retornoManual === 'true' && tr.dataset.retornoAlterado !== 'true') {
+      if (e.key === 'Enter' && tr.dataset.retornoManual === 'true') {
         e.preventDefault();
         processarRetornoManual(inpRetorno, tr);
-        // Foca no botão remover após Enter
         const btnDel = tr.querySelector('.btn-del');
         if (btnDel) btnDel.focus();
-      } else if (e.key === 'Tab' && tr.dataset.retornoManual === 'true' && tr.dataset.retornoAlterado !== 'true') {
+      } else if (e.key === 'Tab' && tr.dataset.retornoManual === 'true') {
         processarRetornoManual(inpRetorno, tr);
       }
     });
     
     inpRetorno.addEventListener('blur', () => {
-      if (tr.dataset.retornoManual === 'true' && tr.dataset.retornoAlterado !== 'true' && inpRetorno.value) {
+      if (tr.dataset.retornoManual === 'true' && inpRetorno.value) {
         processarRetornoManual(inpRetorno, tr);
       }
     });
   }
   
-  const btnSalvar=tr.querySelector('.btn-salvar'); 
+  const btnSalvar = tr.querySelector('.btn-salvar'); 
   if(btnSalvar) btnSalvar.addEventListener('click',()=>_confirmarLinha(tr,id)); 
   
   tr.querySelector('.btn-del').addEventListener('click',()=>{ 
-    const f=tr.querySelector('[data-campo="frota"]').value.trim()||'este registro'; 
+    const f = tr.querySelector('[data-campo="frota"]').value.trim()||'este registro'; 
     salvarHistorico(tr,id,'REMOCAO_MANUAL'); 
     tr.remove(); 
-    if(tr.dataset.salvo==='true')_salvarDados(id); 
+    if(tr.dataset.salvo==='true') _salvarDados(id); 
     atualizarTodosContadores(); 
     showToast('Frota '+f+' removida.','ok');
   });
 }
 
 function _confirmarLinha(tr,id){ 
-  const f=tr.querySelector('[data-campo="frota"]').value.trim(); 
-  if(!f){showToast('⚠️ Preencha a frota','warn');tr.querySelector('[data-campo="frota"]').focus();return;} 
-  if(!_prefixoValido(f,id)){showToast('❌ Frota '+f+' inválida para '+NOMES_TABELA[id],'err');tr.querySelector('[data-campo="frota"]').focus();return;} 
+  const f = tr.querySelector('[data-campo="frota"]').value.trim(); 
+  if(!f){showToast('⚠️ Preencha a frota','warn'); tr.querySelector('[data-campo="frota"]').focus(); return;} 
+  if(!_prefixoValido(f,id)){showToast('❌ Frota '+f+' inválida para '+NOMES_TABELA[id],'err'); tr.querySelector('[data-campo="frota"]').focus(); return;} 
   _autoCadastrarFrota(f,id); 
   tr.setAttribute('data-salvo','true'); 
-  const btnS=tr.querySelector('.btn-salvar'); 
-  if(btnS)btnS.remove(); 
-  const inpMotivo=tr.querySelector('[data-campo="motivo"]'), inpFrota=tr.querySelector('[data-campo="frota"]'); 
+  
+  // Torna Hora Parada readonly após salvar
+  const inpParada = tr.querySelector('[data-campo="parada"]');
+  if (inpParada) {
+    inpParada.readOnly = true;
+    inpParada.style.background = 'rgba(255,255,255,0.05)';
+  }
+  
+  const btnS = tr.querySelector('.btn-salvar'); 
+  if(btnS) btnS.remove(); 
+  const inpMotivo = tr.querySelector('[data-campo="motivo"]'), inpFrota = tr.querySelector('[data-campo="frota"]'); 
   inpMotivo.addEventListener('input',()=>_salvarDados(id)); 
   inpFrota.addEventListener('input',()=>_salvarDados(id)); 
   _salvarDadosOriginalImpl(id); 
@@ -1050,7 +1125,10 @@ function _criarLinha(id, d, salvo) {
   const tr = document.createElement('tr');
   tr.setAttribute('data-salvo', salvo ? 'true' : 'false');
   if (d.dataRetornoCompleta) tr.setAttribute('data-hora-retorno', d.dataRetornoCompleta);
-  if (d.tempoAdicionado) tr.setAttribute('data-tempo-adicionado', 'true');
+  if (d.tempoAdicionado) {
+    tr.setAttribute('data-tempo-adicionado', 'true');
+    tr.setAttribute('data-vezes-adicionado', d.vezesAdicionado || 1);
+  }
   if (d.retornoManual === 'true') {
     tr.setAttribute('data-retorno-manual', 'true');
     if (d.retornoAlterado === 'true') tr.setAttribute('data-retorno-alterado', 'true');
@@ -1091,14 +1169,18 @@ function _criarLinha(id, d, salvo) {
   inpParada.type = 'time';
   inpParada.dataset.campo = 'parada';
   inpParada.value = d.horarioParada || '';
+  if (salvo) {
+    inpParada.readOnly = true;
+    inpParada.style.background = 'rgba(255,255,255,0.05)';
+  }
   tdParada.appendChild(inpParada);
   tr.appendChild(tdParada);
   
   const tdDuracao = document.createElement('td');
   const inpDuracao = document.createElement('input');
-  inpDuracao.type = 'text';
+  inpDuracao.type = 'number';
   inpDuracao.dataset.campo = 'previsao';
-  inpDuracao.placeholder = 'Ex: 2.5h ou 02:30';
+  inpDuracao.placeholder = 'minutos (1=1min, 60=1h)';
   inpDuracao.value = d.previsaoRetorno || '';
   tdDuracao.appendChild(inpDuracao);
   tr.appendChild(tdDuracao);
@@ -1142,7 +1224,6 @@ function _criarLinha(id, d, salvo) {
   
   tbody.appendChild(tr);
   
-  // Se já estava em modo de edição manual ao carregar
   if (d.retornoManual === 'true' && d.retornoAlterado === 'true') {
     inpRetorno.readOnly = false;
     inpRetorno.classList.add('retorno-editavel');
@@ -1154,24 +1235,27 @@ function _criarLinha(id, d, salvo) {
   
   _ativarListeners(tr, id, salvo);
   _criarAutocomplete(inpF, id);
-  _renderizarIconeRelogio(tr);
+  if (tr.dataset.tempoAdicionado === 'true') {
+    const vezes = parseInt(tr.dataset.vezesAdicionado) || 1;
+    _renderizarIconeRelogio(tr, vezes);
+  }
 }
 
 function adicionarLinha(id){ 
-  const hoje=new Date(); 
-  const data=`${String(hoje.getDate()).padStart(2,'0')}/${String(hoje.getMonth()+1).padStart(2,'0')}/${hoje.getFullYear()}`; 
+  const hoje = new Date(); 
+  const data = `${String(hoje.getDate()).padStart(2,'0')}/${String(hoje.getMonth()+1).padStart(2,'0')}/${hoje.getFullYear()}`; 
   _criarLinha(id,{dataEntrada:data},false);
 }
 
 function salvarHistorico(tr, idTabela, tipoAcao = 'REMOCAO') {
   if (!db || !tr) return;
-  const frota=tr.querySelector('[data-campo="frota"]')?.value||'';
-  const dataEntrada=tr.querySelector('[data-campo="data"]')?.value||'';
-  const motivo=tr.querySelector('[data-campo="motivo"]')?.value||'';
-  const parada=tr.querySelector('[data-campo="parada"]')?.value||'';
-  const previsao=tr.querySelector('[data-campo="previsao"]')?.value||'';
-  const retorno=tr.querySelector('[data-campo="retorno"]')?.value||'';
-  const tipo=NOMES_TABELA_HIST[idTabela]||idTabela;
+  const frota = tr.querySelector('[data-campo="frota"]')?.value||'';
+  const dataEntrada = tr.querySelector('[data-campo="data"]')?.value||'';
+  const motivo = tr.querySelector('[data-campo="motivo"]')?.value||'';
+  const parada = tr.querySelector('[data-campo="parada"]')?.value||'';
+  const previsao = tr.querySelector('[data-campo="previsao"]')?.value||'';
+  const retorno = tr.querySelector('[data-campo="retorno"]')?.value||'';
+  const tipo = NOMES_TABELA_HIST[idTabela]||idTabela;
   
   db.collection('historico_paradas').add({
     frota,tipo,dataEntrada,motivo,parada,
@@ -1185,20 +1269,21 @@ function salvarHistorico(tr, idTabela, tipoAcao = 'REMOCAO') {
 }
 
 function _salvarDadosOriginalImpl(id){ 
-  const rows=[]; 
-  document.querySelector(`#${id} tbody`)?.querySelectorAll('tr[data-salvo="true"]').forEach(tr=>rows.push({
-    frota:tr.querySelector('[data-campo="frota"]')?.value||'',
-    dataEntrada:tr.querySelector('[data-campo="data"]')?.value||'',
-    motivo:tr.querySelector('[data-campo="motivo"]')?.value||'',
-    horarioParada:tr.querySelector('[data-campo="parada"]')?.value||'',
-    previsaoRetorno:tr.querySelector('[data-campo="previsao"]')?.value||'',
-    horarioRetorno:tr.querySelector('[data-campo="retorno"]')?.value||'',
-    dataRetornoCompleta:tr.getAttribute('data-hora-retorno')||'',
-    tempoAdicionado:tr.dataset.tempoAdicionado==='true',
-    retornoManual:tr.dataset.retornoManual==='true',
-    retornoAlterado:tr.dataset.retornoAlterado==='true'
+  const rows = []; 
+  document.querySelector(`#${id} tbody`)?.querySelectorAll('tr[data-salvo="true"]').forEach(tr => rows.push({
+    frota: tr.querySelector('[data-campo="frota"]')?.value||'',
+    dataEntrada: tr.querySelector('[data-campo="data"]')?.value||'',
+    motivo: tr.querySelector('[data-campo="motivo"]')?.value||'',
+    horarioParada: tr.querySelector('[data-campo="parada"]')?.value||'',
+    previsaoRetorno: tr.querySelector('[data-campo="previsao"]')?.value||'',
+    horarioRetorno: tr.querySelector('[data-campo="retorno"]')?.value||'',
+    dataRetornoCompleta: tr.getAttribute('data-hora-retorno')||'',
+    tempoAdicionado: tr.dataset.tempoAdicionado === 'true',
+    vezesAdicionado: tr.dataset.vezesAdicionado,
+    retornoManual: tr.dataset.retornoManual === 'true',
+    retornoAlterado: tr.dataset.retornoAlterado === 'true'
   })); 
-  localStorage.setItem(id,JSON.stringify(rows)); 
+  localStorage.setItem(id, JSON.stringify(rows)); 
   _registrarUltimaAtualizacao();
 }
 
@@ -1207,34 +1292,41 @@ function _registrarUltimaAtualizacao(){ const agora=new Date(), ts=agora.toLocal
 function _carregarUltimaAtualizacao(){ const ts=localStorage.getItem('_frotas_ultima_atualizacao'), el=document.getElementById('ultimaAtualizacao'); if(!el)return; if(ts){el.textContent='🕐 Última atualização: '+ts;el.style.color='var(--green)';}else{el.textContent='🕐 Nenhum dado salvo ainda';el.style.color='var(--muted)';}}
 
 function atualizarTodosContadores(){ 
-  let foraBorr=0,geral=0,totCol=0; 
-  const pills={'pill-caminhao':0,'pill-colhedora':0,'pill-transbordo':0}; 
-  TABELAS.forEach(id=>{ 
-    const n=document.querySelector(`#${id} tbody`)?.querySelectorAll('tr[data-salvo="true"]').length||0; 
-    const cel=document.getElementById(CONTADORES[id]), gc=document.getElementById(GCS[id]); 
-    if(cel)cel.textContent=n; 
-    if(gc)gc.textContent=n; 
-    pills[PILLS[id]]=(pills[PILLS[id]]||0)+n; 
-    geral+=n; 
-    if(SEM_BORRACHARIA.includes(id))foraBorr+=n; 
-    if(['tabela-col-proprio','tabela-col-terceiro','tabela-transbordo'].includes(id))totCol+=n; 
+  let totalCaminhoes = 0, totalColhedoras = 0;
+  const pills = {'pill-caminhao':0,'pill-colhedora':0,'pill-transbordo':0};
+  
+  TABELAS.forEach(id => { 
+    const n = document.querySelector(`#${id} tbody`)?.querySelectorAll('tr[data-salvo="true"]').length || 0; 
+    const cel = document.getElementById(CONTADORES[id]);
+    const gc = document.getElementById(GCS[id]); 
+    if(cel) cel.textContent = n; 
+    if(gc) gc.textContent = n; 
+    pills[PILLS[id]] = (pills[PILLS[id]] || 0) + n; 
+    
+    if(CAMINHOES_TABELAS.includes(id)) totalCaminhoes += n;
+    if(COLHEDORAS_TABELAS.includes(id)) totalColhedoras += n;
   }); 
-  Object.entries(pills).forEach(([id,n])=>{const el=document.getElementById(id);if(el)el.textContent=n;}); 
-  document.getElementById('tot-fora').textContent=foraBorr; 
-  document.getElementById('tot-geral').textContent=geral; 
-  const elCol=document.getElementById('tot-geral-col'); 
-  if(elCol)elCol.textContent=totCol;
+  
+  // Atualiza pills das abas
+  document.getElementById('pill-caminhao').textContent = totalCaminhoes;
+  document.getElementById('pill-colhedora').textContent = totalColhedoras;
+  document.getElementById('pill-transbordo').textContent = document.querySelector('#tabela-transbordo tbody tr[data-salvo="true"]')?.length || 0;
+  
+  // Atualiza totais das abas
+  document.getElementById('tot-geral-caminhao').textContent = totalCaminhoes;
+  document.getElementById('tot-geral-col').textContent = totalColhedoras;
 }
 
 function toggleSec(k){ document.getElementById('body-'+k)?.classList.toggle('hidden'); document.getElementById('hdr-'+k)?.classList.toggle('collapsed');}
 function toggleTema(){ const l=document.body.classList.toggle('light'); document.getElementById('btnTema').textContent=l?'☀️ Claro':'🌙 Escuro'; localStorage.setItem('tema',l?'light':'dark');}
 
 function mostrarModalAtraso(tr,id){ 
-  trPendente=tr; 
-  tabelaPendente=id; 
-  const f=tr.querySelector('[data-campo="frota"]')?.value||"S/N"; 
-  document.getElementById('modalFrotaNum').textContent=f; 
-  document.getElementById('modalAtraso').style.display='flex';
+  trPendente = tr; 
+  tabelaPendente = id; 
+  const f = tr.querySelector('[data-campo="frota"]')?.value||"S/N"; 
+  document.getElementById('modalFrotaNum').textContent = f; 
+  document.getElementById('tempoExtraMinutos').value = '';
+  document.getElementById('modalAtraso').style.display = 'flex';
   tr.classList.add('foco-alerta');
   setTimeout(() => tr.classList.remove('foco-alerta'), 3000);
 }
@@ -1256,6 +1348,7 @@ async function salvarTabelaFirebase(tableId) {
       horarioRetorno: tr.querySelector('[data-campo="retorno"]')?.value || '',
       dataRetornoCompleta: tr.getAttribute('data-hora-retorno') || '',
       tempoAdicionado: tr.dataset.tempoAdicionado === 'true',
+      vezesAdicionado: tr.dataset.vezesAdicionado,
       retornoManual: tr.dataset.retornoManual === 'true',
       retornoAlterado: tr.dataset.retornoAlterado === 'true'
     });
@@ -1410,36 +1503,51 @@ function baixarImagem(blob) {
 }
 
 // ========== EVENTOS DO MODAL ==========
-document.getElementById('btnMaisTempo').addEventListener('click', async () => {
+document.getElementById('btnAdicionarTempo').addEventListener('click', async () => {
   if (!trPendente) return;
+  
+  const minutosExtra = parseInt(document.getElementById('tempoExtraMinutos').value);
+  if (isNaN(minutosExtra) || minutosExtra <= 0) {
+    showToast('⚠️ Digite um valor válido em minutos!', 'warn');
+    return;
+  }
+  
   const frota = trPendente.querySelector('[data-campo="frota"]').value;
   const inpPrevisao = trPendente.querySelector('[data-campo="previsao"]');
-  let duracaoAtualMinutos = duracaoParaMinutos(inpPrevisao.value);
-  duracaoAtualMinutos += 120;
-  const novoValor = minutosParaHora(duracaoAtualMinutos);
-  inpPrevisao.value = novoValor;
+  let duracaoAtual = parseInt(inpPrevisao.value) || 0;
+  duracaoAtual += minutosExtra;
+  inpPrevisao.value = duracaoAtual;
+  
+  // Incrementa contador de alterações
+  const count = (contadorAlteracoes.get(frota) || 0) + 1;
+  contadorAlteracoes.set(frota, count);
   trPendente.dataset.tempoAdicionado = "true";
-  _renderizarIconeRelogio(trPendente);
+  trPendente.dataset.vezesAdicionado = count;
+  _renderizarIconeRelogio(trPendente, count);
+  
   inpPrevisao.classList.add('campo-destaque');
   setTimeout(() => inpPrevisao.classList.remove('campo-destaque'), 2000);
   _recalcular(inpPrevisao);
   await _salvarDados(tabelaPendente);
+  
   if(db){
     db.collection('historico_acoes').add({
       frota: frota, tabela: tabelaPendente, acao: 'ADICIONAR_TEMPO',
-      horasAdicionadas: 2, novaDuracao: novoValor,
+      minutosAdicionados: minutosExtra, novaDuracao: duracaoAtual,
       timestamp: new Date().toISOString(), dataHora: new Date().toLocaleString('pt-BR')
     }).catch(e=>console.warn);
   }
-  showToast(`➕ +2 horas adicionado para frota ${frota}. Nova duração: ${novoValor}`, 'ok');
+  
+  showToast(`➕ +${minutosExtra} minutos adicionado para frota ${frota}. Nova duração: ${duracaoAtual}min`, 'ok');
   document.getElementById('modalAtraso').style.display = 'none';
   trPendente = null;
 });
 
-document.getElementById('btnRemoverTempo').addEventListener('click', async () => {
+document.getElementById('btnRemoverFrota').addEventListener('click', async () => {
   if (!trPendente) return;
   const frota = trPendente.querySelector('[data-campo="frota"]').value;
   const idTabela = tabelaPendente;
+  
   if(db){
     await db.collection('historico_remocoes').add({
       frota: frota, tabela: idTabela,
