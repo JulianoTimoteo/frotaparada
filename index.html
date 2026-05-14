@@ -7,7 +7,6 @@
 <link rel="apple-touch-icon" href="https://usinapitangueiras.com.br/wp-content/uploads/2020/10/cropped-favicon-180x180.png">
 <title>Frotas Paradas</title>
 <style>
-/* ========== CSS ORIGINAL COM AJUSTES (table-layout:auto, min-width:1200px) ========== */
 :root {
   --bg:#0d1117; --s1:#161b22; --s2:#1c2128; --s3:#21262d;
   --border:#30363d; --text:#ffffff; --muted:#ffffff;
@@ -28,7 +27,7 @@ header{
 header h1{font-size:1.1rem;font-weight:800;}
 #dataAtual{color:#ffffff;font-size:.83rem;}
 
-main{max-width:1600px;margin:0 auto;padding:16px 24px 50px;display:grid;gap:18px;}
+main{max-width:1600px;margin:0 auto;padding:16px 24px 50px;}
 
 .card{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:0 6px 20px rgba(0,0,0,.3);}
 .card-header{
@@ -127,79 +126,79 @@ td input[readonly]{
   background:rgba(255,255,255,.02);
 }
 td input[readonly]:hover{
-  background:rgba(255,255,255,.02);
-  border-color:transparent;
+  background:rgba(255,255,255,.04);
+  border-color:rgba(255,255,255,.06);
+}
+/* Readonly unlock hint */
+td input[readonly][title]{
+  cursor:help;
+}
+td input[data-unlocked="true"]{
+  border-color:#f59e0b !important;
+  background:rgba(245,158,11,.06) !important;
+  cursor:text !important;
 }
 td input::placeholder{
   color:#7a8899;
 }
 
-.relogio-indicador {
-  position: absolute;
-  right: 2px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 0.75rem;
-  color: var(--amber);
-  pointer-events: none;
-  background:rgba(0,0,0,0.4);
-  border-radius:12px;
-  padding:0 3px;
+/* ===== PROGRESS BAR ===== */
+.progress-wrap{
+  width:100%;height:5px;
+  background:rgba(255,255,255,.07);
+  border-radius:3px;margin-top:5px;
+  overflow:hidden;
+  display:none;
+}
+.progress-bar{
+  height:100%;border-radius:3px;
+  transition:width 1s linear,background-color .5s;
+}
+.progress-ok  {background:linear-gradient(90deg,var(--blue),#60a5fa);}
+.progress-warn{background:linear-gradient(90deg,var(--amber),#fbbf24);}
+.progress-over{background:linear-gradient(90deg,var(--red),#f87171);}
+body.light .progress-wrap{background:rgba(0,0,0,.08);}
+
+/* ===== CRONÔMETRO ===== */
+.cronometro{
+  font-weight:700;font-size:.81rem;white-space:nowrap;
+  padding:4px 6px;border-radius:6px;
+  display:inline-block;width:100%;text-align:center;
+  border:1px solid transparent;
+}
+.cronometro-ativo    {color:#60a5fa;background:rgba(59,130,246,.12);}
+.cronometro-atrasado {color:#f87171;background:rgba(239,68,68,.12);}
+.cronometro-parado   {color:var(--red);background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.2);}
+
+@keyframes pulsar{0%,100%{background:rgba(239,68,68,.03);}50%{background:rgba(239,68,68,.13);}}
+.linha-atrasada{animation:pulsar 1.5s infinite;}
+
+/* ===== INDICADORES ===== */
+.relogio-indicador{
+  position:absolute;right:2px;top:50%;transform:translateY(-50%);
+  font-size:.75rem;color:var(--amber);pointer-events:none;
+  background:rgba(0,0,0,.4);border-radius:12px;padding:0 3px;
 }
 
-.ac-wrap{
-  position:relative;
-  width:100%;
-}
-.ac-wrap input{
-  width:100%;
-  padding-right:22px;
-}
+/* ===== AUTOCOMPLETE ===== */
+.ac-wrap{position:relative;width:100%;}
+.ac-wrap input{width:100%;padding-right:22px;}
 .ac-list{
-  position:absolute;
-  top:calc(100% + 2px);
-  left:0;
-  right:0;
-  z-index:200;
-  background:var(--s1);
-  border:1px solid #4d77ff;
-  border-radius:8px;
-  max-height:180px;
-  overflow-y:auto;
-  box-shadow:0 8px 24px rgba(0,0,0,.5);
+  position:absolute;top:calc(100% + 2px);left:0;right:0;z-index:200;
+  background:var(--s1);border:1px solid #4d77ff;border-radius:8px;
+  max-height:180px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.5);
   display:none;
 }
 .ac-list.show{display:block;}
 .ac-item{
-  padding:8px 12px;
-  font-size:.83rem;
-  cursor:pointer;
-  border-bottom:1px solid rgba(255,255,255,.05);
-  transition:background .1s;
+  padding:8px 12px;font-size:.83rem;cursor:pointer;
+  border-bottom:1px solid rgba(255,255,255,.05);transition:background .1s;
 }
 .ac-item:last-child{border-bottom:none;}
 .ac-item:hover,.ac-item.ativo{background:rgba(77,119,255,.2);color:#a5b8ff;}
 .ac-item mark{background:transparent;color:#60a5fa;font-weight:800;}
 
-.cronometro{
-  font-weight:700;
-  font-size:.81rem;
-  white-space:nowrap;
-  padding:4px 6px;
-  border-radius:6px;
-  display:inline-block;
-  width:100%;
-  text-align:center;
-  border: 1px solid transparent;
-}
-.cronometro-ativo    {color:#60a5fa;background:rgba(59,130,246,.12);}
-.cronometro-atrasado {color:#f87171;background:rgba(239,68,68,.12);}
-/* Estilo para Tempo Parado em Vermelho */
-.cronometro-parado   {color:var(--red);background:rgba(239,68,68,.12);border-color:rgba(239,68,68,0.2);}
-
-@keyframes pulsar{0%,100%{background:rgba(239,68,68,.03);}50%{background:rgba(239,68,68,.13);}}
-.linha-atrasada{animation:pulsar 1.5s infinite;}
-
+/* ===== BOTÕES ===== */
 .btn-add{
   display:inline-flex;align-items:center;gap:5px;
   margin:10px 20px 14px;padding:8px 16px;
@@ -226,10 +225,81 @@ td input::placeholder{
 
 .card-note{padding:8px 20px 14px;color:var(--muted);font-size:.79rem;font-style:italic;border-top:1px solid rgba(255,255,255,.04);}
 
-@media(max-width:700px){
-  thead th:nth-child(6),tbody td:nth-child(6){display:none;} /* Duração */
+/* ===== ABAS ===== */
+.tab-nav-container{
+  background:var(--s1);border-bottom:1px solid var(--border);
+  padding:0 24px;box-shadow:0 2px 10px rgba(0,0,0,.2);
 }
+.tab-nav-wrapper{
+  max-width:1600px;margin:0 auto;
+  display:flex;gap:10px;padding:10px 0;
+}
+.tab-button{
+  padding:8px 16px;border:1px solid var(--border);border-radius:8px;
+  background:var(--s2);color:var(--muted);font-size:.88rem;font-weight:700;
+  cursor:pointer;transition:all .15s;white-space:nowrap;
+}
+.tab-button:hover{background:var(--s3);color:var(--text);}
+.tab-button.active{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 2px 8px rgba(59,130,246,.3);}
+.tab-content.hidden{display:none;}
 
+/* ===== STAT CARDS ===== */
+.stat-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:12px;
+  padding:16px 24px 12px;width:100%;
+}
+.stat-card{
+  background:var(--s1);border:1px solid var(--border);
+  border-left:4px solid var(--accent,var(--blue));
+  border-radius:var(--radius);padding:14px 18px;
+  display:flex;align-items:center;gap:14px;
+  transition:transform .15s,box-shadow .15s;
+}
+.stat-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.25);}
+.stat-icon{font-size:1.6rem;line-height:1;}
+.stat-info{display:flex;flex-direction:column;gap:2px;}
+.stat-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);font-weight:700;}
+.stat-value{font-size:1.7rem;font-weight:900;color:var(--accent,var(--text));line-height:1;}
+.stat-total .stat-value{color:#7aa3ff;}
+
+/* ===== TOAST ===== */
+#toast{
+  position:fixed;bottom:24px;right:24px;z-index:9999;
+  padding:12px 22px;border-radius:10px;font-weight:700;font-size:.88rem;
+  display:none;opacity:0;transition:opacity .3s;
+  box-shadow:0 4px 20px rgba(0,0,0,.4);pointer-events:none;
+}
+#toast.show{display:block;opacity:1;}
+#toast.ok  {background:#10b981;color:#fff;}
+#toast.err {background:#ef4444;color:#fff;}
+#toast.warn{background:#f59e0b;color:#000;}
+
+/* ===== MODAL ===== */
+.modal{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,.8);z-index:10000;
+  display:none;align-items:center;justify-content:center;
+  backdrop-filter:blur(4px);
+}
+.modal-content{
+  background:var(--s1);padding:24px;border-radius:var(--radius);
+  border:1px solid var(--border);text-align:center;
+  max-width:420px;width:90%;
+  box-shadow:0 20px 50px rgba(0,0,0,.5);
+}
+.modal-content h3{margin-bottom:8px;font-size:1.2rem;}
+.modal-content p{margin-bottom:14px;font-size:.88rem;opacity:.8;}
+.modal-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.modal-input{
+  width:100%;padding:10px 14px;border-radius:8px;
+  border:1px solid var(--border);background:var(--s2);
+  color:var(--text);font-size:.9rem;text-align:center;
+  margin-bottom:16px;outline:none;transition:border-color .18s,background .18s;
+}
+.modal-input:focus{border-color:#4d77ff;background:var(--s1);}
+.modal-label{font-size:.78rem;color:var(--muted);margin-bottom:6px;display:block;text-align:left;}
+
+/* ===== LIGHT THEME ===== */
 body.light{
   --bg:#f4f6f8;--s1:#ffffff;--s2:#f0f2f5;--s3:#e8ebef;
   --border:#d0d5dd;--text:#000000;--muted:#000000;
@@ -273,6 +343,7 @@ body.light td input{color:#000;}
 body.light td input:hover{background:#f0f4fc;border-color:#aabbdd;}
 body.light td input:focus{background:#fff;border-color:#1a5cb8;box-shadow:0 0 0 2px rgba(26,92,184,.15);}
 body.light td input[readonly]{color:#334;background:#f8fafc;}
+body.light td input[data-unlocked="true"]{border-color:#d97000 !important;background:#fffbf0 !important;}
 body.light .cronometro-ativo{color:#1a5cb8;background:#e8f0fc;border:1px solid #c0d0f0;}
 body.light .cronometro-atrasado{color:#c01020;background:#fde8ea;border:1px solid #f0b0b8;}
 body.light .cronometro-parado{color:#c01020;background:#fde8ea;border:1px solid #f0b0b8;}
@@ -280,96 +351,24 @@ body.light .btn-add{color:#1a5cb8;border:1px dashed #aabbdd;font-weight:700;}
 body.light .btn-add:hover{background:#e8f0fc;border-color:#1a5cb8;color:#000;}
 body.light .card-note{color:#444;font-style:italic;}
 body.light .ac-list{background:#fff;border:1.5px solid #1a5cb8;box-shadow:0 8px 24px rgba(26,92,184,.15);}
-body.light .ac-item:hover,body.light .ac-item.ativo{background:#e8f0fc;color:#000;}
+body.light .ac-item:hover,.body.light .ac-item.ativo{background:#e8f0fc;color:#000;}
+body.light .modal-content{background:#fff;color:#000;border-color:#ccc;}
+body.light .modal-input{background:#f0f2f5;border-color:#ccc;color:#000;}
+body.light .modal-input:focus{border-color:#1a5cb8;background:#fff;}
+body.light .modal-label{color:#444;}
+body.light .tab-nav-container{background:#ffffff;border-bottom:2px solid #d0d5dd;box-shadow:0 2px 12px rgba(0,0,0,.08);}
+body.light .tab-button{background:#f0f2f5;border-color:#d0d5dd;color:#444;}
+body.light .tab-button:hover{background:#e8ebef;color:#000;}
+body.light .tab-button.active{background:#1a5cb8;border-color:#1a5cb8;color:#fff;}
+
 @keyframes pulsarLight{0%,100%{background:#fff5f5;}50%{background:#fed7d7;}}
 body.light .linha-atrasada{animation:pulsarLight 1.5s infinite;}
 
-.stat-grid{
-  /* Mantido para o layout interno das abas */
-  display:grid;grid-template-columns:repeat(4,1fr);gap:12px;
-  padding:16px 24px 12px;width:100%;
-}
-
-/* Estilos para as abas */
-.tab-nav-container {
-  background: var(--s1);
-  border-bottom: 1px solid var(--border);
-  padding: 0 24px;
-  box-shadow: 0 2px 10px rgba(0,0,0,.2);
-}
-.tab-nav-wrapper {
-  max-width: 1600px;
-  margin: 0 auto;
-  display: flex;
-  gap: 10px;
-  padding: 10px 0;
-}
-.tab-button {
-  padding: 8px 16px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--s2);
-  color: var(--muted);
-  font-size: .88rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all .15s;
-  white-space: nowrap;
-}
-.tab-button:hover { background: var(--s3); color: var(--text); }
-.tab-button.active { background: var(--blue); border-color: var(--blue); color: #fff; box-shadow: 0 2px 8px rgba(59,130,246,.3); }
-.tab-content.hidden { display: none; }
-.stat-card{
-  background:var(--s1);border:1px solid var(--border);
-  border-left:4px solid var(--accent,var(--blue));
-  border-radius:var(--radius);padding:14px 18px;
-  display:flex;align-items:center;gap:14px;
-  transition:transform .15s,box-shadow .15s;
-}
-.stat-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.25);}
-.stat-icon{font-size:1.6rem;line-height:1;}
-.stat-info{display:flex;flex-direction:column;gap:2px;}
-.stat-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);font-weight:700;}
-.stat-value{font-size:1.7rem;font-weight:900;color:var(--accent,var(--text));line-height:1;}
-.stat-total .stat-value{color:#7aa3ff;}
-body.light .stat-value{color:#000000;}
-body.light .stat-total .stat-value{color:#000000;}
-body.light .stat-label{color:#000000;}
 @media(max-width:900px){.stat-grid{grid-template-columns:repeat(2,1fr);}}
-
-/* Light theme adjustments for tabs */
-body.light .tab-nav-container {
-  background: #ffffff;
-  border-bottom: 2px solid #d0d5dd;
-  box-shadow: 0 2px 12px rgba(0,0,0,.08);
-}
-body.light .tab-button {
-  background: #f0f2f5;
-  border-color: #d0d5dd;
-  color: #444;
-}
-body.light .tab-button:hover { background: #e8ebef; color: #000; }
-body.light .tab-button.active { background: #1a5cb8; border-color: #1a5cb8; color: #fff; box-shadow: 0 2px 8px rgba(26,92,184,.2); }
 @media(max-width:500px){.stat-grid{grid-template-columns:repeat(1,1fr);}}
-
-#toast{
-  position:fixed;bottom:24px;right:24px;z-index:9999;
-  padding:12px 22px;border-radius:10px;font-weight:700;font-size:.88rem;
-  display:none;opacity:0;transition:opacity .3s;
-  box-shadow:0 4px 20px rgba(0,0,0,.4);pointer-events:none;
+@media(max-width:700px){
+  thead th:nth-child(6),tbody td:nth-child(6){display:none;}
 }
-#toast.show{display:block;opacity:1;}
-#toast.ok  {background:#10b981;color:#fff;}
-#toast.err {background:#ef4444;color:#fff;}
-#toast.warn{background:#f59e0b;color:#000;}
-
-.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:10000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
-.modal-content{background:var(--s1);padding:24px;border-radius:var(--radius);border:1px solid var(--border);text-align:center;max-width:380px;box-shadow:0 20px 50px rgba(0,0,0,0.5);}
-.modal-content h3{margin-bottom:12px;font-size:1.2rem;}
-.modal-content p{margin-bottom:20px;font-size:0.9rem;opacity:0.8;}
-.modal-btns{display:flex;gap:12px;justify-content:center;}
-body.light .modal{background:rgba(0,0,0,0.4);}
-body.light .modal-content{background:#fff;color:#000;border-color:#ccc;}
 
 @media print {
   * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
@@ -377,13 +376,13 @@ body.light .modal-content{background:#fff;color:#000;border-color:#ccc;}
   .btn-add, .btn-del, .btn-salvar, .acoes-cell, thead th:last-child, tbody td:last-child,
   #btnPrint, #btnTema, [onclick="exportarCSV()"], #toast { display: none !important; }
   body { background: #fff !important; }
-  body.light { background: #fff !important; }
   .card { box-shadow: none !important; border: 1px solid #ccc !important; page-break-inside: avoid; }
   .group { box-shadow: none !important; border: 1px solid #ddd !important; margin: 6px 0 !important; page-break-inside: avoid; }
   .stat-grid { display: grid !important; grid-template-columns: repeat(4,1fr) !important; gap: 6px !important; }
   main { padding: 8px !important; }
   table { min-width: unset !important; font-size: .75rem !important; }
   td input { border: none !important; background: transparent !important; padding: 2px 4px !important; }
+  .progress-wrap { display: none !important; }
 }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -392,13 +391,17 @@ body.light .modal-content{background:#fff;color:#000;border-color:#ccc;}
 </head>
 <body>
 
+<!-- ===== MODAL ATRASO (COM CAMPO TEMPO EXTRA) ===== -->
 <div id="modalAtraso" class="modal">
   <div class="modal-content">
-    <h3>⚠️ Frota <span id="modalFrotaNum"></span></h3>
-    <p>O tempo previsto encerrou. O que deseja fazer?</p>
+    <h3>⏰ Frota <span id="modalFrotaNum"></span> — Retorno Atrasado!</h3>
+    <p style="margin-bottom:10px;">Quanto tempo adicional deseja conceder?</p>
+    <label class="modal-label">⏱ Tempo extra (Ex: 30 = 30min | 130 = 1h30min)</label>
+    <input type="text" id="modalTempoExtra" class="modal-input" placeholder="Ex: 30, 130, 200..." maxlength="5">
     <div class="modal-btns">
       <button onclick="escolhaModal('mais')" class="btn-salvar" style="padding:10px 15px;">＋ Adicionar Tempo</button>
-      <button onclick="escolhaModal('remover')" class="btn-del" style="padding:10px 15px;">❌ Remover</button>
+      <button onclick="escolhaModal('remover')" class="btn-del" style="padding:10px 15px;">❌ Remover Frota</button>
+      <button onclick="escolhaModal('fechar')" style="padding:10px 15px;border-radius:7px;border:1px solid var(--border);background:var(--s2);color:var(--text);cursor:pointer;font-weight:700;">✕ Fechar</button>
     </div>
   </div>
 </div>
@@ -424,7 +427,7 @@ body.light .modal-content{background:#fff;color:#000;border-color:#ccc;}
   </div>
 </header>
 
-<!-- Nova navegação de abas -->
+<!-- Navegação de abas -->
 <div class="tab-nav-container">
   <div class="tab-nav-wrapper">
     <button class="tab-button active" onclick="showTab('tab-caminhoes', this)">🚛 Caminhões</button>
@@ -433,14 +436,14 @@ body.light .modal-content{background:#fff;color:#000;border-color:#ccc;}
 </div>
 
 <main>
-  <!-- Conteúdo da aba Caminhões -->
-  <div id="tab-caminhoes" class="tab-content active">
+  <!-- Aba Caminhões -->
+  <div id="tab-caminhoes" class="tab-content">
     <div class="stat-grid">
       <div class="stat-card" style="--accent:var(--blue)"><div class="stat-icon">🚛</div><div class="stat-info"><span class="stat-label">Cam. Próprio</span><span class="stat-value" id="contador-cam-proprio">0</span></div></div>
       <div class="stat-card" style="--accent:var(--amber)"><div class="stat-icon">🚛</div><div class="stat-info"><span class="stat-label">Cam. Terceiro</span><span class="stat-value" id="contador-cam-terceiro">0</span></div></div>
       <div class="stat-card" style="--accent:var(--red)"><div class="stat-icon">🔧</div><div class="stat-info"><span class="stat-label">Borracharia</span><span class="stat-value" id="contador-cam-borracharia">0</span></div></div>
       <div class="stat-card" style="--accent:#64748b"><div class="stat-icon">📊</div><div class="stat-info"><span class="stat-label">Fora Borracharia</span><span class="stat-value" id="tot-fora">0</span></div></div>
-      <div class="stat-card stat-total" style="--accent:#4d77ff"><div class="stat-icon">🚜</div><div class="stat-info"><span class="stat-label">Total Geral</span><span class="stat-value" id="tot-geral">0</span></div></div>
+      <div class="stat-card stat-total" style="--accent:#4d77ff"><div class="stat-icon">🚜</div><div class="stat-info"><span class="stat-label">Total Caminhões</span><span class="stat-value" id="tot-geral">0</span></div></div>
     </div>
     <section class="card" id="sec-caminhao">
       <div class="card-header" id="hdr-caminhao" onclick="toggleSec('caminhao')">
@@ -455,13 +458,13 @@ body.light .modal-content{background:#fff;color:#000;border-color:#ccc;}
     </section>
   </div>
 
-  <!-- Conteúdo da aba Colhedoras e Transbordo -->
+  <!-- Aba Colhedoras e Transbordo -->
   <div id="tab-colhedoras" class="tab-content hidden">
     <div class="stat-grid">
       <div class="stat-card" style="--accent:var(--green)"><div class="stat-icon">🌾</div><div class="stat-info"><span class="stat-label">Col. Própria</span><span class="stat-value" id="contador-col-proprio">0</span></div></div>
       <div class="stat-card" style="--accent:var(--amber)"><div class="stat-icon">🌾</div><div class="stat-info"><span class="stat-label">Col. Terceira</span><span class="stat-value" id="contador-col-terceiro">0</span></div></div>
       <div class="stat-card" style="--accent:var(--purple)"><div class="stat-icon">🔄</div><div class="stat-info"><span class="stat-label">Transbordo</span><span class="stat-value" id="contador-transbordo">0</span></div></div>
-      <div class="stat-card stat-total" style="--accent:var(--green)"><div class="stat-icon">🌾</div><div class="stat-info"><span class="stat-label">Total Geral</span><span class="stat-value" id="tot-geral-col">0</span></div></div>
+      <div class="stat-card stat-total" style="--accent:var(--green)"><div class="stat-icon">🌾</div><div class="stat-info"><span class="stat-label">Total Col+Transbordo</span><span class="stat-value" id="tot-geral-col">0</span></div></div>
     </div>
     <section class="card" id="sec-colhedora">
       <div class="card-header" id="hdr-colhedora" onclick="toggleSec('colhedora')">
@@ -487,7 +490,9 @@ body.light .modal-content{background:#fff;color:#000;border-color:#ccc;}
 </main>
 
 <script>
-// ========== FIREBASE E LÓGICA ORIGINAL ==========
+// ============================================================
+// FIREBASE
+// ============================================================
 const firebaseConfig = {
   apiKey: "AIzaSyBRvOpraQrwmXegstKtqLMDXkC9Uk0s4Hw",
   authDomain: "frotasparadas.firebaseapp.com",
@@ -506,31 +511,34 @@ async function initFirebase() {
     db = firebase.firestore();
     document.getElementById('syncStatus').innerHTML = '🟢 Firebase OK';
     return true;
-  } catch (error) {
+  } catch (e) {
     document.getElementById('syncStatus').innerHTML = '🔴 Firebase Offline';
     return false;
   }
 }
 
 async function salvarTabelaFirebase(tableId) {
-  if (!db) return;
+  if (!db) return false;
   const registros = [];
   document.querySelectorAll(`#${tableId} tbody tr[data-salvo="true"]`).forEach(tr => {
     registros.push({
-      frota: tr.querySelector('[data-campo="frota"]')?.value || '',
-      dataEntrada: tr.querySelector('[data-campo="data"]')?.value || '',
-      motivo: tr.querySelector('[data-campo="motivo"]')?.value || '',
-      horarioParada: tr.querySelector('[data-campo="parada"]')?.value || '',
-      previsaoRetorno: tr.querySelector('[data-campo="previsao"]')?.value || '',
-      horarioRetorno: tr.querySelector('[data-campo="retorno"]')?.value || '',
+      frota:              tr.querySelector('[data-campo="frota"]')?.value || '',
+      dataEntrada:        tr.querySelector('[data-campo="data"]')?.value || '',
+      motivo:             tr.querySelector('[data-campo="motivo"]')?.value || '',
+      horarioParada:      tr.querySelector('[data-campo="parada"]')?.value || '',
+      previsaoRetorno:    tr.querySelector('[data-campo="previsao"]')?.value || '',
+      horarioRetorno:     tr.querySelector('[data-campo="retorno"]')?.value || '',
       dataRetornoCompleta: tr.getAttribute('data-hora-retorno') || '',
-      tempoAdicionado: tr.dataset.tempoAdicionado === 'true'
+      tempoAdicionado:    tr.dataset.tempoAdicionado === 'true'
     });
   });
   try {
-    await db.collection('frotas_ativas').doc(tableId).set({ registros, atualizado: new Date().toISOString() }, { merge: true });
+    await db.collection('frotas_ativas').doc(tableId).set(
+      { registros, atualizado: new Date().toISOString() },
+      { merge: true }
+    );
     return true;
-  } catch (error) { return false; }
+  } catch (e) { return false; }
 }
 
 async function salvarTudoFirebase() {
@@ -539,8 +547,12 @@ async function salvarTudoFirebase() {
   showToast('💾 Salvando no Firebase...', 'warn');
   let ok = true;
   for (const id of TABELAS) { if (!(await salvarTabelaFirebase(id))) ok = false; }
-  if (ok) { showToast('✅ Dados salvos no Firebase!', 'ok'); document.getElementById('syncStatus').innerHTML = '🟢 Sincronizado'; }
-  else showToast('⚠️ Erro ao salvar no Firebase', 'err');
+  if (ok) {
+    showToast('✅ Dados salvos no Firebase!', 'ok');
+    document.getElementById('syncStatus').innerHTML = '🟢 Sincronizado';
+  } else {
+    showToast('⚠️ Erro ao salvar no Firebase', 'err');
+  }
   sincronizando = false;
 }
 
@@ -549,7 +561,7 @@ async function carregarTabelaFirebase(tableId) {
   try {
     const doc = await db.collection('frotas_ativas').doc(tableId).get();
     if (doc.exists && doc.data().registros) return doc.data().registros;
-  } catch (error) {}
+  } catch (e) {}
   return [];
 }
 
@@ -563,9 +575,13 @@ async function carregarTudoFirebase() {
     if (!tbody) continue;
     tbody.innerHTML = '';
     registros.forEach(l => _criarLinha(id, l, true));
+    // Revalidar frotas carregadas
+    document.querySelectorAll(`#${id} tbody tr[data-salvo="true"] [data-campo="frota"]`)
+      .forEach(inp => _validarInputFrota(inp, id));
     localStorage.setItem(id, JSON.stringify(registros));
   }
-  atualizarTodosCronometros(); atualizarTodosContadores();
+  atualizarTodosCronometros();
+  atualizarTodosContadores();
   showToast('✅ Dados carregados do Firebase!', 'ok');
   document.getElementById('syncStatus').innerHTML = '🟢 Sincronizado';
   sincronizando = false;
@@ -573,6 +589,7 @@ async function carregarTudoFirebase() {
 
 async function syncFirebase() { await salvarTudoFirebase(); await carregarTudoFirebase(); }
 
+// Histórico
 const NOMES_TABELA_HIST = {
   'tabela-cam-proprio':'Caminhao Proprio','tabela-cam-terceiro':'Caminhao Terceiro',
   'tabela-cam-borracharia':'Borracharia','tabela-col-proprio':'Colhedora Propria',
@@ -580,18 +597,38 @@ const NOMES_TABELA_HIST = {
 };
 function salvarHistorico(tr, idTabela) {
   if (!db || !tr) return;
-  const frota=tr.querySelector('[data-campo="frota"]')?.value||'';
-  const dataEntrada=tr.querySelector('[data-campo="data"]')?.value||'';
-  const motivo=tr.querySelector('[data-campo="motivo"]')?.value||'';
-  const parada=tr.querySelector('[data-campo="parada"]')?.value||'';
-  const previsao=tr.querySelector('[data-campo="previsao"]')?.value||'';
-  const retorno=tr.querySelector('[data-campo="retorno"]')?.value||'';
-  const tipo=NOMES_TABELA_HIST[idTabela]||idTabela;
-  let duracao='';
-  try{if(parada){const hoje=new Date();const[hP,mP]=parada.split(':').map(Number);const base=new Date(hoje.getFullYear(),hoje.getMonth(),hoje.getDate(),hP,mP,0);const diffMs=hoje-base;if(diffMs>0){const h=Math.floor(diffMs/3600000);const m=Math.floor((diffMs%3600000)/60000);duracao=h+'h '+m+'min';}}}catch(e){}
-  db.collection('historico_paradas').add({frota,tipo,dataEntrada,motivo,parada,previsaoRetorno:previsao,horarioRetorno:retorno,duracao,timestamp:new Date().toISOString(),data:new Date().toLocaleDateString('pt-BR')}).catch(e=>console.warn('hist:',e));
+  const frota = tr.querySelector('[data-campo="frota"]')?.value || '';
+  const dataEntrada = tr.querySelector('[data-campo="data"]')?.value || '';
+  const motivo = tr.querySelector('[data-campo="motivo"]')?.value || '';
+  const parada = tr.querySelector('[data-campo="parada"]')?.value || '';
+  const previsao = tr.querySelector('[data-campo="previsao"]')?.value || '';
+  const retorno = tr.querySelector('[data-campo="retorno"]')?.value || '';
+  const tipo = NOMES_TABELA_HIST[idTabela] || idTabela;
+  let duracao = '';
+  try {
+    if (parada) {
+      const hoje = new Date();
+      const [hP, mP] = parada.split(':').map(Number);
+      const base = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate(), hP, mP, 0);
+      const diffMs = hoje - base;
+      if (diffMs > 0) {
+        const h = Math.floor(diffMs / 3600000);
+        const m = Math.floor((diffMs % 3600000) / 60000);
+        duracao = h + 'h ' + m + 'min';
+      }
+    }
+  } catch (e) {}
+  db.collection('historico_paradas').add({
+    frota, tipo, dataEntrada, motivo, parada,
+    previsaoRetorno: previsao, horarioRetorno: retorno,
+    duracao, timestamp: new Date().toISOString(),
+    data: new Date().toLocaleDateString('pt-BR')
+  }).catch(e => console.warn('hist:', e));
 }
 
+// ============================================================
+// DADOS DE FROTAS — ordenação numérica
+// ============================================================
 const FROTAS_DISPONIVEIS = {
   'tabela-cam-proprio': ['311015','311025','311115','311125','31115','311215','31125','311325','311425','311525','311625','311725','311825','311925','312025','31215','31225','31315','31316','31325','31415','31425','31515','31525','31615','31625','31725','31825','31925','31815','311225'],
   'tabela-cam-terceiro': ['91015','91065','91203','91207','91209','91210','91277','91280','91282','91284','91286','91291','91301','91374','91375','91376','91378','91379','91380','91383','91393','91394','91396','91397','91398','91399','91400','91410','91411','91412','91413'],
@@ -601,9 +638,23 @@ const FROTAS_DISPONIVEIS = {
   'tabela-transbordo': ['92060','92079','92194','92201','92252','92264','92266','92269','92465','92466','92498','92499','92501','92504','92505','92506','92508','92509','92606','92607','92630','92631','92632','92657','92658','92659','92660','92661','92662','92663','92664','92665','92666','92667','92668','92669','92670','92671','92672','92673','92674','92677','92678','92682','92686','92687','92688','92690','92691','92692','92693','92694','92695','92696','92697','92698','92701','92703','92704','92706','92707']
 };
 
+// [FIX 13] Ordenação numérica correta
+function _sortFrotas(arr) {
+  arr.sort((a, b) => {
+    const na = parseInt(a, 10), nb = parseInt(b, 10);
+    if (!isNaN(na) && !isNaN(nb)) return na - nb;
+    return a.localeCompare(b);
+  });
+}
+Object.values(FROTAS_DISPONIVEIS).forEach(_sortFrotas);
+
 const PREFIXOS_VALIDOS = {
-  'tabela-cam-proprio':    ['31'], 'tabela-cam-terceiro':   ['91'], 'tabela-cam-borracharia':['31','91'],
-  'tabela-col-proprio':    ['80'], 'tabela-col-terceiro':   ['93'], 'tabela-transbordo':     ['92']
+  'tabela-cam-proprio':    ['31'],
+  'tabela-cam-terceiro':   ['91'],
+  'tabela-cam-borracharia':['31','91'],
+  'tabela-col-proprio':    ['80'],
+  'tabela-col-terceiro':   ['93'],
+  'tabela-transbordo':     ['92']
 };
 
 const NOMES_TABELA = {
@@ -613,241 +664,831 @@ const NOMES_TABELA = {
 };
 
 const TABELAS = ['tabela-cam-proprio','tabela-cam-terceiro','tabela-cam-borracharia','tabela-col-proprio','tabela-col-terceiro','tabela-transbordo'];
-const CONTADORES = {'tabela-cam-proprio':'contador-cam-proprio','tabela-cam-terceiro':'contador-cam-terceiro','tabela-cam-borracharia':'contador-cam-borracharia','tabela-col-proprio':'contador-col-proprio','tabela-col-terceiro':'contador-col-terceiro','tabela-transbordo':'contador-transbordo'};
-const GCS = {'tabela-cam-proprio':'gc-cam-proprio','tabela-cam-terceiro':'gc-cam-terceiro','tabela-cam-borracharia':'gc-cam-borracharia','tabela-col-proprio':'gc-col-proprio','tabela-col-terceiro':'gc-col-terceiro','tabela-transbordo':'gc-transbordo'};
-const PILLS = {'tabela-cam-proprio':'pill-caminhao','tabela-cam-terceiro':'pill-caminhao','tabela-cam-borracharia':'pill-caminhao','tabela-col-proprio':'pill-colhedora','tabela-col-terceiro':'pill-colhedora','tabela-transbordo':'pill-transbordo'};
+const CONTADORES = {
+  'tabela-cam-proprio':'contador-cam-proprio','tabela-cam-terceiro':'contador-cam-terceiro',
+  'tabela-cam-borracharia':'contador-cam-borracharia','tabela-col-proprio':'contador-col-proprio',
+  'tabela-col-terceiro':'contador-col-terceiro','tabela-transbordo':'contador-transbordo'
+};
+const GCS = {
+  'tabela-cam-proprio':'gc-cam-proprio','tabela-cam-terceiro':'gc-cam-terceiro',
+  'tabela-cam-borracharia':'gc-cam-borracharia','tabela-col-proprio':'gc-col-proprio',
+  'tabela-col-terceiro':'gc-col-terceiro','tabela-transbordo':'gc-transbordo'
+};
+const PILLS = {
+  'tabela-cam-proprio':'pill-caminhao','tabela-cam-terceiro':'pill-caminhao',
+  'tabela-cam-borracharia':'pill-caminhao','tabela-col-proprio':'pill-colhedora',
+  'tabela-col-terceiro':'pill-colhedora','tabela-transbordo':'pill-transbordo'
+};
 const SEM_BORRACHARIA = ['tabela-cam-proprio','tabela-cam-terceiro','tabela-col-proprio','tabela-col-terceiro','tabela-transbordo'];
 
 let trPendente = null, tabelaPendente = null;
 const _alarmeSet = new Set();
 
-function _prefixoValido(frota, idTabela) { const p = PREFIXOS_VALIDOS[idTabela]||[]; return p.some(pr=>frota.startsWith(pr)); }
-function _autoCadastrarFrota(frota, idTabela) { if(!frota||frota.length<4||!_prefixoValido(frota,idTabela)||FROTAS_DISPONIVEIS[idTabela].includes(frota)) return; FROTAS_DISPONIVEIS[idTabela].push(frota); FROTAS_DISPONIVEIS[idTabela].sort(); showToast('✅ Frota '+frota+' cadastrada!','ok'); }
-function _carregarFrotasCustom() { TABELAS.forEach(id=>{const c=JSON.parse(localStorage.getItem('_frotas_custom_'+id)||'[]');c.forEach(f=>{if(!FROTAS_DISPONIVEIS[id].includes(f))FROTAS_DISPONIVEIS[id].push(f);});FROTAS_DISPONIVEIS[id].sort();});}
-function _validarInputFrota(inp,id){ const f=inp.value.trim(); if(!f){inp.style.borderColor='transparent';return true;} if(_prefixoValido(f,id)){inp.style.borderColor='rgba(16,185,129,.6)';inp.style.background='rgba(16,185,129,.06)';return true;}else{inp.style.borderColor='#ef4444';inp.style.background='rgba(239,68,68,.08)';return false;} }
-function mostrarModalAtraso(tr,id){ trPendente=tr; tabelaPendente=id; const f=tr.querySelector('[data-campo="frota"]')?.value||"S/N"; document.getElementById('modalFrotaNum').textContent=f; document.getElementById('modalAtraso').style.display='flex';}
-function escolhaModal(op){ document.getElementById('modalAtraso').style.display='none'; if(!trPendente)return; if(op==='mais'){ const inp=trPendente.querySelector('[data-campo="previsao"]'); trPendente.dataset.tempoAdicionado="true"; _renderizarIconeRelogio(trPendente); inp.focus(); inp.select(); trPendente=null; }else{ const f=trPendente.querySelector('[data-campo="frota"]').value; const _tr=trPendente,_id=tabelaPendente; trPendente=null; salvarHistorico(_tr,_id); _tr.remove(); _salvarDados(_id); atualizarTodosContadores(); showToast('Frota '+f+' removida.','ok'); }}
-function tocarAlarme(){try{const c=new (AudioContext||webkitAudioContext)();[0,0.4,0.8].forEach(d=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.setValueAtTime(880,c.currentTime+d);g.gain.setValueAtTime(0.5,c.currentTime+d);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+d+0.35);o.start(c.currentTime+d);o.stop(c.currentTime+d+0.35);});}catch(e){}}
-function _renderizarIconeRelogio(tr){ const td=tr.querySelector('td'); if(tr.dataset.tempoAdicionado==='true' && !td.querySelector('.relogio-indicador')){const s=document.createElement('span');s.className='relogio-indicador';s.innerHTML='🕒';s.title='Tempo extra adicionado';td.appendChild(s);} }
-function _mascaraData(inp){ let v=inp.value.replace(/\D/g,''); if(v.length>2)v=v.slice(0,2)+'/'+v.slice(2); if(v.length>5)v=v.slice(0,5)+'/'+v.slice(5); inp.value=v.slice(0,10);}
-function _interpretarDuracao(inp){ let v=inp.value.replace(/\D/g,'').slice(0,4); if(!v){inp.value='';return;} let hh,mm; if(v.length<=2){hh=0;mm=parseInt(v,10);}else{mm=parseInt(v.slice(-2),10);hh=parseInt(v.slice(0,v.length-2),10);} if(mm>59){hh+=Math.floor(mm/60);mm=mm%60;} const result=String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0'); if(result==='00:00'){inp.value='';return;} inp.value=result;}
-function _dataBase(tr){
-  const v=tr.querySelector('[data-campo="data"]').value.trim(), m=v.match(/^(\d{2})\/(\d{2})\/(\d{2,4})$/);
-  if(!m)return null;
-  const [_,d,mo,a]=m, af=a.length===2?'20'+a:a;
-  const day=parseInt(d,10), month=parseInt(mo,10), year=parseInt(af,10);
-  const t=new Date(year, month - 1, day);
-  if(t.getFullYear()===year && (t.getMonth()+1)===month && t.getDate()===day){
-    return `${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+// ============================================================
+// VALIDAÇÃO E FROTAS
+// ============================================================
+function _prefixoValido(frota, idTabela) {
+  return (PREFIXOS_VALIDOS[idTabela] || []).some(pr => frota.startsWith(pr));
+}
+function _autoCadastrarFrota(frota, idTabela) {
+  if (!frota || frota.length < 4 || !_prefixoValido(frota, idTabela) || FROTAS_DISPONIVEIS[idTabela].includes(frota)) return;
+  FROTAS_DISPONIVEIS[idTabela].push(frota);
+  _sortFrotas(FROTAS_DISPONIVEIS[idTabela]);
+  showToast('✅ Frota ' + frota + ' cadastrada!', 'ok');
+}
+function _carregarFrotasCustom() {
+  TABELAS.forEach(id => {
+    const c = JSON.parse(localStorage.getItem('_frotas_custom_' + id) || '[]');
+    c.forEach(f => { if (!FROTAS_DISPONIVEIS[id].includes(f)) FROTAS_DISPONIVEIS[id].push(f); });
+    _sortFrotas(FROTAS_DISPONIVEIS[id]);
+  });
+}
+function _validarInputFrota(inp, id) {
+  const f = inp.value.trim();
+  if (!f) { inp.style.borderColor = 'transparent'; return true; }
+  if (_prefixoValido(f, id)) {
+    inp.style.borderColor = 'rgba(16,185,129,.6)';
+    inp.style.background = 'rgba(16,185,129,.06)';
+    return true;
+  } else {
+    inp.style.borderColor = '#ef4444';
+    inp.style.background = 'rgba(239,68,68,.08)';
+    return false;
   }
+}
+
+// ============================================================
+// MODAL DE ATRASO — [FIX 5] com tempo extra personalizável
+// ============================================================
+function mostrarModalAtraso(tr, id) {
+  trPendente = tr;
+  tabelaPendente = id;
+  const f = tr.querySelector('[data-campo="frota"]')?.value || 'S/N';
+  document.getElementById('modalFrotaNum').textContent = f;
+  document.getElementById('modalTempoExtra').value = '';
+  document.getElementById('modalAtraso').style.display = 'flex';
+  setTimeout(() => document.getElementById('modalTempoExtra').focus(), 100);
+}
+
+function escolhaModal(op) {
+  document.getElementById('modalAtraso').style.display = 'none';
+  if (!trPendente) return;
+
+  if (op === 'mais') {
+    const tempoRaw = document.getElementById('modalTempoExtra').value.trim();
+    const inpPrevisao = trPendente.querySelector('[data-campo="previsao"]');
+
+    if (tempoRaw) {
+      // Parsear tempo extra: "30" = 30min, "130" = 1h30min
+      const v = tempoRaw.replace(/\D/g, '').slice(0, 4);
+      let extraMin = 0;
+      if (v.length <= 2) {
+        extraMin = parseInt(v, 10) || 0;
+      } else {
+        const mm = parseInt(v.slice(-2), 10) || 0;
+        const hh = parseInt(v.slice(0, v.length - 2), 10) || 0;
+        extraMin = hh * 60 + mm;
+      }
+      if (extraMin > 0) {
+        // Somar ao previsao atual
+        let atualMin = 0;
+        const pv = inpPrevisao.value.trim();
+        if (pv && /^\d{1,2}:\d{2}$/.test(pv)) {
+          const [h, m] = pv.split(':').map(Number);
+          atualMin = h * 60 + m;
+        }
+        const novoTotal = atualMin + extraMin;
+        const nH = Math.floor(novoTotal / 60);
+        const nM = novoTotal % 60;
+        inpPrevisao.value = String(nH).padStart(2, '0') + ':' + String(nM).padStart(2, '0');
+        inpPrevisao.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    }
+
+    trPendente.dataset.tempoAdicionado = 'true';
+    _renderizarIconeRelogio(trPendente);
+
+    // Recalcular retorno com nova duração
+    _recalcular(inpPrevisao);
+
+    // Salvar
+    const _id = trPendente.closest('table').id;
+    _salvarDados(_id);
+
+    // [FIX] Limpar alarme antigo para este frota para poder re-disparar
+    const frota = trPendente.querySelector('[data-campo="frota"]')?.value || '';
+    _alarmeSet.forEach(key => { if (key.startsWith(frota + '|')) _alarmeSet.delete(key); });
+
+    showToast('⏱ Tempo extra adicionado à frota ' + frota, 'ok');
+    trPendente = null;
+    document.getElementById('modalTempoExtra').value = '';
+
+  } else if (op === 'remover') {
+    const f = trPendente.querySelector('[data-campo="frota"]').value;
+    const _tr = trPendente, _id = tabelaPendente;
+    trPendente = null;
+    salvarHistorico(_tr, _id);
+    _tr.remove();
+    _salvarDados(_id);
+    atualizarTodosContadores();
+    showToast('Frota ' + f + ' removida.', 'ok');
+    document.getElementById('modalTempoExtra').value = '';
+
+  } else if (op === 'fechar') {
+    trPendente = null;
+    document.getElementById('modalTempoExtra').value = '';
+  }
+}
+
+// Fechar modal com Enter (na input de tempo)
+document.addEventListener('DOMContentLoaded', () => {
+  const inp = document.getElementById('modalTempoExtra');
+  if (inp) inp.addEventListener('keydown', e => { if (e.key === 'Enter') escolhaModal('mais'); });
+});
+
+// ============================================================
+// ALARME
+// ============================================================
+function tocarAlarme() {
+  try {
+    const c = new (window.AudioContext || window.webkitAudioContext)();
+    [0, 0.4, 0.8].forEach(d => {
+      const o = c.createOscillator(), g = c.createGain();
+      o.connect(g); g.connect(c.destination);
+      o.type = 'sine'; o.frequency.setValueAtTime(880, c.currentTime + d);
+      g.gain.setValueAtTime(0.5, c.currentTime + d);
+      g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + d + 0.35);
+      o.start(c.currentTime + d); o.stop(c.currentTime + d + 0.35);
+    });
+  } catch (e) {}
+}
+
+function _renderizarIconeRelogio(tr) {
+  const td = tr.querySelector('td');
+  if (tr.dataset.tempoAdicionado === 'true' && !td.querySelector('.relogio-indicador')) {
+    const s = document.createElement('span');
+    s.className = 'relogio-indicador'; s.innerHTML = '🕒';
+    s.title = 'Tempo extra adicionado';
+    td.appendChild(s);
+  }
+}
+
+// ============================================================
+// UTILITÁRIOS DE DATA / HORA
+// ============================================================
+function _mascaraData(inp) {
+  let v = inp.value.replace(/\D/g, '');
+  if (v.length > 2) v = v.slice(0, 2) + '/' + v.slice(2);
+  if (v.length > 5) v = v.slice(0, 5) + '/' + v.slice(5);
+  inp.value = v.slice(0, 10);
+}
+
+// [FIX 2] Duração livre: aceita número puro (minutos) ou HH:MM
+function _interpretarDuracao(inp) {
+  let raw = inp.value.trim().replace(/[^0-9:]/g, '');
+  if (!raw) { inp.value = ''; return; }
+
+  // Se já está no formato HH:MM, normalizar
+  if (raw.includes(':')) {
+    const parts = raw.split(':');
+    let hh = parseInt(parts[0], 10) || 0;
+    let mm = parseInt(parts[1], 10) || 0;
+    if (mm > 59) { hh += Math.floor(mm / 60); mm = mm % 60; }
+    if (hh === 0 && mm === 0) { inp.value = ''; return; }
+    inp.value = String(hh).padStart(2, '0') + ':' + String(mm).padStart(2, '0');
+    return;
+  }
+
+  // Número puro: até 2 dígitos = minutos, 3+ dígitos = últimos 2 são min, resto são horas
+  const v = raw.replace(/\D/g, '').slice(0, 4);
+  let hh, mm;
+  if (v.length <= 2) { hh = 0; mm = parseInt(v, 10); }
+  else { mm = parseInt(v.slice(-2), 10); hh = parseInt(v.slice(0, v.length - 2), 10); }
+  if (mm > 59) { hh += Math.floor(mm / 60); mm = mm % 60; }
+  if (hh === 0 && mm === 0) { inp.value = ''; return; }
+  inp.value = String(hh).padStart(2, '0') + ':' + String(mm).padStart(2, '0');
+}
+
+function _dataBase(tr) {
+  const v = tr.querySelector('[data-campo="data"]').value.trim();
+  const m = v.match(/^(\d{2})\/(\d{2})\/(\d{2,4})$/);
+  if (!m) return null;
+  const [, d, mo, a] = m;
+  const af = a.length === 2 ? '20' + a : a;
+  const day = parseInt(d, 10), month = parseInt(mo, 10), year = parseInt(af, 10);
+  const t = new Date(year, month - 1, day);
+  if (t.getFullYear() === year && (t.getMonth() + 1) === month && t.getDate() === day)
+    return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
   return null;
 }
-function _recalcular(inp){
-  const tr=inp.closest('tr'), idT=inp.closest('table').id, parada=tr.querySelector('[data-campo="parada"]').value, previsao=tr.querySelector('[data-campo="previsao"]').value.trim(), inpRet=tr.querySelector('[data-campo="retorno"]'), span=tr.querySelector('.cronometro'), valida=/^\d{1,2}:\d{2}$/.test(previsao);
-  const previsaoZero = previsao==='00:00'||previsao==='0:00';
-  if(!parada||!valida||previsaoZero){
-    tr.removeAttribute('data-hora-retorno'); inpRet.value=''; tr.classList.remove('linha-atrasada');
+
+// ============================================================
+// CÁLCULO / RECALCULAR
+// ============================================================
+function _recalcular(inp) {
+  const tr = inp.closest('tr');
+  const parada = tr.querySelector('[data-campo="parada"]').value;
+  const previsao = tr.querySelector('[data-campo="previsao"]').value.trim();
+  const inpRet = tr.querySelector('[data-campo="retorno"]');
+  const valida = /^\d{1,2}:\d{2}$/.test(previsao);
+  const previsaoZero = previsao === '00:00' || previsao === '0:00';
+
+  if (!parada || !valida || previsaoZero) {
+    tr.removeAttribute('data-hora-retorno');
+    inpRet.value = '';
+    tr.classList.remove('linha-atrasada');
     _atualizarCronometroLinha(tr);
     return;
   }
-  let dataISO=_dataBase(tr); if(!dataISO){const hj=new Date(); dataISO=`${hj.getFullYear()}-${String(hj.getMonth()+1).padStart(2,'0')}-${String(hj.getDate()).padStart(2,'0')}`;}
-  const [hP,mP]=parada.split(':').map(Number), [hPv,mPv]=previsao.split(':').map(Number), total=hP*60+mP+hPv*60+mPv, dias=Math.floor(total/1440), hR=Math.floor((total%1440)/60), mR=total%60;
-  inpRet.value=`${String(hR).padStart(2,'0')}:${String(mR).padStart(2,'0')}`;
-  const dt=new Date(dataISO+'T00:00:00'); dt.setDate(dt.getDate()+dias); dt.setHours(hR,mR,0,0);
-  tr.setAttribute('data-hora-retorno',dt.toISOString()); _atualizarCronometroLinha(tr);
+
+  let dataISO = _dataBase(tr);
+  if (!dataISO) {
+    const hj = new Date();
+    dataISO = `${hj.getFullYear()}-${String(hj.getMonth()+1).padStart(2,'0')}-${String(hj.getDate()).padStart(2,'0')}`;
+  }
+
+  const [hP, mP] = parada.split(':').map(Number);
+  const [hPv, mPv] = previsao.split(':').map(Number);
+  const total = hP * 60 + mP + hPv * 60 + mPv;
+  const dias = Math.floor(total / 1440);
+  const hR = Math.floor((total % 1440) / 60);
+  const mR = total % 60;
+
+  inpRet.value = `${String(hR).padStart(2,'0')}:${String(mR).padStart(2,'0')}`;
+  const dt = new Date(dataISO + 'T00:00:00');
+  dt.setDate(dt.getDate() + dias);
+  dt.setHours(hR, mR, 0, 0);
+  tr.setAttribute('data-hora-retorno', dt.toISOString());
+  _atualizarCronometroLinha(tr);
 }
-function _atualizarCronometroLinha(tr){
-  const iso=tr.getAttribute('data-hora-retorno'), span=tr.querySelector('.cronometro');
-  if(!span)return;
-  if(!iso){
-    const parada=tr.querySelector('[data-campo="parada"]')?.value;
-    const dataISO=_dataBase(tr);
-    if(parada && dataISO){
-      const [h,m]=parada.split(':').map(Number), [y, mon, d]=dataISO.split('-').map(Number);
-      const dtS=new Date(y, mon - 1, d, h, m, 0);
-      const diff=new Date()-dtS;
-      if(diff>0){
-        const hh=Math.floor(diff/3600000), mm=Math.floor((diff%3600000)/60000);
-        span.textContent=`Parado ${hh}h ${mm}min`;
-        span.className='cronometro cronometro-parado';
+
+// [FIX 4] Atualizar retorno manualmente (após ctrl+dblclick)
+function _atualizarRetornoManual(tr, timeValue) {
+  if (!timeValue || !/^\d{1,2}:\d{2}$/.test(timeValue)) return;
+  let dataISO = _dataBase(tr);
+  if (!dataISO) {
+    const hj = new Date();
+    dataISO = `${hj.getFullYear()}-${String(hj.getMonth()+1).padStart(2,'0')}-${String(hj.getDate()).padStart(2,'0')}`;
+  }
+  const [h, m] = timeValue.split(':').map(Number);
+  const [y, mon, d] = dataISO.split('-').map(Number);
+  const dt = new Date(y, mon - 1, d, h, m, 0);
+  // Se hora retorno < hora parada, assumir dia seguinte
+  const paradaVal = tr.querySelector('[data-campo="parada"]')?.value;
+  if (paradaVal) {
+    const [hP, mP] = paradaVal.split(':').map(Number);
+    if (h * 60 + m < hP * 60 + mP) dt.setDate(dt.getDate() + 1);
+  }
+  tr.setAttribute('data-hora-retorno', dt.toISOString());
+  _atualizarCronometroLinha(tr);
+  const id = tr.closest('table')?.id;
+  if (id) _salvarDados(id);
+}
+
+// ============================================================
+// [FIX 6] CRONÔMETRO + BARRA DE PROGRESSO
+// ============================================================
+function _atualizarCronometroLinha(tr) {
+  const iso = tr.getAttribute('data-hora-retorno');
+  const span = tr.querySelector('.cronometro');
+  const progressWrap = tr.querySelector('.progress-wrap');
+  const progressBar = tr.querySelector('.progress-bar');
+  if (!span) return;
+
+  if (!iso) {
+    // Sem previsão: mostrar tempo parado
+    const parada = tr.querySelector('[data-campo="parada"]')?.value;
+    const dataISO = _dataBase(tr);
+    if (parada && dataISO) {
+      const [h, m] = parada.split(':').map(Number);
+      const [y, mon, d] = dataISO.split('-').map(Number);
+      const dtS = new Date(y, mon - 1, d, h, m, 0);
+      const diff = new Date() - dtS;
+      if (diff > 0) {
+        const hh = Math.floor(diff / 3600000);
+        const mm = Math.floor((diff % 3600000) / 60000);
+        span.textContent = `Parado ${hh}h ${mm}min`;
+        span.className = 'cronometro cronometro-parado';
         tr.classList.remove('linha-atrasada');
+        if (progressWrap) progressWrap.style.display = 'none';
         return;
       }
     }
-    span.textContent='--:--';span.className='cronometro';tr.classList.remove('linha-atrasada');
+    span.textContent = '--:--';
+    span.className = 'cronometro';
+    tr.classList.remove('linha-atrasada');
+    if (progressWrap) progressWrap.style.display = 'none';
     return;
   }
-  const frota=tr.querySelector('[data-campo="frota"]')?.value||'', diff=new Date(iso)-new Date(); if(diff<=0){ const a=Math.abs(diff), h=Math.floor(a/3600000), m=Math.floor((a%3600000)/60000); span.textContent=`Atrasado ${h}h ${m}min`; span.className='cronometro cronometro-atrasado'; tr.classList.add('linha-atrasada'); const key=frota+'|'+iso; if(frota&&!_alarmeSet.has(key)){_alarmeSet.add(key);tocarAlarme();if(tr.dataset.salvo==='true')mostrarModalAtraso(tr,tr.closest('table').id); showToast(`🔔 Frota ${frota} com retorno atrasado!`,'warn');} }else{ const h=Math.floor(diff/3600000), m=Math.floor((diff%3600000)/60000); span.textContent=`Falta ${h}h ${m}min`; span.className='cronometro cronometro-ativo'; tr.classList.remove('linha-atrasada');}
+
+  const frota = tr.querySelector('[data-campo="frota"]')?.value || '';
+  const diff = new Date(iso) - new Date();
+
+  // Calcular progresso para barra
+  if (progressWrap && progressBar) {
+    const paradaVal = tr.querySelector('[data-campo="parada"]')?.value;
+    const dataISO = _dataBase(tr);
+    if (paradaVal && dataISO) {
+      const [hP, mP] = paradaVal.split(':').map(Number);
+      const [y, mon, d] = dataISO.split('-').map(Number);
+      const startTime = new Date(y, mon - 1, d, hP, mP, 0);
+      const endTime = new Date(iso);
+      const totalMs = endTime - startTime;
+      if (totalMs > 0) {
+        const elapsed = new Date() - startTime;
+        const pct = Math.min(Math.max((elapsed / totalMs) * 100, 0), 100);
+        progressWrap.style.display = 'block';
+        progressBar.style.width = pct + '%';
+        if (pct < 70) progressBar.className = 'progress-bar progress-ok';
+        else if (pct < 100) progressBar.className = 'progress-bar progress-warn';
+        else progressBar.className = 'progress-bar progress-over';
+      } else {
+        progressWrap.style.display = 'none';
+      }
+    } else {
+      progressWrap.style.display = 'none';
+    }
+  }
+
+  if (diff <= 0) {
+    const a = Math.abs(diff);
+    const h = Math.floor(a / 3600000), m = Math.floor((a % 3600000) / 60000);
+    span.textContent = `Atrasado ${h}h ${m}min`;
+    span.className = 'cronometro cronometro-atrasado';
+    tr.classList.add('linha-atrasada');
+    const key = frota + '|' + iso;
+    if (frota && !_alarmeSet.has(key)) {
+      _alarmeSet.add(key);
+      tocarAlarme();
+      if (tr.dataset.salvo === 'true') mostrarModalAtraso(tr, tr.closest('table').id);
+      showToast(`🔔 Frota ${frota} com retorno atrasado!`, 'warn');
+    }
+  } else {
+    const h = Math.floor(diff / 3600000), m = Math.floor((diff % 3600000) / 60000);
+    span.textContent = `Falta ${h}h ${m}min`;
+    span.className = 'cronometro cronometro-ativo';
+    tr.classList.remove('linha-atrasada');
+  }
 }
-function atualizarTodosCronometros(){ TABELAS.forEach(id=>{document.querySelector(`#${id} tbody`)?.querySelectorAll('tr[data-salvo="true"]').forEach(_atualizarCronometroLinha);});}
-setInterval(()=>{ atualizarTodosCronometros(); atualizarTodosContadores(); },1000);
-function _criarAutocomplete(inp,id){ const lista=FROTAS_DISPONIVEIS[id]||[], wrap=document.createElement('div');wrap.className='ac-wrap';inp.parentNode.insertBefore(wrap,inp);wrap.appendChild(inp);const drop=document.createElement('div');drop.className='ac-list';wrap.appendChild(drop);let idx=-1; const filtrar=q=>{drop.innerHTML='';idx=-1;if(!q){drop.classList.remove('show');return;}const m=lista.filter(f=>f.includes(q)).slice(0,12);if(!m.length){drop.classList.remove('show');return;}m.forEach(f=>{const it=document.createElement('div');it.className='ac-item';it.innerHTML=f.replace(q,`<mark>${q}</mark>`);it.addEventListener('mousedown',e=>{e.preventDefault();inp.value=f;inp.dispatchEvent(new Event('input',{bubbles:true}));drop.classList.remove('show');});drop.appendChild(it);});drop.classList.add('show');}; inp.addEventListener('input',()=>filtrar(inp.value.trim())); inp.addEventListener('focus',()=>{if(inp.value.trim())filtrar(inp.value.trim());}); inp.addEventListener('keydown',e=>{const its=drop.querySelectorAll('.ac-item');if(!its.length)return;if(e.key==='ArrowDown'){e.preventDefault();idx=Math.min(idx+1,its.length-1);its.forEach((it,i)=>it.classList.toggle('ativo',i===idx));}else if(e.key==='ArrowUp'){e.preventDefault();idx=Math.max(idx-1,0);its.forEach((it,i)=>it.classList.toggle('ativo',i===idx));}else if(e.key==='Enter'&&idx>=0){e.preventDefault();inp.value=its[idx].textContent;inp.dispatchEvent(new Event('input',{bubbles:true}));drop.classList.remove('show');}else if(e.key==='Escape')drop.classList.remove('show');}); document.addEventListener('click',e=>{if(!wrap.contains(e.target))drop.classList.remove('show');});}
-function _ativarListeners(tr,id,salvo){ const inpData=tr.querySelector('[data-campo="data"]'), inpMotivo=tr.querySelector('[data-campo="motivo"]'), inpParada=tr.querySelector('[data-campo="parada"]'), inpPrevisao=tr.querySelector('[data-campo="previsao"]'), inpFrota=tr.querySelector('[data-campo="frota"]'); inpData.addEventListener('input',()=>{_mascaraData(inpData);_recalcular(inpData);if(tr.dataset.salvo==='true')_salvarDados(id);}); inpParada.addEventListener('input',()=>{_recalcular(inpParada);if(tr.dataset.salvo==='true')_salvarDados(id);}); inpPrevisao.addEventListener('input',()=>{_recalcular(inpPrevisao);if(tr.dataset.salvo==='true')_salvarDados(id);}); inpPrevisao.addEventListener('blur',()=>{_interpretarDuracao(inpPrevisao);_recalcular(inpPrevisao);if(tr.dataset.salvo==='true')_salvarDados(id);}); if(salvo){inpMotivo.addEventListener('input',()=>_salvarDados(id));inpFrota.addEventListener('input',()=>_salvarDados(id));} const inpFrotaEl=tr.querySelector('[data-campo="frota"]'); if(inpFrotaEl){ inpFrotaEl.addEventListener('input',()=>_validarInputFrota(inpFrotaEl,id)); inpFrotaEl.addEventListener('blur',()=>_validarInputFrota(inpFrotaEl,id));} const btnSalvar=tr.querySelector('.btn-salvar'); if(btnSalvar)btnSalvar.addEventListener('click',()=>_confirmarLinha(tr,id)); tr.querySelector('.btn-del').addEventListener('click',()=>{ const f=tr.querySelector('[data-campo="frota"]').value.trim()||'este registro'; salvarHistorico(tr,id); tr.remove(); if(tr.dataset.salvo==='true')_salvarDados(id); atualizarTodosContadores(); showToast('Frota '+f+' removida.','ok');});}
-function _confirmarLinha(tr,id){ const f=tr.querySelector('[data-campo="frota"]').value.trim(); if(!f){showToast('⚠️ Preencha a frota','warn');tr.querySelector('[data-campo="frota"]').focus();return;} if(!_prefixoValido(f,id)){showToast('❌ Frota '+f+' inválida para '+NOMES_TABELA[id],'err');tr.querySelector('[data-campo="frota"]').focus();return;} _autoCadastrarFrota(f,id); tr.setAttribute('data-salvo','true'); const btnS=tr.querySelector('.btn-salvar'); if(btnS)btnS.remove(); const inpMotivo=tr.querySelector('[data-campo="motivo"]'), inpFrota=tr.querySelector('[data-campo="frota"]'); inpMotivo.addEventListener('input',()=>_salvarDados(id)); inpFrota.addEventListener('input',()=>_salvarDados(id)); _salvarDadosOriginalImpl(id); if(db){ salvarTabelaFirebase(id).then(ok=>{ if(ok){showToast('✅ Frota '+f+' salva no Firebase!','ok'); document.getElementById('syncStatus').innerHTML='🟢 Salvo';}else{showToast('⚠️ Firebase falhou, salvo local.','warn');} }); }else{ showToast('✅ Frota '+f+' registrada (offline)!','ok'); } atualizarTodosContadores();}
-function _criarLinha(id,d,salvo){ const _tbl=document.getElementById(id); const tbody=_tbl?_tbl.querySelector('tbody'):null; if(!tbody){console.error('tbody nao encontrado:',id);return;} const tr=document.createElement('tr'); tr.setAttribute('data-salvo',salvo?'true':'false'); if(d.dataRetornoCompleta)tr.setAttribute('data-hora-retorno',d.dataRetornoCompleta); if(d.tempoAdicionado)tr.setAttribute('data-tempo-adicionado','true'); const tdF=document.createElement('td'); tdF.style.position='relative'; const inpF=document.createElement('input'); inpF.type='text'; inpF.dataset.campo='frota'; inpF.placeholder=({'tabela-cam-proprio':'Ex: 311015','tabela-cam-terceiro':'Ex: 91015','tabela-cam-borracharia':'Ex: 311015 ou 91015','tabela-col-proprio':'Ex: 80224','tabela-col-terceiro':'Ex: 93059','tabela-transbordo':'Ex: 92079'})[id]||'Ex: frota'; inpF.value=d.frota||''; if(salvo)inpF.addEventListener('input',()=>_salvarDados(id)); tdF.appendChild(inpF); tr.appendChild(tdF); const tpl=document.createElement('template'); tpl.innerHTML=`<td><input type="text" data-campo="data" placeholder="dd/mm/aaaa" maxlength="10" value="${d.dataEntrada||''}"></td><td><input type="text" data-campo="motivo" placeholder="Descreva o motivo" value="${(d.motivo||'').replace(/"/g,'&quot;')}"></td><td><input type="time" data-campo="parada" value="${d.horarioParada||''}"></td><td><input type="text" data-campo="previsao" placeholder="Ex: 130 = 1h30" maxlength="5" value="${d.previsaoRetorno||''}"></td><td><input type="text" data-campo="retorno" readonly placeholder="Calculado" value="${d.horarioRetorno||''}"></td><td><span class="cronometro">--:--</span></td><td><div class="acoes-cell">${salvo?'':'<button class="btn-salvar">✔ Salvar</button>'}<button class="btn-del">Remover</button></div></td>`; while(tpl.content.firstChild)tr.appendChild(tpl.content.firstChild); tbody.appendChild(tr); _ativarListeners(tr,id,salvo); _criarAutocomplete(inpF,id); _renderizarIconeRelogio(tr);}
-function adicionarLinha(id){ const hoje=new Date(); const data=`${String(hoje.getDate()).padStart(2,'0')}/${String(hoje.getMonth()+1).padStart(2,'0')}/${hoje.getFullYear()}`; _criarLinha(id,{dataEntrada:data},false);}
-function _salvarDadosOriginalImpl(id){ const rows=[]; document.querySelector(`#${id} tbody`)?.querySelectorAll('tr[data-salvo="true"]').forEach(tr=>rows.push({frota:tr.querySelector('[data-campo="frota"]')?.value||'',dataEntrada:tr.querySelector('[data-campo="data"]')?.value||'',motivo:tr.querySelector('[data-campo="motivo"]')?.value||'',horarioParada:tr.querySelector('[data-campo="parada"]')?.value||'',previsaoRetorno:tr.querySelector('[data-campo="previsao"]')?.value||'',horarioRetorno:tr.querySelector('[data-campo="retorno"]')?.value||'',dataRetornoCompleta:tr.getAttribute('data-hora-retorno')||'',tempoAdicionado:tr.dataset.tempoAdicionado==='true'})); localStorage.setItem(id,JSON.stringify(rows)); _registrarUltimaAtualizacao();}
-function _salvarDados(id){ _salvarDadosOriginalImpl(id); if(db){ setTimeout(()=>salvarTabelaFirebase(id), 100); } }
-function _registrarUltimaAtualizacao(){ const agora=new Date(), ts=agora.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'}); localStorage.setItem('_frotas_ultima_atualizacao',ts); const el=document.getElementById('ultimaAtualizacao'); if(el){el.textContent='🕐 Última atualização: '+ts;el.style.color='var(--green)';}}
-function _carregarUltimaAtualizacao(){ const ts=localStorage.getItem('_frotas_ultima_atualizacao'), el=document.getElementById('ultimaAtualizacao'); if(!el)return; if(ts){el.textContent='🕐 Última atualização: '+ts;el.style.color='var(--green)';}else{el.textContent='🕐 Nenhum dado salvo ainda';el.style.color='var(--muted)';}}
-function atualizarTodosContadores(){ let foraBorr=0,geral=0,totCol=0; const pills={'pill-caminhao':0,'pill-colhedora':0,'pill-transbordo':0}; TABELAS.forEach(id=>{ const n=document.querySelector(`#${id} tbody`)?.querySelectorAll('tr[data-salvo="true"]').length||0; const cel=document.getElementById(CONTADORES[id]), gc=document.getElementById(GCS[id]); if(cel)cel.textContent=n; if(gc)gc.textContent=n; pills[PILLS[id]]=(pills[PILLS[id]]||0)+n; geral+=n; if(SEM_BORRACHARIA.includes(id))foraBorr+=n; if(['tabela-col-proprio','tabela-col-terceiro','tabela-transbordo'].includes(id))totCol+=n; }); Object.entries(pills).forEach(([id,n])=>{const el=document.getElementById(id);if(el)el.textContent=n;}); document.getElementById('tot-fora').textContent=foraBorr; document.getElementById('tot-geral').textContent=geral; const elCol=document.getElementById('tot-geral-col'); if(elCol)elCol.textContent=totCol;}
-function toggleSec(k){ document.getElementById('body-'+k)?.classList.toggle('hidden'); document.getElementById('hdr-'+k)?.classList.toggle('collapsed');}
-function exportarCSV(){const NOMES={'tabela-cam-proprio':'Caminhão Próprio','tabela-cam-terceiro':'Caminhão Terceiro','tabela-cam-borracharia':'Borracharia','tabela-col-proprio':'Colhedora Própria','tabela-col-terceiro':'Colhedora Terceira','tabela-transbordo':'Transbordo Terceiro'}; let csv='\uFEFF'; TABELAS.forEach(id=>{csv+=NOMES[id]+'\n'; csv+='Frota,Data Entrada,Motivo,Hora Parada,Previsão Retorno,Horário Retorno\n'; const linhas=JSON.parse(localStorage.getItem(id)||'[]'); linhas.forEach(l=>{csv+=`${l.frota||''},${l.dataEntrada||''},${l.motivo||''},${l.horarioParada||''},${l.previsaoRetorno||''},${l.horarioRetorno||''}\n`;}); csv+='\n';}); const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'})); a.download='frotas_paradas.csv'; a.click();}
-function toggleTema(){ const l=document.body.classList.toggle('light'); document.getElementById('btnTema').textContent=l?'☀️ Claro':'🌙 Escuro'; localStorage.setItem('tema',l?'light':'dark');}
-function showToast(msg,t='ok'){ const tst=document.getElementById('toast'); tst.textContent=msg; tst.className='show '+t; clearTimeout(tst._t); tst._t=setTimeout(()=>{tst.className='';},3500);}
 
-// ========== Lógica de Abas ==========
+function atualizarTodosCronometros() {
+  TABELAS.forEach(id => {
+    document.querySelector(`#${id} tbody`)?.querySelectorAll('tr[data-salvo="true"]').forEach(_atualizarCronometroLinha);
+  });
+}
+setInterval(() => { atualizarTodosCronometros(); atualizarTodosContadores(); }, 1000);
+
+// ============================================================
+// AUTOCOMPLETE
+// ============================================================
+function _criarAutocomplete(inp, id) {
+  const lista = FROTAS_DISPONIVEIS[id] || [];
+  const wrap = document.createElement('div');
+  wrap.className = 'ac-wrap';
+  inp.parentNode.insertBefore(wrap, inp);
+  wrap.appendChild(inp);
+  const drop = document.createElement('div');
+  drop.className = 'ac-list';
+  wrap.appendChild(drop);
+  let idx = -1;
+
+  const filtrar = q => {
+    drop.innerHTML = ''; idx = -1;
+    if (!q) { drop.classList.remove('show'); return; }
+    const m = lista.filter(f => f.includes(q)).slice(0, 12);
+    if (!m.length) { drop.classList.remove('show'); return; }
+    m.forEach(f => {
+      const it = document.createElement('div');
+      it.className = 'ac-item';
+      it.innerHTML = f.replace(q, `<mark>${q}</mark>`);
+      it.addEventListener('mousedown', e => {
+        e.preventDefault();
+        inp.value = f;
+        inp.dispatchEvent(new Event('input', { bubbles: true }));
+        drop.classList.remove('show');
+      });
+      drop.appendChild(it);
+    });
+    drop.classList.add('show');
+  };
+
+  inp.addEventListener('input', () => filtrar(inp.value.trim()));
+  inp.addEventListener('focus', () => { if (inp.value.trim()) filtrar(inp.value.trim()); });
+  inp.addEventListener('keydown', e => {
+    const its = drop.querySelectorAll('.ac-item');
+    if (!its.length) return;
+    if (e.key === 'ArrowDown') { e.preventDefault(); idx = Math.min(idx + 1, its.length - 1); its.forEach((it, i) => it.classList.toggle('ativo', i === idx)); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); idx = Math.max(idx - 1, 0); its.forEach((it, i) => it.classList.toggle('ativo', i === idx)); }
+    else if (e.key === 'Enter' && idx >= 0) { e.preventDefault(); inp.value = its[idx].textContent; inp.dispatchEvent(new Event('input', { bubbles: true })); drop.classList.remove('show'); }
+    else if (e.key === 'Escape') drop.classList.remove('show');
+  });
+  document.addEventListener('click', e => { if (!wrap.contains(e.target)) drop.classList.remove('show'); });
+}
+
+// ============================================================
+// [FIX 3 + FIX 4] LISTENERS — Hora Parada + Retorno com ctrl+dblclick
+// ============================================================
+function _ativarListeners(tr, id, salvo) {
+  const inpData    = tr.querySelector('[data-campo="data"]');
+  const inpMotivo  = tr.querySelector('[data-campo="motivo"]');
+  const inpParada  = tr.querySelector('[data-campo="parada"]');
+  const inpPrevisao= tr.querySelector('[data-campo="previsao"]');
+  const inpFrota   = tr.querySelector('[data-campo="frota"]');
+  const inpRetorno = tr.querySelector('[data-campo="retorno"]');
+
+  // Data
+  inpData.addEventListener('input', () => { _mascaraData(inpData); _recalcular(inpData); if (tr.dataset.salvo === 'true') _salvarDados(id); });
+
+  // Parada: listener de input (funciona quando desbloqueado)
+  inpParada.addEventListener('input', () => { _recalcular(inpParada); if (tr.dataset.salvo === 'true') _salvarDados(id); });
+
+  // [FIX 3] Parada readonly após salvar + ctrl+dblclick para desbloquear
+  if (salvo) {
+    inpParada.readOnly = true;
+    inpParada.title = 'CTRL + Duplo Clique para editar';
+  }
+  inpParada.addEventListener('dblclick', e => {
+    if (e.ctrlKey && tr.dataset.salvo === 'true') {
+      inpParada.readOnly = false;
+      inpParada.dataset.unlocked = 'true';
+      inpParada.focus();
+      showToast('✏️ Hora Parada desbloqueada — Enter para confirmar', 'warn');
+    }
+  });
+  inpParada.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && inpParada.dataset.unlocked === 'true') {
+      inpParada.readOnly = true;
+      delete inpParada.dataset.unlocked;
+      _recalcular(inpParada);
+      if (tr.dataset.salvo === 'true') _salvarDados(id);
+    }
+  });
+  inpParada.addEventListener('blur', () => {
+    if (inpParada.dataset.unlocked === 'true' && tr.dataset.salvo === 'true') {
+      inpParada.readOnly = true;
+      delete inpParada.dataset.unlocked;
+      _recalcular(inpParada);
+      _salvarDados(id);
+    }
+  });
+
+  // Previsão (Duração)
+  inpPrevisao.addEventListener('input', () => { _recalcular(inpPrevisao); if (tr.dataset.salvo === 'true') _salvarDados(id); });
+  inpPrevisao.addEventListener('blur', () => { _interpretarDuracao(inpPrevisao); _recalcular(inpPrevisao); if (tr.dataset.salvo === 'true') _salvarDados(id); });
+
+  // [FIX 4] Retorno: readonly, ctrl+dblclick para desbloquear
+  if (inpRetorno) {
+    inpRetorno.addEventListener('dblclick', e => {
+      if (e.ctrlKey) {
+        inpRetorno.readOnly = false;
+        inpRetorno.dataset.unlocked = 'true';
+        inpRetorno.focus();
+        showToast('✏️ Horário Retorno desbloqueado — Enter para confirmar', 'warn');
+      }
+    });
+    inpRetorno.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && inpRetorno.dataset.unlocked === 'true') {
+        inpRetorno.readOnly = true;
+        delete inpRetorno.dataset.unlocked;
+        _atualizarRetornoManual(tr, inpRetorno.value);
+      }
+    });
+    inpRetorno.addEventListener('blur', () => {
+      if (inpRetorno.dataset.unlocked === 'true') {
+        inpRetorno.readOnly = true;
+        delete inpRetorno.dataset.unlocked;
+        _atualizarRetornoManual(tr, inpRetorno.value);
+      }
+    });
+  }
+
+  // Motivo e Frota (auto-save quando já salvo)
+  if (salvo) {
+    inpMotivo.addEventListener('input', () => _salvarDados(id));
+    inpFrota.addEventListener('input', () => _salvarDados(id));
+  }
+
+  // Validação frota
+  inpFrota.addEventListener('input', () => _validarInputFrota(inpFrota, id));
+  inpFrota.addEventListener('blur', () => _validarInputFrota(inpFrota, id));
+
+  // Botão salvar
+  const btnSalvar = tr.querySelector('.btn-salvar');
+  if (btnSalvar) btnSalvar.addEventListener('click', () => _confirmarLinha(tr, id));
+
+  // Botão remover
+  tr.querySelector('.btn-del').addEventListener('click', () => {
+    const f = tr.querySelector('[data-campo="frota"]').value.trim() || 'este registro';
+    salvarHistorico(tr, id);
+    tr.remove();
+    if (tr.dataset.salvo === 'true') _salvarDados(id);
+    atualizarTodosContadores();
+    showToast('Frota ' + f + ' removida.', 'ok');
+  });
+}
+
+// ============================================================
+// CONFIRMAR LINHA — [FIX 3] torna hora parada readonly
+// ============================================================
+function _confirmarLinha(tr, id) {
+  const f = tr.querySelector('[data-campo="frota"]').value.trim();
+  if (!f) { showToast('⚠️ Preencha a frota', 'warn'); tr.querySelector('[data-campo="frota"]').focus(); return; }
+  if (!_prefixoValido(f, id)) { showToast('❌ Frota ' + f + ' inválida para ' + NOMES_TABELA[id], 'err'); tr.querySelector('[data-campo="frota"]').focus(); return; }
+
+  _autoCadastrarFrota(f, id);
+  tr.setAttribute('data-salvo', 'true');
+
+  // [FIX 3] Tornar hora parada readonly
+  const inpParada = tr.querySelector('[data-campo="parada"]');
+  if (inpParada) {
+    inpParada.readOnly = true;
+    inpParada.title = 'CTRL + Duplo Clique para editar';
+  }
+
+  // Remover botão salvar e ativar auto-save
+  const btnS = tr.querySelector('.btn-salvar');
+  if (btnS) btnS.remove();
+
+  const inpMotivo = tr.querySelector('[data-campo="motivo"]');
+  const inpFrota  = tr.querySelector('[data-campo="frota"]');
+  inpMotivo.addEventListener('input', () => _salvarDados(id));
+  inpFrota.addEventListener('input', () => _salvarDados(id));
+
+  _salvarDadosOriginalImpl(id);
+
+  if (db) {
+    salvarTabelaFirebase(id).then(ok => {
+      if (ok) { showToast('✅ Frota ' + f + ' salva no Firebase!', 'ok'); document.getElementById('syncStatus').innerHTML = '🟢 Salvo'; }
+      else showToast('⚠️ Firebase falhou, salvo local.', 'warn');
+    });
+  } else {
+    showToast('✅ Frota ' + f + ' registrada (offline)!', 'ok');
+  }
+  atualizarTodosContadores();
+}
+
+// ============================================================
+// CRIAR LINHA
+// ============================================================
+function _criarLinha(id, d, salvo) {
+  const _tbl = document.getElementById(id);
+  const tbody = _tbl ? _tbl.querySelector('tbody') : null;
+  if (!tbody) { console.error('tbody não encontrado:', id); return; }
+
+  const tr = document.createElement('tr');
+  tr.setAttribute('data-salvo', salvo ? 'true' : 'false');
+  if (d.dataRetornoCompleta) tr.setAttribute('data-hora-retorno', d.dataRetornoCompleta);
+  if (d.tempoAdicionado) tr.setAttribute('data-tempo-adicionado', 'true');
+
+  // Célula Frota
+  const tdF = document.createElement('td');
+  tdF.style.position = 'relative';
+  const inpF = document.createElement('input');
+  inpF.type = 'text';
+  inpF.dataset.campo = 'frota';
+  inpF.placeholder = ({
+    'tabela-cam-proprio':'Ex: 311015','tabela-cam-terceiro':'Ex: 91015',
+    'tabela-cam-borracharia':'Ex: 311015 ou 91015','tabela-col-proprio':'Ex: 80224',
+    'tabela-col-terceiro':'Ex: 93059','tabela-transbordo':'Ex: 92079'
+  })[id] || 'Ex: frota';
+  inpF.value = d.frota || '';
+  if (salvo) inpF.addEventListener('input', () => _salvarDados(id));
+  tdF.appendChild(inpF);
+  tr.appendChild(tdF);
+
+  // Demais células via template
+  const tpl = document.createElement('template');
+  tpl.innerHTML = `
+    <td><input type="text" data-campo="data" placeholder="dd/mm/aaaa" maxlength="10" value="${d.dataEntrada||''}"></td>
+    <td><input type="text" data-campo="motivo" placeholder="Descreva o motivo" value="${(d.motivo||'').replace(/"/g,'&quot;')}"></td>
+    <td><input type="time" data-campo="parada" value="${d.horarioParada||''}"></td>
+    <td><input type="text" data-campo="previsao" placeholder="Ex: 130 = 1h30" maxlength="5" value="${d.previsaoRetorno||''}"></td>
+    <td><input type="text" data-campo="retorno" readonly title="CTRL + Duplo Clique para editar" placeholder="Calculado" value="${d.horarioRetorno||''}"></td>
+    <td>
+      <span class="cronometro">--:--</span>
+      <div class="progress-wrap"><div class="progress-bar progress-ok" style="width:0%"></div></div>
+    </td>
+    <td><div class="acoes-cell">${salvo ? '' : '<button class="btn-salvar">✔ Salvar</button>'}<button class="btn-del">Remover</button></div></td>
+  `;
+  while (tpl.content.firstChild) tr.appendChild(tpl.content.firstChild);
+
+  tbody.appendChild(tr);
+  _ativarListeners(tr, id, salvo);
+  _criarAutocomplete(inpF, id);
+  _renderizarIconeRelogio(tr);
+}
+
+// ============================================================
+// [FIX 9] ADICIONAR LINHA — autofocus no campo Frota
+// ============================================================
+function adicionarLinha(id) {
+  const hoje = new Date();
+  const data = `${String(hoje.getDate()).padStart(2,'0')}/${String(hoje.getMonth()+1).padStart(2,'0')}/${hoje.getFullYear()}`;
+  _criarLinha(id, { dataEntrada: data }, false);
+  // Foco automático no campo Frota da última linha adicionada
+  const tbody = document.querySelector(`#${id} tbody`);
+  if (tbody) {
+    const lastRow = tbody.lastElementChild;
+    if (lastRow) {
+      const frotaInp = lastRow.querySelector('[data-campo="frota"]');
+      if (frotaInp) setTimeout(() => { frotaInp.focus(); frotaInp.select?.(); }, 60);
+    }
+  }
+}
+
+// ============================================================
+// PERSISTÊNCIA LOCAL
+// ============================================================
+function _salvarDadosOriginalImpl(id) {
+  const rows = [];
+  document.querySelector(`#${id} tbody`)?.querySelectorAll('tr[data-salvo="true"]').forEach(tr => {
+    rows.push({
+      frota:              tr.querySelector('[data-campo="frota"]')?.value || '',
+      dataEntrada:        tr.querySelector('[data-campo="data"]')?.value || '',
+      motivo:             tr.querySelector('[data-campo="motivo"]')?.value || '',
+      horarioParada:      tr.querySelector('[data-campo="parada"]')?.value || '',
+      previsaoRetorno:    tr.querySelector('[data-campo="previsao"]')?.value || '',
+      horarioRetorno:     tr.querySelector('[data-campo="retorno"]')?.value || '',
+      dataRetornoCompleta: tr.getAttribute('data-hora-retorno') || '',
+      tempoAdicionado:    tr.dataset.tempoAdicionado === 'true'
+    });
+  });
+  localStorage.setItem(id, JSON.stringify(rows));
+  _registrarUltimaAtualizacao();
+}
+
+function _salvarDados(id) {
+  _salvarDadosOriginalImpl(id);
+  if (db) setTimeout(() => salvarTabelaFirebase(id), 100);
+}
+
+function _registrarUltimaAtualizacao() {
+  const ts = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  localStorage.setItem('_frotas_ultima_atualizacao', ts);
+  const el = document.getElementById('ultimaAtualizacao');
+  if (el) { el.textContent = '🕐 Última atualização: ' + ts; el.style.color = 'var(--green)'; }
+}
+
+function _carregarUltimaAtualizacao() {
+  const ts = localStorage.getItem('_frotas_ultima_atualizacao');
+  const el = document.getElementById('ultimaAtualizacao');
+  if (!el) return;
+  if (ts) { el.textContent = '🕐 Última atualização: ' + ts; el.style.color = 'var(--green)'; }
+  else { el.textContent = '🕐 Nenhum dado salvo ainda'; el.style.color = 'var(--muted)'; }
+}
+
+// ============================================================
+// [FIX 1] CONTADORES — separados por aba
+// ============================================================
+function atualizarTodosContadores() {
+  let geralCam = 0, geralCol = 0, foraBorr = 0;
+  const pills = { 'pill-caminhao': 0, 'pill-colhedora': 0, 'pill-transbordo': 0 };
+
+  TABELAS.forEach(id => {
+    const n = document.querySelector(`#${id} tbody`)?.querySelectorAll('tr[data-salvo="true"]').length || 0;
+    const cel = document.getElementById(CONTADORES[id]);
+    const gc  = document.getElementById(GCS[id]);
+    if (cel) cel.textContent = n;
+    if (gc)  gc.textContent  = n;
+    pills[PILLS[id]] = (pills[PILLS[id]] || 0) + n;
+
+    // [FIX 1] Totais separados por aba
+    if (['tabela-cam-proprio','tabela-cam-terceiro','tabela-cam-borracharia'].includes(id)) geralCam += n;
+    if (['tabela-col-proprio','tabela-col-terceiro','tabela-transbordo'].includes(id))       geralCol += n;
+    if (SEM_BORRACHARIA.includes(id)) foraBorr += n;
+  });
+
+  Object.entries(pills).forEach(([pid, n]) => { const el = document.getElementById(pid); if (el) el.textContent = n; });
+  document.getElementById('tot-fora').textContent  = foraBorr;
+  document.getElementById('tot-geral').textContent = geralCam;
+  const elCol = document.getElementById('tot-geral-col');
+  if (elCol) elCol.textContent = geralCol;
+}
+
+// ============================================================
+// UI — Abas, Seções
+// ============================================================
+function toggleSec(k) {
+  document.getElementById('body-' + k)?.classList.toggle('hidden');
+  document.getElementById('hdr-' + k)?.classList.toggle('collapsed');
+}
+
 function showTab(tabId, clickedButton) {
-  document.querySelectorAll('.tab-content').forEach(content => {
-    content.classList.add('hidden');
-  });
-  document.querySelectorAll('.tab-button').forEach(button => {
-    button.classList.remove('active');
-  });
-
-  const selectedTab = document.getElementById(tabId);
-  if (selectedTab) {
-    selectedTab.classList.remove('hidden');
-  }
-  if (clickedButton) {
-    clickedButton.classList.add('active');
-  }
-  // Re-renderizar cronômetros e contadores para a aba recém-visível
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+  document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+  const sel = document.getElementById(tabId);
+  if (sel) sel.classList.remove('hidden');
+  if (clickedButton) clickedButton.classList.add('active');
   atualizarTodosCronometros();
   atualizarTodosContadores();
 }
 
-// ========== FUNÇÃO DE PRINT CAPTURANDO APENAS A ABA ATIVA (SEM HEADER, SEM LATERAIS, TEMA CLARO FORÇADO) ==========
+// ============================================================
+// TEMA
+// ============================================================
+function toggleTema() {
+  const l = document.body.classList.toggle('light');
+  document.getElementById('btnTema').textContent = l ? '☀️ Claro' : '🌙 Escuro';
+  localStorage.setItem('tema', l ? 'light' : 'dark');
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+function showToast(msg, t = 'ok') {
+  const tst = document.getElementById('toast');
+  tst.textContent = msg; tst.className = 'show ' + t;
+  clearTimeout(tst._t);
+  tst._t = setTimeout(() => { tst.className = ''; }, 3500);
+}
+
+// ============================================================
+// EXPORTAR CSV
+// ============================================================
+function exportarCSV() {
+  const NOMES = {
+    'tabela-cam-proprio':'Caminhão Próprio','tabela-cam-terceiro':'Caminhão Terceiro',
+    'tabela-cam-borracharia':'Borracharia','tabela-col-proprio':'Colhedora Própria',
+    'tabela-col-terceiro':'Colhedora Terceira','tabela-transbordo':'Transbordo Terceiro'
+  };
+  let csv = '\uFEFF';
+  TABELAS.forEach(id => {
+    csv += NOMES[id] + '\n';
+    csv += 'Frota,Data Entrada,Motivo,Hora Parada,Previsão Retorno,Horário Retorno\n';
+    const linhas = JSON.parse(localStorage.getItem(id) || '[]');
+    linhas.forEach(l => {
+      csv += `${l.frota||''},${l.dataEntrada||''},${l.motivo||''},${l.horarioParada||''},${l.previsaoRetorno||''},${l.horarioRetorno||''}\n`;
+    });
+    csv += '\n';
+  });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+  a.download = 'frotas_paradas.csv';
+  a.click();
+}
+
+// ============================================================
+// PRINT (captura aba ativa, tema claro)
+// ============================================================
 async function tirarPrint() {
-  if (window !== window.top) {
-    showToast('⚠️ Abra no navegador para usar print.', 'warn');
-    return;
-  }
+  if (window !== window.top) { showToast('⚠️ Abra no navegador para usar print.', 'warn'); return; }
   const btn = document.getElementById('btnPrint');
   const original = btn.innerHTML;
-  btn.innerHTML = '⏳';
-  btn.disabled = true;
+  btn.innerHTML = '⏳'; btn.disabled = true;
 
   try {
-    // Capturar o conteúdo da aba ativa
     const activeTabContent = document.querySelector('.tab-content:not(.hidden)');
-    if (!activeTabContent) throw new Error('Nenhum conteúdo de aba ativa encontrado para imprimir.');
+    if (!activeTabContent) throw new Error('Nenhuma aba ativa encontrada.');
 
-    // Clonar o conteúdo da aba ativa
     const clone = activeTabContent.cloneNode(true);
-    
-    // Aplicar estilos de main ao clone para manter o layout
-    clone.style.cssText = window.getComputedStyle(document.querySelector('main')).cssText;
-
-    // Forçar tema claro no clone (fundos brancos, texto preto)
     clone.style.backgroundColor = '#ffffff';
     clone.style.color = '#000000';
     clone.style.padding = '20px';
     clone.style.margin = '0 auto';
     clone.style.maxWidth = '1600px';
-    
-    // Ajustar todos os cards, groups e tabelas para fundo claro
+
     clone.querySelectorAll('.card, .group, .table-wrap, .card-body').forEach(el => {
-      el.style.backgroundColor = '#ffffff';
-      el.style.color = '#000000';
-      el.style.border = '1px solid #ccc';
+      el.style.backgroundColor = '#ffffff'; el.style.color = '#000000'; el.style.border = '1px solid #ccc';
     });
-    
-    // Remover botões de ação (.btn-add, .btn-del, .btn-salvar, .acoes-cell)
-    clone.querySelectorAll('.btn-add, .btn-del, .btn-salvar, .acoes-cell, .card-header .arrow').forEach(el => el.remove());
-    
-    // Nos inputs, substituir por spans com o valor (para garantir legibilidade sem cortes)
+    clone.querySelectorAll('.btn-add, .btn-del, .btn-salvar, .acoes-cell, .card-header .arrow, .relogio-indicador, .progress-wrap').forEach(el => el.remove());
     clone.querySelectorAll('input').forEach(inp => {
       const span = document.createElement('div');
       span.textContent = inp.value || inp.placeholder || '';
-      span.style.minHeight = '38px';
-      span.style.padding = '8px 10px';
-      span.style.display = 'flex';
-      span.style.alignItems = 'center';
-      span.style.justifyContent = inp.dataset.campo === 'motivo' ? 'flex-start' : 'center';
-      span.style.width = '100%';
-      span.style.fontSize = '15px';
-      span.style.fontWeight = '700';
-      span.style.color = '#000000';
-      span.style.backgroundColor = '#f9f9f9';
-      span.style.border = '1px solid #ddd';
-      span.style.borderRadius = '7px';
-      span.style.boxSizing = 'border-box';
-      span.style.whiteSpace = 'nowrap';
-      span.style.overflow = 'visible';
+      span.style.cssText = `min-height:38px;padding:8px 10px;display:flex;align-items:center;justify-content:${inp.dataset.campo==='motivo'?'flex-start':'center'};width:100%;font-size:15px;font-weight:700;color:#000;background:#f9f9f9;border:1px solid #ddd;border-radius:7px;box-sizing:border-box;white-space:nowrap;`;
       inp.parentNode.replaceChild(span, inp);
     });
-    
-    // Ajustar tabelas para layout auto e largura adequada
-    clone.querySelectorAll('table').forEach(tbl => {
-      tbl.style.tableLayout = 'auto';
-      tbl.style.width = '100%';
-      tbl.style.minWidth = '1200px';
-    });
-    clone.querySelectorAll('td, th').forEach(td => {
-      td.style.whiteSpace = 'nowrap';
-      td.style.overflow = 'visible';
-    });
-    
-    // Expandir todos os cards
-    clone.querySelectorAll('.card-body').forEach(body => {
-      body.classList.remove('hidden');
-    });
-    
-    // Criar um container externo para captura
+    clone.querySelectorAll('table').forEach(tbl => { tbl.style.tableLayout = 'auto'; tbl.style.width = '100%'; tbl.style.minWidth = '1200px'; });
+    clone.querySelectorAll('td, th').forEach(td => { td.style.whiteSpace = 'nowrap'; td.style.overflow = 'visible'; });
+    clone.querySelectorAll('.card-body').forEach(b => b.classList.remove('hidden'));
+
     const wrapper = document.createElement('div');
-    wrapper.style.position = 'fixed';
-    wrapper.style.left = '-99999px';
-    wrapper.style.top = '0';
-    wrapper.style.backgroundColor = '#ffffff';
-    wrapper.style.padding = '0';
+    wrapper.style.cssText = 'position:fixed;left:-99999px;top:0;background:#fff;padding:0;';
     wrapper.appendChild(clone);
     document.body.appendChild(wrapper);
-    
-    // Aguardar reflow
     await new Promise(r => setTimeout(r, 200));
-    
-    // Capturar com html2canvas
+
     const canvas = await html2canvas(wrapper, {
-      backgroundColor: '#ffffff',
-      useCORS: true,
-      allowTaint: true,
-      logging: false,
+      backgroundColor: '#ffffff', useCORS: true, allowTaint: true, logging: false,
       scale: Math.max(window.devicePixelRatio, 3),
-      windowWidth: clone.scrollWidth,
-      windowHeight: clone.scrollHeight,
-      width: clone.scrollWidth,
-      height: clone.scrollHeight
+      windowWidth: clone.scrollWidth, windowHeight: clone.scrollHeight,
+      width: clone.scrollWidth, height: clone.scrollHeight
     });
-    
-    // Remover wrapper
     document.body.removeChild(wrapper);
-    
-    // Copiar ou baixar a imagem
+
     canvas.toBlob(async blob => {
       if (navigator.clipboard && window.ClipboardItem) {
         try {
           await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
-          btn.innerHTML = '✅';
-          btn.style.background = '#16a34a';
-          showToast('✅ Print copiado (somente cards, tema claro)!', 'ok');
-        } catch {
-          baixarImagem(blob);
-        }
-      } else {
-        baixarImagem(blob);
-      }
-      setTimeout(() => {
-        btn.innerHTML = original;
-        btn.style.background = '#25d366';
-        btn.disabled = false;
-      }, 2500);
+          btn.innerHTML = '✅'; btn.style.background = '#16a34a';
+          showToast('✅ Print copiado!', 'ok');
+        } catch { baixarImagem(blob); }
+      } else { baixarImagem(blob); }
+      setTimeout(() => { btn.innerHTML = original; btn.style.background = '#25d366'; btn.disabled = false; }, 2500);
     }, 'image/png');
   } catch (err) {
     console.error(err);
     showToast('Erro ao gerar print: ' + err.message, 'err');
-    btn.innerHTML = original;
-    btn.disabled = false;
+    btn.innerHTML = original; btn.disabled = false;
   }
 }
 
@@ -855,40 +1496,96 @@ function baixarImagem(blob) {
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = 'frotas-cards-' + new Date().toLocaleDateString('pt-BR').replace(/\//g, '-') + '.png';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
   showToast('📥 Imagem baixada!', 'warn');
 }
-// =================================================================
 
-// Eventos e inicialização (originais)
-document.addEventListener('keydown',e=>{ if(e.key!=='Tab'&&e.key!=='Enter')return; const active=document.activeElement; if(!active||active.tagName!=='INPUT'||active.readOnly)return; if(!active.closest('tbody'))return; e.preventDefault(); const tr=active.closest('tr'), id=active.closest('table')?.id; if(active.dataset.campo==='previsao'){_interpretarDuracao(active);_recalcular(active);if(tr?.dataset.salvo==='true'&&id)_salvarDados(id);const btnSalvar=tr?.querySelector('.btn-salvar'), btnDel=tr?.querySelector('.btn-del'); if(btnSalvar){btnSalvar.focus();return;} if(btnDel){btnDel.focus();return;}} const allInputs=Array.from(document.querySelectorAll('tbody tr td input:not([readonly])')).filter(inp=>inp.offsetParent!==null); const idx=allInputs.indexOf(active); if(idx===-1)return; const next=(e.shiftKey&&e.key==='Tab')?allInputs[idx-1]:allInputs[idx+1]; if(next){next.focus();next.select?.();}});
-document.addEventListener('keydown',e=>{ if(e.key==='F10'){e.preventDefault(); const a=document.activeElement; if(a&&a.dataset.campo==='parada'){const n=new Date(); a.value=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0'); a.dispatchEvent(new Event('input',{bubbles:true}));}}});
+// ============================================================
+// [FIX 7+8] TECLADO — F10 hora atual + Tab/Enter navegação
+// ============================================================
+document.addEventListener('keydown', e => {
+  // F10 → insere hora atual no campo parada (se não readonly)
+  if (e.key === 'F10') {
+    e.preventDefault();
+    const a = document.activeElement;
+    if (a && a.dataset.campo === 'parada' && !a.readOnly) {
+      const n = new Date();
+      a.value = String(n.getHours()).padStart(2, '0') + ':' + String(n.getMinutes()).padStart(2, '0');
+      a.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    return;
+  }
 
-window.onload = async function(){ 
-  // Ajustar o main para não ser grid diretamente, mas sim os tab-contents
-  document.querySelector('main').style.display = 'block'; // Ou flex, dependendo do layout desejado para o container das abas
+  // Tab / Enter → navegar entre campos de tbody
+  if (e.key !== 'Tab' && e.key !== 'Enter') return;
+  const active = document.activeElement;
+  if (!active || active.tagName !== 'INPUT' || active.readOnly) return;
+  if (!active.closest('tbody')) return;
+
+  e.preventDefault();
+  const tr = active.closest('tr'), id = active.closest('table')?.id;
+
+  // No campo previsão: interpretar e mover para botão salvar ou próximo campo
+  if (active.dataset.campo === 'previsao') {
+    _interpretarDuracao(active);
+    _recalcular(active);
+    if (tr?.dataset.salvo === 'true' && id) _salvarDados(id);
+    const btnSalvar = tr?.querySelector('.btn-salvar');
+    const btnDel    = tr?.querySelector('.btn-del');
+    if (btnSalvar) { btnSalvar.focus(); return; }
+    if (btnDel)    { btnDel.focus(); return; }
+  }
+
+  const allInputs = Array.from(
+    document.querySelectorAll('tbody tr td input:not([readonly])')
+  ).filter(inp => inp.offsetParent !== null && !inp.closest('.tab-content.hidden'));
+
+  const idx = allInputs.indexOf(active);
+  if (idx === -1) return;
+  const next = (e.shiftKey && e.key === 'Tab') ? allInputs[idx - 1] : allInputs[idx + 1];
+  if (next) { next.focus(); next.select?.(); }
+});
+
+// ============================================================
+// INICIALIZAÇÃO
+// ============================================================
+window.onload = async function () {
+  document.querySelector('main').style.display = 'block';
+
   await initFirebase();
-  _carregarFrotasCustom(); 
-  TABELAS.forEach(id=>{ 
-    const salvo = localStorage.getItem(id); 
-    const linhas = salvo ? JSON.parse(salvo) : []; 
+  _carregarFrotasCustom();
+
+  // Carregar do localStorage primeiro
+  TABELAS.forEach(id => {
+    const salvo = localStorage.getItem(id);
+    const linhas = salvo ? JSON.parse(salvo) : [];
     const tbody = document.querySelector(`#${id} tbody`);
     if (tbody) tbody.innerHTML = '';
-    linhas.forEach(l=>_criarLinha(id,l,true)); 
-    document.querySelectorAll(`#${id} tbody tr[data-salvo="true"] [data-campo="frota"]`).forEach(inp=>_validarInputFrota(inp,id));
-  }); 
-  await carregarTudoFirebase(); // Carrega todos os dados, mesmo os de abas não ativas
-  showTab('tab-caminhoes', document.querySelector('.tab-button.active')); // Exibe a aba de caminhões por padrão
-  atualizarTodosCronometros(); 
-  atualizarTodosContadores(); 
-  if(localStorage.getItem('tema')==='light'){
+    linhas.forEach(l => _criarLinha(id, l, true));
+    document.querySelectorAll(`#${id} tbody tr[data-salvo="true"] [data-campo="frota"]`)
+      .forEach(inp => _validarInputFrota(inp, id));
+  });
+
+  // Depois sincronizar com Firebase
+  await carregarTudoFirebase();
+
+  showTab('tab-caminhoes', document.querySelector('.tab-button.active'));
+  atualizarTodosCronometros();
+  atualizarTodosContadores();
+
+  // Tema
+  if (localStorage.getItem('tema') === 'light') {
     document.body.classList.add('light');
-    document.getElementById('btnTema').textContent='☀️ Claro';
-  } 
-  document.getElementById('dataAtual').textContent = new Date().toLocaleDateString('pt-BR',{weekday:'long',year:'numeric',month:'long',day:'2-digit'}); 
+    document.getElementById('btnTema').textContent = '☀️ Claro';
+  }
+
+  // Data
+  document.getElementById('dataAtual').textContent =
+    new Date().toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: '2-digit' });
+
   _carregarUltimaAtualizacao();
+
+  // Botão sincronizar
   document.getElementById('btnSyncFirebase').addEventListener('click', syncFirebase);
 };
 </script>
