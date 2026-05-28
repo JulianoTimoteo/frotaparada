@@ -1,0 +1,16 @@
+/* Add your styles here */
+.btn-team-filter {
+  /* Add styles for the team filter button */
+}
+
+.os-status-atrasada {
+  /* Add styles for delayed orders */
+}
+
+.os-status-semprev {
+  /* Add styles for orders without a deadline */
+}
+
+.os-status-prazo {
+  /* Add styles for orders within the deadline */
+}

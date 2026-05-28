@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -384,10 +384,333 @@ body.light .linha-atrasada{animation:pulsarLight 1.5s infinite;}
   td input { border: none !important; background: transparent !important; padding: 2px 4px !important; }
   .progress-wrap { display: none !important; }
 }
+
+/* ===== BADGE VIA SISTEMA (OS automática nas abas de frota) ===== */
+.badge-via-sistema {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: .64rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(59,130,246,.18);
+  border: 1px solid rgba(59,130,246,.38);
+  color: #93c5fd;
+  white-space: nowrap;
+  margin-top: 5px;
+  letter-spacing: .3px;
+  pointer-events: none;
+}
+body.light .badge-via-sistema {
+  background: rgba(26,92,184,.12);
+  border-color: rgba(26,92,184,.3);
+  color: #1a5cb8;
+}
+tr[data-os-origin="true"] {
+  border-left: 3px solid rgba(59,130,246,.55) !important;
+  background: rgba(59,130,246,.035);
+}
+body.light tr[data-os-origin="true"] {
+  border-left: 3px solid rgba(26,92,184,.5) !important;
+  background: rgba(26,92,184,.035);
+}
+
+/* ===== OS OFICINA CARDS ===== */
+.os-card {
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin: 12px 0;
+  transition: box-shadow .2s;
+}
+.os-card:hover {
+  box-shadow: 0 8px 24px rgba(0,0,0,.35);
+}
+.os-card-header {
+  padding: 14px 18px;
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  transition: background .15s;
+}
+.os-card-header:hover { background: var(--s2); }
+.os-card-frota {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+.os-card-frota-nome {
+  font-size: 1.05rem;
+  font-weight: 900;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.os-card-badge {
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: .72rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.os-card-badge-equipe {
+  background: rgba(59,130,246,.15);
+  color: #60a5fa;
+  border: 1px solid rgba(59,130,246,.25);
+}
+.os-card-badge-atrasada {
+  background: rgba(239,68,68,.15);
+  color: #f87171;
+  border: 1px solid rgba(239,68,68,.3);
+}
+.os-card-badge-prazo {
+  background: rgba(16,185,129,.15);
+  color: #6ee7b7;
+  border: 1px solid rgba(16,185,129,.25);
+}
+.os-card-badge-semprev {
+  background: rgba(245,158,11,.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245,158,11,.3);
+}
+.os-card-resumo {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 15px;
+  background: rgba(255,255,255,0.02);
+  border-radius: 8px;
+  margin: 10px 15px;
+}
+.os-card-resumo-item {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.os-card-resumo-valor {
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.os-card-resumo-label {
+  font-size: .68rem;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  color: var(--muted);
+  opacity: 0.7;
+}
+.os-desc-section {
+  padding: 15px;
+  border-top: 1px solid var(--border);
+}
+.os-desc-text {
+  font-size: 0.85rem;
+  color: #e2e8f0;
+  line-height: 1.5;
+  margin-top: 5px;
+  background: rgba(0,0,0,0.2);
+  padding: 10px;
+  border-radius: 6px;
+}
+
+.os-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 20px;
+  margin-top: 10px;
+}
+body.light .os-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+}
+body.light .os-card-resumo {
+  background: #f8fafc;
+}
+body.light .os-desc-text {
+  background: #f1f5f9;
+  color: #334155;
+}
+
+.os-status-label {
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+.os-status-atrasada {
+  color: #fff;
+  background: #dc2626;
+}
+.os-status-hoje {
+  color: #000;
+  background: #fbbf24;
+}
+.os-status-prazo {
+  color: #fff;
+  background: #059669;
+}
+.os-status-semprev {
+  color: #fff;
+  background: #64748b;
+}
+
+.search-container-os {
+  display: flex;
+  gap: 12px;
+  padding: 12px 24px;
+  background: rgba(255,255,255,0.01);
+  align-items: center; flex-wrap: wrap;
+}
+.search-input-os {
+  flex: 1;
+  min-width: 250px;
+  background: var(--s2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px 16px;
+  border-radius: 8px;
+  outline: none;
+  font-size: 0.88rem;
+  transition: all 0.15s;
+}
+.search-input-os:focus {
+  border-color: var(--blue);
+  background: var(--s3);
+}
+.btn-refresh-os {
+  padding: 10px 20px;
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 700;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+.btn-refresh-os:hover {
+  background: #2563eb;
+}
+.empty-os-state {
+  padding: 40px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-style: italic;
+}
+body.light .search-input-os {
+  background: #ffffff;
+  border-color: #d0d5dd;
+  color: #000000;
+}
+body.light .search-input-os:focus {
+  border-color: #1a5cb8;
+  background: #fff;
+}
+body.light .btn-refresh-os {
+  background: #1a5cb8;
+}
+body.light .btn-refresh-os:hover {
+  background: #154a94;
+}
+
+/* ===== MELHORIAS DO LAYOUT DE FILTROS E EQUIPES ===== */
+.team-filter-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 24px;
+  background: var(--s1);
+  border-bottom: 1px solid var(--border);
+}
+.team-filter-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 800;
+  color: var(--muted);
+}
+.team-filter-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  max-height: 150px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+/* Scrollbar para os botões se houver muitos */
+.team-filter-buttons::-webkit-scrollbar {
+  width: 6px;
+}
+.team-filter-buttons::-webkit-scrollbar-track {
+  background: var(--s2);
+  border-radius: 3px;
+}
+.team-filter-buttons::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+.btn-team-filter {
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--s2);
+  color: var(--text);
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.btn-team-filter:hover {
+  background: var(--s3);
+  border-color: var(--blue);
+}
+.btn-team-filter.active {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: #ffffff;
+}
+body.light .team-filter-container {
+  background: #ffffff;
+  border-color: #d0d5dd;
+}
+body.light .btn-team-filter {
+  background: #f0f2f5;
+  border-color: #d0d5dd;
+  color: #444;
+}
+body.light .btn-team-filter:hover {
+  background: #e8ebef;
+}
+body.light .btn-team-filter.active {
+  background: #1a5cb8;
+  border-color: #1a5cb8;
+  color: #ffffff;
+}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
@@ -427,11 +750,12 @@ body.light .linha-atrasada{animation:pulsarLight 1.5s infinite;}
   </div>
 </header>
 
-<!-- Navegação de abas -->
+<!-- Navegação de abas (Atualizado para incluir "OS Oficina") -->
 <div class="tab-nav-container">
   <div class="tab-nav-wrapper">
     <button class="tab-button active" onclick="showTab('tab-caminhoes', this)">🚛 Caminhões</button>
     <button class="tab-button" onclick="showTab('tab-colhedoras', this)">🌾 Colhedoras e Transbordo</button>
+    <button class="tab-button" onclick="showTab('tab-oficina', this)">🔧 OS Oficina</button>
   </div>
 </div>
 
@@ -487,27 +811,79 @@ body.light .linha-atrasada{animation:pulsarLight 1.5s infinite;}
       </div>
     </section>
   </div>
+
+  <!-- Nova Aba: OS Oficina -->
+  <div id="tab-oficina" class="tab-content hidden">
+    <div class="stat-grid">
+      <div class="stat-card" style="--accent:var(--red)">
+        <div class="stat-icon" style="font-size:1.5rem;">🔧</div>
+        <div class="stat-info">
+          <span class="stat-label">Atrasadas</span>
+          <span class="stat-value" id="os-stat-atrasadas" style="color:var(--red);">0</span>
+        </div>
+      </div>
+      <div class="stat-card" style="--accent:var(--amber)">
+        <div class="stat-icon" style="font-size:1.5rem;">⏱️</div>
+        <div class="stat-info">
+          <span class="stat-label">S/ Previsão</span>
+          <span class="stat-value" id="os-stat-sem-prev" style="color:var(--amber);">0</span>
+        </div>
+      </div>
+      <div class="stat-card" style="--accent:var(--green)">
+        <div class="stat-icon" style="font-size:1.5rem;">✅</div>
+        <div class="stat-info">
+          <span class="stat-label">No Prazo</span>
+          <span class="stat-value" id="os-stat-prazo" style="color:var(--green);">0</span>
+        </div>
+      </div>
+      <div class="stat-card stat-total" style="--accent:var(--blue)">
+        <div class="stat-icon" style="font-size:1.5rem;">📋</div>
+        <div class="stat-info">
+          <span class="stat-label">Total OS</span>
+          <span class="stat-value" id="os-stat-total" style="color:#7aa3ff;">0</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="team-filter-container">
+        <span class="team-filter-label">📅 Período de Visualização</span>
+        <div class="team-filter-buttons" style="margin-bottom: 15px;">
+          <button class="btn-team-filter active" id="btn-os-hoje" onclick="_mudarModoOS('HOJE')">Principal (Hoje)</button>
+          <button class="btn-team-filter" id="btn-os-hist" onclick="_mudarModoOS('HISTORICO')">Histórico OS (Tudo)</button>
+        </div>
+        <span class="team-filter-label">🎯 Filtrar por Equipe</span>
+        <div class="team-filter-buttons" id="os-team-buttons"></div>
+      </div>
+      <div class="search-container-os">
+        <input type="text" id="os-search-input" class="search-input-os" placeholder="🔎 Buscar por Frota, Cód. OS ou Descrição...">
+        <button id="os-btn-refresh" class="btn-refresh-os" onclick="carregarDadosOficina(true)">🔄 Atualizar OS</button>
+      </div>
+    </div>
+
+    <div id="os-cards-container">
+      <div class="empty-os-state">Carregando ordens de serviço...</div>
+    </div>
+  </div>
 </main>
 
 <script>
 // ============================================================
 // FIREBASE
-// ============================================================
-const firebaseConfig = {
-  apiKey: "AIzaSyBRvOpraQrwmXegstKtqLMDXkC9Uk0s4Hw",
-  authDomain: "frotasparadas.firebaseapp.com",
-  projectId: "frotasparadas",
-  storageBucket: "frotasparadas.firebasestorage.app",
-  messagingSenderId: "829660038659",
-  appId: "1:829660038659:web:d8b4b12de0446fa99e7036"
-};
-
 let db = null;
 let sincronizando = false;
 
 async function initFirebase() {
   try {
-    if (firebase.apps.length === 0) firebase.initializeApp(firebaseConfig);
+    const firebaseConfig = {
+      apiKey: "AIzaSyBRvOpraQrwmXegstKtqLMDXkC9Uk0s4Hw",
+      authDomain: "frotasparadas.firebaseapp.com",
+      projectId: "frotasparadas",
+      storageBucket: "frotasparadas.firebasestorage.app",
+      messagingSenderId: "829660038659",
+      appId: "1:829660038659:web:d8b4b12de0446fa99e7036"
+    };
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     db = firebase.firestore();
     document.getElementById('syncStatus').innerHTML = '🟢 Firebase OK';
     return true;
@@ -529,7 +905,9 @@ async function salvarTabelaFirebase(tableId) {
       previsaoRetorno:    tr.querySelector('[data-campo="previsao"]')?.value || '',
       horarioRetorno:     tr.querySelector('[data-campo="retorno"]')?.value || '',
       dataRetornoCompleta: tr.getAttribute('data-hora-retorno') || '',
-      tempoAdicionado:    tr.dataset.tempoAdicionado === 'true'
+      tempoAdicionado:    tr.dataset.tempoAdicionado === 'true',
+      osOrigin:           tr.dataset.osOrigin === 'true',
+      cod_os_origin:      tr.dataset.osOriginCod || ''
     });
   });
   try {
@@ -559,12 +937,13 @@ async function salvarTudoFirebase() {
 async function carregarTabelaFirebase(tableId) {
   if (!db) return [];
   try {
-    const doc = await db.collection('frotas_ativas').doc(tableId).get();
+    const doc = await db.collection('frotas_ativas').doc(tableId).get(); // Use db (local Firebase)
     if (doc.exists && doc.data().registros) return doc.data().registros;
   } catch (e) {}
   return [];
 }
 
+// Modify carregarTudoFirebase to handle osOrigin and cod_os_origin
 async function carregarTudoFirebase() {
   if (!db || sincronizando) return;
   sincronizando = true;
@@ -574,7 +953,12 @@ async function carregarTudoFirebase() {
     const tbody = document.querySelector(`#${id} tbody`);
     if (!tbody) continue;
     tbody.innerHTML = '';
-    registros.forEach(l => _criarLinha(id, l, true));
+    registros.forEach(l => {
+      _criarLinha(id, l, true, l.osOrigin || false); // Pass osOrigin flag
+      if ((l.osOrigin) && l.cod_os_origin) {
+        _addedOSCodigos.add(String(l.cod_os_origin)); // Registrar para evitar duplicatas
+      }
+    });
     // Revalidar frotas carregadas
     document.querySelectorAll(`#${id} tbody tr[data-salvo="true"] [data-campo="frota"]`)
       .forEach(inp => _validarInputFrota(inp, id));
@@ -637,6 +1021,9 @@ const FROTAS_DISPONIVEIS = {
   'tabela-col-terceiro': ['93034','93044','93058','93059','93080','93081','93078','93079','93069','93070','93071','93066'],
   'tabela-transbordo': ['92060','92079','92194','92201','92252','92264','92266','92269','92465','92466','92498','92499','92501','92504','92505','92506','92508','92509','92606','92607','92630','92631','92632','92657','92658','92659','92660','92661','92662','92663','92664','92665','92666','92667','92668','92669','92670','92671','92672','92673','92674','92677','92678','92682','92686','92687','92688','92690','92691','92692','92693','92694','92695','92696','92697','92698','92701','92703','92704','92706','92707']
 };
+
+// Global set to keep track of OS codes already added to tables to prevent duplicates
+let _addedOSCodigos = new Set();
 
 // [FIX 13] Ordenação numérica correta
 function _sortFrotas(arr) {
@@ -1089,7 +1476,7 @@ function _criarAutocomplete(inp, id) {
 // [FIX 3 + FIX 4] LISTENERS — Hora Parada + Retorno com ctrl+dblclick
 // ============================================================
 function _ativarListeners(tr, id, salvo) {
-  const inpData    = tr.querySelector('[data-campo="data"]');
+  const inpData = tr.querySelector('[data-campo="data"]');
   const inpMotivo  = tr.querySelector('[data-campo="motivo"]');
   const inpParada  = tr.querySelector('[data-campo="parada"]');
   const inpPrevisao= tr.querySelector('[data-campo="previsao"]');
@@ -1097,12 +1484,14 @@ function _ativarListeners(tr, id, salvo) {
   const inpRetorno = tr.querySelector('[data-campo="retorno"]');
 
   // Data
-  inpData.addEventListener('input', () => { _mascaraData(inpData); _recalcular(inpData); if (tr.dataset.salvo === 'true') _salvarDados(id); });
+  if (!inpData.readOnly) { // Only add listener if not readonly
+    inpData.addEventListener('input', () => { _mascaraData(inpData); _recalcular(inpData); if (tr.dataset.salvo === 'true') _salvarDados(id); });
+  }
 
   // Parada: listener de input (funciona quando desbloqueado)
-  inpParada.addEventListener('input', () => { _recalcular(inpParada); if (tr.dataset.salvo === 'true') _salvarDados(id); });
-
-  // [FIX 3] Parada readonly após salvar + ctrl+dblclick para desbloquear
+  if (!inpParada.readOnly) { // Only add listener if not readonly
+    inpParada.addEventListener('input', () => { _recalcular(inpParada); if (tr.dataset.salvo === 'true') _salvarDados(id); });
+  }
   if (salvo) {
     inpParada.readOnly = true;
     inpParada.title = 'CTRL + Duplo Clique para editar';
@@ -1132,7 +1521,7 @@ function _ativarListeners(tr, id, salvo) {
     }
   });
 
-  // Previsão (Duração)
+  // Previsão (Duração) — sempre editável, inclusive em linhas Via Sistema
   inpPrevisao.addEventListener('input', () => { _recalcular(inpPrevisao); if (tr.dataset.salvo === 'true') _salvarDados(id); });
   inpPrevisao.addEventListener('blur', () => { _interpretarDuracao(inpPrevisao); _recalcular(inpPrevisao); if (tr.dataset.salvo === 'true') _salvarDados(id); });
 
@@ -1163,8 +1552,12 @@ function _ativarListeners(tr, id, salvo) {
   }
 
   // Motivo e Frota (auto-save quando já salvo)
-  if (salvo) {
-    inpMotivo.addEventListener('input', () => _salvarDados(id));
+  // For OS-origin rows, these are readonly, so no input listener needed for them
+  if (salvo && !tr.dataset.osOrigin) {
+    if (!inpMotivo.readOnly) inpMotivo.addEventListener('input', () => _salvarDados(id));
+    if (!inpFrota.readOnly) inpFrota.addEventListener('input', () => _salvarDados(id));
+  } else if (tr.dataset.osOrigin) {
+    // Even if readonly, we might want to save if other fields change (like previsao/retorno)
     inpFrota.addEventListener('input', () => _salvarDados(id));
   }
 
@@ -1178,6 +1571,9 @@ function _ativarListeners(tr, id, salvo) {
 
   // Botão remover
   tr.querySelector('.btn-del').addEventListener('click', () => {
+    if (tr.dataset.osOrigin === 'true' && tr.dataset.osOriginCod) {
+      _addedOSCodigos.delete(tr.dataset.osOriginCod); // Remove from set if OS origin
+    }
     const f = tr.querySelector('[data-campo="frota"]').value.trim() || 'este registro';
     salvarHistorico(tr, id);
     tr.remove();
@@ -1230,12 +1626,14 @@ function _confirmarLinha(tr, id) {
 // ============================================================
 // CRIAR LINHA
 // ============================================================
-function _criarLinha(id, d, salvo) {
+function _criarLinha(id, d, salvo, isOSOrigin = false) {
   const _tbl = document.getElementById(id);
   const tbody = _tbl ? _tbl.querySelector('tbody') : null;
   if (!tbody) { console.error('tbody não encontrado:', id); return; }
 
   const tr = document.createElement('tr');
+  if (isOSOrigin) tr.setAttribute('data-os-origin', 'true');
+  if (d.cod_os_origin) tr.setAttribute('data-os-origin-cod', d.cod_os_origin);
   tr.setAttribute('data-salvo', salvo ? 'true' : 'false');
   if (d.dataRetornoCompleta) tr.setAttribute('data-hora-retorno', d.dataRetornoCompleta);
   if (d.tempoAdicionado) tr.setAttribute('data-tempo-adicionado', 'true');
@@ -1252,18 +1650,29 @@ function _criarLinha(id, d, salvo) {
     'tabela-col-terceiro':'Ex: 93059','tabela-transbordo':'Ex: 92079'
   })[id] || 'Ex: frota';
   inpF.value = d.frota || '';
-  if (salvo) inpF.addEventListener('input', () => _salvarDados(id));
+  if (salvo && !isOSOrigin) inpF.addEventListener('input', () => _salvarDados(id)); // Auto-save for manual saved rows
+  if (isOSOrigin) inpF.readOnly = true; // Frota from OS is readonly
   tdF.appendChild(inpF);
+
+  // Badge visual "Via Sistema" para linhas geradas automaticamente por OS
+  if (isOSOrigin) {
+    const badge = document.createElement('div');
+    badge.className = 'badge-via-sistema';
+    badge.innerHTML = '🔧 Via Sistema';
+    badge.title = 'Linha criada automaticamente pela OS #' + (d.cod_os_origin || '—');
+    tdF.appendChild(badge);
+  }
+
   tr.appendChild(tdF);
 
   // Demais células via template
   const tpl = document.createElement('template');
   tpl.innerHTML = `
-    <td><input type="text" data-campo="data" placeholder="dd/mm/aaaa" maxlength="10" value="${d.dataEntrada||''}"></td>
-    <td><input type="text" data-campo="motivo" placeholder="Descreva o motivo" value="${(d.motivo||'').replace(/"/g,'&quot;')}"></td>
-    <td><input type="time" data-campo="parada" value="${d.horarioParada||''}"></td>
+    <td><input type="text" data-campo="data" placeholder="dd/mm/aaaa" maxlength="10" value="${d.dataEntrada||''}" ${isOSOrigin ? 'readonly' : ''}></td>
+    <td><input type="text" data-campo="motivo" placeholder="Descreva o motivo" value="${(d.motivo||'').replace(/"/g,'&quot;')}" ${isOSOrigin ? 'readonly' : ''}></td>
+    <td><input type="time" data-campo="parada" value="${d.horarioParada||''}" ${isOSOrigin ? 'readonly' : ''}></td>
     <td><input type="text" data-campo="previsao" placeholder="Ex: 130 = 1h30" maxlength="5" value="${d.previsaoRetorno||''}"></td>
-    <td><input type="text" data-campo="retorno" readonly title="CTRL + Duplo Clique para editar" placeholder="Calculado" value="${d.horarioRetorno||''}"></td>
+    <td><input type="text" data-campo="retorno" ${isOSOrigin ? '' : 'readonly'} title="CTRL + Duplo Clique para editar" placeholder="Calculado" value="${d.horarioRetorno||''}"></td>
     <td>
       <span class="cronometro">--:--</span>
       <div class="progress-wrap"><div class="progress-bar progress-ok" style="width:0%"></div></div>
@@ -1272,7 +1681,7 @@ function _criarLinha(id, d, salvo) {
   `;
   while (tpl.content.firstChild) tr.appendChild(tpl.content.firstChild);
 
-  tbody.appendChild(tr);
+  tbody.prepend(tr); // Add to the top of the table
   _ativarListeners(tr, id, salvo);
   _criarAutocomplete(inpF, id);
   _renderizarIconeRelogio(tr);
@@ -1309,7 +1718,9 @@ function _salvarDadosOriginalImpl(id) {
       horarioParada:      tr.querySelector('[data-campo="parada"]')?.value || '',
       previsaoRetorno:    tr.querySelector('[data-campo="previsao"]')?.value || '',
       horarioRetorno:     tr.querySelector('[data-campo="retorno"]')?.value || '',
-      dataRetornoCompleta: tr.getAttribute('data-hora-retorno') || '',
+      dataRetornoCompleta: tr.getAttribute('data-hora-retorno') || '', // Save this attribute
+      osOrigin:           tr.dataset.osOrigin === 'true', // Save this flag
+      cod_os_origin:      tr.dataset.osOriginCod || '', // Save the original OS code
       tempoAdicionado:    tr.dataset.tempoAdicionado === 'true'
     });
   });
@@ -1373,14 +1784,22 @@ function toggleSec(k) {
   document.getElementById('hdr-' + k)?.classList.toggle('collapsed');
 }
 
+// Extensão da função showTab para aceitar a nova aba "OS Oficina"
 function showTab(tabId, clickedButton) {
   document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
   document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
   const sel = document.getElementById(tabId);
   if (sel) sel.classList.remove('hidden');
   if (clickedButton) clickedButton.classList.add('active');
-  atualizarTodosCronometros();
-  atualizarTodosContadores();
+  
+  // When switching to OS Oficina tab, ensure data is loaded/rendered
+  if (tabId === 'tab-oficina') {
+    // Inicializa ou recarrega os dados da oficina
+    carregarDadosOficina(false);
+  } else {
+    atualizarTodosCronometros();
+    atualizarTodosContadores();
+  }
 }
 
 // ============================================================
@@ -1450,7 +1869,7 @@ async function tirarPrint() {
     clone.querySelectorAll('.card, .group, .table-wrap, .card-body').forEach(el => {
       el.style.backgroundColor = '#ffffff'; el.style.color = '#000000'; el.style.border = '1px solid #ccc';
     });
-    clone.querySelectorAll('.btn-add, .btn-del, .btn-salvar, .acoes-cell, .card-header .arrow, .relogio-indicador, .progress-wrap').forEach(el => el.remove());
+    clone.querySelectorAll('.btn-add, .btn-del, .btn-salvar, .acoes-cell, .card-header .arrow, .relogio-indicador, .progress-wrap, #os-btn-refresh, #os-search-input').forEach(el => el.remove());
     clone.querySelectorAll('input').forEach(inp => {
       const span = document.createElement('div');
       span.textContent = inp.value || inp.placeholder || '';
@@ -1555,6 +1974,7 @@ window.onload = async function () {
   await initFirebase();
   _carregarFrotasCustom();
 
+  _addedOSCodigos.clear(); // Clear the set of added OS codes at the start
   // Carregar do localStorage primeiro
   TABELAS.forEach(id => {
     const salvo = localStorage.getItem(id);
@@ -1562,7 +1982,10 @@ window.onload = async function () {
     const tbody = document.querySelector(`#${id} tbody`);
     if (tbody) tbody.innerHTML = '';
     linhas.forEach(l => _criarLinha(id, l, true));
+    // Revalidar frotas carregadas
     document.querySelectorAll(`#${id} tbody tr[data-salvo="true"] [data-campo="frota"]`)
+      .forEach(inp => _validarInputFrota(inp, id));
+    document.querySelectorAll(`#${id} tbody tr[data-os-origin="true"] [data-campo="frota"]`)
       .forEach(inp => _validarInputFrota(inp, id));
   });
 
@@ -1572,6 +1995,9 @@ window.onload = async function () {
   showTab('tab-caminhoes', document.querySelector('.tab-button.active'));
   atualizarTodosCronometros();
   atualizarTodosContadores();
+
+  // Carregar dados da oficina em background e processar para outras abas
+  setTimeout(() => carregarDadosOficina(false), 500);
 
   // Tema
   if (localStorage.getItem('tema') === 'light') {
@@ -1588,6 +2014,712 @@ window.onload = async function () {
   // Botão sincronizar
   document.getElementById('btnSyncFirebase').addEventListener('click', syncFirebase);
 };
-</script>
+
+// ============================================================================
+// OS OFICINA — Cards por frota, leitura completa do Firestore
+// Estrutura REAL do Firestore:
+//   /oficina/{apelido}/frotas/{frota_cc}/ordens/{cod_os}
+//   Ex: /oficina/COLHEDORA DE CANA PICADA/frotas/80116 - CASE 8800/ordens/718898
+// Path parts: p[0]=oficina, p[1]=apelido, p[2]=frotas, p[3]=frota_cc, p[4]=ordens, p[5]=cod_os
+// Campos: cod_os, frota_cc, apelido, data_entrada, data_previsao, descricao, oficina, dias_permanencia
+// ============================================================================
+const _cfgAgro = {
+  apiKey: "AIzaSyADUuqh_THzGInTSytxzUFEwHV5LmwdvYc",
+  authDomain: "agroanalytics-api.firebaseapp.com",
+  projectId: "agroanalytics-api",
+  storageBucket: "agroanalytics-api.firebasestorage.app",
+  messagingSenderId: "739888244342",
+  appId: "1:739888244342:web:558d620583469ec515e157"
+};
+
+let _dbAgro = null;
+let _osCache = [];
+let _equipeFiltro = "TODAS";
+let _osModoExibicao = "HOJE";
+
+
+function _mudarModoOS(modo) {
+  _osModoExibicao = modo;
+  document.getElementById('btn-os-hoje').classList.toggle('active', modo === 'HOJE');
+  document.getElementById('btn-os-hist').classList.toggle('active', modo === 'HISTORICO');
+  // Força o recarregamento se mudar para histórico e o cache estiver curto
+  if (modo === 'HISTORICO') carregarDadosOficina(true);
+  else _render();
+}
+
+function _log(msg) { console.log("[OS] " + msg); }
+
+function _initAgro() {
+  try {
+    if (!_dbAgro) {
+      const app = firebase.apps.find(a => a.name === "agro2") || firebase.initializeApp(_cfgAgro, "agro2");
+      _dbAgro = app.firestore();
+      _log("Firestore AgroAnalytics conectado");
+    }
+    return true;
+  } catch (e) {
+    _log("ERRO conexão: " + e.message);
+    return false;
+  }
+}
+
+function _normEquipe(raw) {
+  if (!raw) return "OUTROS";
+  const u = raw.toString().toUpperCase().trim();
+  const map = {
+    "BASCULANTE":"BASCULANTE","BOMBEIROS":"BOMBEIROS",
+    "CAM - HERBICIDA":"CAM - HERBICIDA","CAM_-_HERBICIDA":"CAM - HERBICIDA","CAM_-HERBICIDA":"CAM - HERBICIDA","CAM-_HERBICIDA":"CAM - HERBICIDA",
+    "CAM - OFICINA":"CAM - OFICINA","CAM_-_OFICINA":"CAM - OFICINA","CAM_-OFICINA":"CAM - OFICINA","CAM-_OFICINA":"CAM - OFICINA",
+    "CAMINHÕES INTERNOS":"CAMINHÕES INTERNOS","CAMINHÕES_INTERNOS":"CAMINHÕES INTERNOS","CAMINHOES INTERNOS":"CAMINHÕES INTERNOS","CAMINHOES_INTERNOS":"CAMINHÕES INTERNOS",
+    "CANAVIEIROS":"CANAVIEIROS","CARREGADORAS":"CARREGADORAS",
+    "COLHEDORA DE CANA PICADA":"COLHEDORA DE CANA PICADA","COLHEDORA_DE_CANA_PICADA":"COLHEDORA DE CANA PICADA","COLHEDORAS":"COLHEDORA DE CANA PICADA",
+    "IMPL ROD.1":"IMPL ROD.1","IMPL_ROD-1":"IMPL ROD.1","IMPL_ROD_1":"IMPL ROD.1",
+    "IMPL ROD.3":"IMPL ROD.3","IMPL_ROD-3":"IMPL ROD.3","IMPL_ROD_3":"IMPL ROD.3",
+    "IMPLEMENTOS":"IMPLEMENTOS",
+    "LINHA AMARELA":"LINHA AMARELA","LINHA_AMARELA":"LINHA AMARELA",
+    "OUTROS":"OUTROS",
+    "PRANCHA-MUNCK":"PRANCHA-MUNCK","PRANCHA_MUNCK":"PRANCHA-MUNCK",
+    "SECUNDARIOS":"SECUNDARIOS",
+    "SÓ FERTIRRIGAÇÃO":"SÓ FERTIRRIGAÇÃO","SÓ_FERTIRRIGAÇÃO":"SÓ FERTIRRIGAÇÃO",
+    "TRATORES":"TRATORES",
+    "VEICULOS LEVES":"VEICULOS LEVES","VEICULOS_LEVES":"VEICULOS LEVES",
+    "TRANSBORDOS":"OUTROS"
+  };
+  if (map[u]) return map[u];
+  const limpo = u.replace(/_/g, " ");
+  if (map[limpo]) return map[limpo];
+  return "OUTROS";
+}
+
+function _statusOS(dataPrevisao) {
+  if (!dataPrevisao || dataPrevisao.trim() === "") return { label: "S/ Previsão", cls: "os-status-semprev" };
+  try {
+    const p = dataPrevisao.split("/");
+    if (p.length !== 3) return { label: "S/ Previsão", cls: "os-status-semprev" };
+    const d = parseInt(p[0],10), m = parseInt(p[1],10)-1, a = p[2].length===2 ? 2000+parseInt(p[2],10) : parseInt(p[2],10);
+    const prev = new Date(a, m, d, 23, 59, 59);
+    const hoje = new Date(); hoje.setHours(0,0,0,0);
+    const prev0 = new Date(a, m, d, 0, 0, 0);
+    if (prev0.getTime() === hoje.getTime()) return { label: "Vence Hoje", cls: "os-status-hoje" };
+    if (prev.getTime() < Date.now()) return { label: "Atrasada", cls: "os-status-atrasada" };
+    return { label: "No Prazo", cls: "os-status-prazo" };
+  } catch { return { label: "S/ Previsão", cls: "os-status-semprev" }; }
+}
+
+function _tsData(str) {
+  if (!str || str.trim() === "") return 0;
+  const p = str.split("/");
+  if (p.length !== 3) return 0;
+  return new Date(parseInt(p[2].length===2 ? 2000+parseInt(p[2],10) : parseInt(p[2],10)), parseInt(p[1],10)-1, parseInt(p[0],10)).getTime();
+}
+
+function _parseOS(d, path) {
+  const p = path || [];
+  // Detecta estrutura: /oficina/{equipe}/{frota}/{os} OU /oficina/{equipe}/frotas/{frota}/ordens/{os}
+  const ofiIdx = p.indexOf("oficina");
+  
+  let cod = d.cod_os || p[p.length - 1] || "";
+  let apelido = d.apelido;
+  let frota = d.frota_cc;
+
+  // Fallback para quando os dados vêm do "Resumo" (objeto flat sem path longo)
+  if (p.length < 3) {
+    cod = d.cod_os || "";
+    frota = d.frota_cc || d.frota || "Sem Frota";
+    apelido = d.apelido || d.grupo || "OUTROS";
+  } else if (ofiIdx !== -1) {
+    if (!apelido) apelido = p[ofiIdx + 1];
+    if (!frota) {
+      // Se o penúltimo for 'ordens' ou 'frotas', pega o anterior a ele
+      const penultimo = p[p.length - 2];
+      frota = (penultimo === 'ordens' || penultimo === 'frotas') ? p[p.length - 3] : penultimo;
+    }
+  }
+
+  if (!frota) {
+    const ordIdx = p.indexOf("ordens");
+    frota = (ordIdx > 0) ? p[ordIdx - 1] : p[p.length - 2];
+  }
+
+  return {
+    cod_os: String(cod).trim(),
+    frota_cc: String(frota || "Sem Frota").replace(/_/g, " ").replace(/\s+/g, " ").trim(),
+    apelido: (apelido || "OUTROS").trim(),
+    data_entrada: (d.data_entrada || "").trim(),
+    data_previsao: d.data_previsao || "",
+    descricao_servico: d.descricao_servico || d.descricao || "Sem descrição",
+    oficina: d.oficina || "",
+    dias_permanencia: (d.dias_permanencia != null) ? d.dias_permanencia : 0,
+    updated_at: d.updated_at
+  };
+}
+
+async function carregarDadosOficina(forcar = false) {
+  const wrap = document.getElementById("os-cards-container");
+  if (!forcar && _osCache.length > 0) { _render(); return; }
+  wrap.innerHTML = '<div class="empty-os-state">⚡ Conectando ao AgroAnalytics...</div>';
+  _initAgro();
+  _addedOSCodigos.clear(); // Clear the set of added OS codes before fetching new data
+  if (!_dbAgro) {
+    wrap.innerHTML = '<div class="empty-os-state" style="color:var(--red);">❌ Falha ao conectar no Firestore</div>';
+    return;
+  }
+
+  let todasMap = new Map();
+  const n = new Date();
+  const isoStr = n.getFullYear() + "-" + String(n.getMonth() + 1).padStart(2, '0') + "-" + String(n.getDate()).padStart(2, '0');
+  const hojeFormatado = String(n.getDate()).padStart(2, '0') + '/' + String(n.getMonth() + 1).padStart(2, '0') + '/' + n.getFullYear();
+
+  let resumoEncontrado = false;
+
+  // ESTRATÉGIA 0: Resumo Diário Consolidado (Caminho: /resumo_oficina/{YYYY-MM-DD})
+  async function tentarResumo(database, label) {
+    if (!database) return false;
+    try {
+      _log(`Buscando resumo em ${label} /resumo_oficina/${isoStr}`);
+      const docRes = await database.collection("resumo_oficina").doc(isoStr).get();
+      if (docRes.exists) {
+        const res = docRes.data();
+        if (res.grupos) {
+          Object.keys(res.grupos).forEach(grupo => {
+            if (Array.isArray(res.grupos[grupo])) {
+              res.grupos[grupo].forEach(os => {
+                const item = {
+                  ...os,
+                  apelido: os.apelido || grupo,
+                  updated_at: os.updated_at || res.updated_at,
+                  // Se vem do resumo de hoje, garante que a data de entrada seja hoje para o filtro
+                  data_entrada: os.data_entrada || hojeFormatado 
+                };
+                if (item.cod_os) todasMap.set(String(item.cod_os), item);
+              });
+            }
+          });
+          _log(`✅ ${todasMap.size} OS carregadas via resumo ${label}`);
+          return true;
+        }
+      }
+    } catch (e) {
+      _log(`[OS] ❌ Erro ${label} (Resumo): ${e.message}`);
+      if (e.code === 'permission-denied') showToast(`❌ Erro de permissão ao ler resumo diário do ${label}. Verifique as regras de segurança do Firebase.`, 'err');
+    }
+    return false;
+  }
+
+  try {
+    // Tenta primeiro no DB do AgroAnalytics, depois no DB Local (Dashboard)
+    resumoEncontrado = await tentarResumo(_dbAgro, "AgroAnalytics");
+    if (!resumoEncontrado) {
+      resumoEncontrado = await tentarResumo(db, "DB Local");
+    }
+  } catch (e) { _log("Erro Estratégia 0: " + e.message); }
+
+  // Continua com as outras estratégias apenas se não achou nada ou se forçar atualização completa
+  if (todasMap.size === 0 || forcar) try {
+    _log("Buscando fallbacks (Estratégias 1-5)...");
+    const snap = await _dbAgro.collectionGroup("ordens").get();
+    _log("collectionGroup('ordens') → " + snap.size + " docs");
+    snap.forEach(doc => {
+      const os = _parseOS(doc.data(), doc.ref.path.split('/'));
+      if (os.cod_os && !todasMap.has(String(os.cod_os))) todasMap.set(String(os.cod_os), os);
+    });
+  } catch (e) { _log("collectionGroup('ordens') falhou: " + e.message); }
+
+  // Estratégia 2: collectionGroup("os") — fallback
+  if (todasMap.size === 0 || forcar) {
+    try {
+      _log("Tentando collectionGroup('os')...");
+      const snap = await _dbAgro.collectionGroup("os").get();
+      _log("collectionGroup('os') → " + snap.size + " docs");
+      snap.forEach(doc => {
+        const os = _parseOS(doc.data(), doc.ref.path.split('/'));
+        if (os.cod_os && !todasMap.has(String(os.cod_os))) todasMap.set(String(os.cod_os), os);
+      });
+    } catch (e) { _log("collectionGroup('os') falhou: " + e.message); }
+  }
+
+  // Estratégia 3: /oficina/{apelido}/frotas/{frota}/ordens/{cod_os} — 4 níveis
+  if (todasMap.size === 0) {
+    try {
+      _log("Varrendo: oficina/{eq}/frotas/{fr}/ordens...");
+      const equipes = await _dbAgro.collection("oficina").get();
+      _log("Equipes: " + equipes.size);
+      for (const eq of equipes.docs) {
+        _log("  Equipe: " + eq.id);
+        const frotas = await eq.ref.collection("frotas").get();
+        _log("    frotas: " + frotas.size);
+        for (const fr of frotas.docs) {
+          // Tenta "ordens" primeiro, depois "os"
+          let oss;
+          try { oss = await fr.ref.collection("ordens").get(); } catch(e) { oss = null; }
+          if (!oss || oss.empty) {
+            try { oss = await fr.ref.collection("os").get(); } catch(e) { oss = null; }
+          }
+          if (oss && !oss.empty) {
+            _log("      " + fr.id + ": " + oss.size + " OS");
+            oss.forEach(o => {
+              const os = _parseOS(o.data(), o.ref.path.split('/'));
+              if (os.cod_os && !todasMap.has(String(os.cod_os))) todasMap.set(String(os.cod_os), os);
+            });
+          }
+        }
+      }
+    } catch (e) { _log("Estratégia 3 falhou: " + e.message); }
+  }
+
+  // Estratégia 4: oficina/{apelido}/frotas/{frota}/{cod_os} — 3 níveis (sem "ordens")
+  if (todasMap.size === 0) {
+    try {
+      _log("Varrendo: oficina/{eq}/frotas/{fr} (docs diretos)...");
+      const equipes = await _dbAgro.collection("oficina").get();
+      for (const eq of equipes.docs) {
+        const frotas = await eq.ref.collection("frotas").get();
+        for (const fr of frotas.docs) {
+          const d = fr.data();
+          if (d.cod_os) {
+            const os = _parseOS(d, fr.ref.path.split('/'));
+            if (os.cod_os && !todasMap.has(String(os.cod_os))) todasMap.set(String(os.cod_os), os);
+          }
+        }
+      }
+    } catch (e) { _log("Estratégia 4 falhou: " + e.message); }
+  }
+
+  // Estratégia 5: varredura profunda com listCollections
+  if (todasMap.size === 0) {
+    try {
+      _log("Varredura profunda...");
+      const equipes = await _dbAgro.collection("oficina").get();
+      for (const eq of equipes.docs) {
+        const subcols = await eq.ref.listCollections();
+        for (const sc of subcols) {
+          const docs = await sc.get();
+          if (sc.id === "ordens" || sc.id === "os") {
+            docs.forEach(o => {
+              const os = _parseOS(o.data(), o.ref.path.split('/'));
+              if (os.cod_os && !todasMap.has(String(os.cod_os))) todasMap.set(String(os.cod_os), os);
+            });
+          } else if (sc.id === "frotas" || sc.id === "frota") {
+            for (const fr of docs.docs) {
+              const subcols2 = await fr.ref.listCollections();
+              for (const sc2 of subcols2) {
+                const oss = await sc2.get();
+                oss.forEach(o => {
+                  const os = _parseOS(o.data(), o.ref.path.split('/'));
+                  if (os.cod_os && !todasMap.has(String(os.cod_os))) todasMap.set(String(os.cod_os), os);
+                });
+              }
+              // Se não tem subcoleção, o doc pode ser uma OS
+              const d = fr.data();
+              if (d.cod_os) {
+                const os = _parseOS(d, fr.ref.path.split('/'));
+                if (os.cod_os && !todasMap.has(String(os.cod_os))) todasMap.set(String(os.cod_os), os);
+              }
+            }
+          } else {
+            docs.forEach(doc => {
+              const d = doc.data();
+              if (d.cod_os) {
+                const os = _parseOS(d, doc.ref.path.split('/'));
+                if (os.cod_os && !todasMap.has(String(os.cod_os))) todasMap.set(String(os.cod_os), os);
+              }
+            });
+          }
+        }
+      }
+    } catch (e) { _log("Estratégia 5 falhou: " + e.message); }
+  }
+
+  const todas = Array.from(todasMap.values());
+
+  if (todas.length === 0 && !resumoEncontrado) {
+    wrap.innerHTML = '<div class="empty-os-state" style="color:var(--amber);">⚠️ Nenhuma OS encontrada no resumo diário.</div>';
+    _atualizaStats([]);
+    return;
+  }
+
+  _log("✅ Total: " + todas.length + " OS carregadas");
+  _osCache = todas;
+  showToast("✅ " + todas.length + " OS carregadas!", "ok");
+  // 1. Remove linhas "Via Sistema" cujas OS do dia foram fechadas
+  _limparOSFechadasDasFrotas();
+  // 2. Cria novas linhas para OS do dia ainda não presentes nas abas
+  _processarOSParaFrotasParadas();
+  _render();
+}
+
+function _render() {
+  const wrap = document.getElementById("os-cards-container");
+  const busca = (document.getElementById("os-search-input").value || "").toLowerCase().trim();
+
+  // Objeto Date para o início do dia de hoje (para comparações robustas)
+  const hojeObj = new Date();
+  hojeObj.setHours(0, 0, 0, 0);
+
+  // String de hoje no formato DD/MM/YYYY para logs e comparação de strings
+  const hojeStrFormatted = String(hojeObj.getDate()).padStart(2, '0') + '/' +
+                           String(hojeObj.getMonth() + 1).padStart(2, '0') + '/' +
+                           hojeObj.getFullYear();
+
+  // 1. Filtragem Base (Modo + Busca + Exclusão de Lote) - Ignora filtro de equipe para manter os botões estáveis
+  let baseDados = _osCache.filter(os => {
+    // Ignorar OS geradas em lote
+    if (os.descricao_servico && os.descricao_servico.trim().toUpperCase().startsWith("GERADA PELA GERAÇÃO DE O.S. EM LOTE")) return false;
+
+    // No modo HOJE, filtra apenas entradas de hoje
+    if (_osModoExibicao === "HOJE") {
+      let osDate = null;
+      // Tenta parsear os.data_entrada (formato DD/MM/YYYY)
+      if (os.data_entrada) {
+        const parts = os.data_entrada.split(' ')[0].split('/'); // Pega só a data e divide
+        if (parts.length === 3) {
+          const d = parseInt(parts[0], 10);
+          const m = parseInt(parts[1], 10) - 1; // Mês é 0-indexado
+          const y = parseInt(parts[2], 10);
+          osDate = new Date(y, m, d);
+          osDate.setHours(0, 0, 0, 0); // Normaliza para o início do dia
+        }
+      }
+
+      let osUpdatedDate = null;
+      if (os.updated_at && typeof os.updated_at.toDate === 'function') {
+        osUpdatedDate = os.updated_at.toDate();
+        osUpdatedDate.setHours(0, 0, 0, 0); // Normaliza para o início do dia
+      }
+
+      // Verifica se a data de entrada ou a data de atualização é hoje
+      const isToday = (osDate && osDate.getTime() === hojeObj.getTime()) || 
+                      (osUpdatedDate && osUpdatedDate.getTime() === hojeObj.getTime()) ||
+                      (os.data_entrada && os.data_entrada.split(' ')[0].trim() === hojeStrFormatted);
+
+      if (!isToday) {
+        // Adiciona log detalhado para depuração
+        console.log(`[OS Debug] Filtrando OS ${os.cod_os}. Data Entrada: '${os.data_entrada}', Hoje: '${hojeStrFormatted}'`);
+        return false;
+      }
+    }
+
+    const okBusca = !busca ||
+      os.frota_cc.toLowerCase().includes(busca) ||
+      String(os.cod_os).toLowerCase().includes(busca) ||
+      os.descricao_servico.toLowerCase().includes(busca) ||
+      os.oficina.toLowerCase().includes(busca);
+    return okBusca;
+  });
+
+  // Consolidação por frota: Somente no modo HOJE
+  if (_osModoExibicao === "HOJE") {
+    const mapaFrota = {};
+    baseDados.forEach(os => {
+      const frota = os.frota_cc || "Sem Frota";
+      const ts = _tsData(os.data_entrada);
+      const cod = parseInt(os.cod_os) || 0;
+
+      if (!mapaFrota[frota]) {
+        mapaFrota[frota] = os;
+      } else {
+        const tsExistente = _tsData(mapaFrota[frota].data_entrada);
+        const codExistente = parseInt(mapaFrota[frota].cod_os) || 0;
+        if (ts > tsExistente || (ts === tsExistente && cod > codExistente)) {
+          mapaFrota[frota] = os;
+        }
+      }
+    });
+    baseDados = Object.values(mapaFrota);
+  }
+
+  // 2. Renderiza botões usando a base (para que os outros botões de equipe não sumam ao selecionar um)
+  _renderBotoes(baseDados);
+
+  // 3. Aplica o filtro de equipe apenas para os dados que serão exibidos nos cards
+  let dados = baseDados.filter(os => {
+    const equipe = _normEquipe(os.apelido);
+    return (_equipeFiltro === "TODAS" || equipe === _equipeFiltro);
+  });
+
+  _atualizaStats(dados);
+
+  if (dados.length === 0) {
+    wrap.innerHTML = '<div class="empty-os-state">Nenhuma OS encontrada para os critérios selecionados.</div>';
+    return;
+  }
+
+  // Agrupa: equipe → frota → [OS]
+  const grupos = {};
+  dados.forEach(os => {
+    const eq = _normEquipe(os.apelido);
+    if (!grupos[eq]) grupos[eq] = {};
+    const frotaKey = os.frota_cc || "Sem Frota";
+    if (!grupos[eq][frotaKey]) grupos[eq][frotaKey] = [];
+    grupos[eq][frotaKey].push(os);
+  });
+
+  // Ordena OS dentro de cada frota (mais recente primeiro)
+  Object.values(grupos).forEach(frotas => {
+    Object.values(frotas).forEach(list => {
+      list.sort((a, b) => _tsData(b.data_entrada) - _tsData(a.data_entrada) || (parseInt(b.cod_os)||0) - (parseInt(a.cod_os)||0));
+    });
+  });
+
+  wrap.innerHTML = "";
+  // Filtra as equipes que possuem dados para exibir com base no filtro atual
+  let equipesParaRenderizar = Object.keys(grupos).sort();
+  
+  // Se houver um filtro de equipe específico, garante que apenas ele seja processado
+  if (_equipeFiltro !== "TODAS") {
+    equipesParaRenderizar = equipesParaRenderizar.filter(eq => eq === _equipeFiltro);
+  }
+
+  equipesParaRenderizar.forEach(equipe => {
+    const frotasDestaEquipe = grupos[equipe];
+    const cardsVisiveis = Object.keys(frotasDestaEquipe).length;
+
+    const eqDiv = document.createElement("div");
+    eqDiv.style.marginBottom = "32px";
+
+    const eqTitle = document.createElement("div");
+    eqTitle.style.cssText = "font-size:.85rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin:16px 0 10px;display:flex;align-items:center;gap:8px;";
+    eqTitle.innerHTML = `<span>⚙️ ${equipe}</span><span style="font-size:.75rem;background:var(--s3);padding:2px 8px;border-radius:999px;">${cardsVisiveis} Frotas</span>`;
+    eqDiv.appendChild(eqTitle);
+
+    const gridDiv = document.createElement("div");
+    gridDiv.className = "os-grid";
+    eqDiv.appendChild(gridDiv);
+
+    Object.keys(frotasDestaEquipe).sort((a,b) => {
+      return Math.max(...frotasDestaEquipe[b].map(o=>_tsData(o.data_entrada))) - Math.max(...frotasDestaEquipe[a].map(o=>_tsData(o.data_entrada)));
+    }).forEach(frota => {
+      const oss = frotasDestaEquipe[frota];
+      const rec = oss[0];
+      const st = _statusOS(rec.data_previsao);
+
+      const card = document.createElement("div");
+      card.className = "os-card";
+      card.style.borderTop = `4px solid ${st.cls === 'os-status-atrasada' ? '#dc2626' : (st.cls === 'os-status-prazo' ? '#059669' : '#fbbf24')}`;
+
+      card.innerHTML = `
+        <div class="os-card-header" style="border-bottom:none; cursor:default;">
+          <span class="os-card-frota-nome" style="font-size:1.2rem;">${frota}</span>
+          <span class="os-status-label ${st.cls}">${st.label}</span>
+        </div>
+        <div class="os-card-resumo">
+          <div class="os-card-resumo-item">
+            <span class="os-card-resumo-label">Ordem de Serviço</span>
+            <div class="os-card-resumo-valor" style="color:var(--blue); font-weight:800;">#${rec.cod_os}</div>
+          </div>
+          <div class="os-card-resumo-item">
+            <span class="os-card-resumo-label">Permanência</span>
+            <div class="os-card-resumo-valor">${rec.dias_permanencia} Dias</div>
+          </div>
+          <div class="os-card-resumo-item">
+            <span class="os-card-resumo-label">Data de Entrada</span>
+            <div class="os-card-resumo-valor">${rec.data_entrada || "—"}</div>
+          </div>
+          <div class="os-card-resumo-item">
+            <span class="os-card-resumo-label">Oficina Responsável</span>
+            <div class="os-card-resumo-valor">${rec.oficina || "Geral"}</div>
+          </div>
+        </div>
+        <div class="os-desc-section">
+          <span class="os-card-resumo-label">Previsão de Entrega</span>
+          <div class="os-card-resumo-valor" style="margin-bottom:10px;">${rec.data_previsao || "Não definida"}</div>
+          <span class="os-card-resumo-label">Descrição Técnica do Serviço</span>
+          <div class="os-desc-text">${rec.descricao_servico}</div>
+        </div>
+      `;
+      gridDiv.appendChild(card);
+    });
+
+    wrap.appendChild(eqDiv);
+  });
+}
+
+function _renderBotoes(dadosFiltrados) {
+  const container = document.getElementById("os-team-buttons");
+  if (!container) return;
+  container.innerHTML = "";
+
+  const counts = {};
+  dadosFiltrados.forEach(os => {
+    const eq = _normEquipe(os.apelido);
+    counts[eq] = (counts[eq] || 0) + 1;
+  });
+
+  const equipes = ["TODAS"];
+  Object.keys(counts).sort().forEach(eq => { if (counts[eq] > 0) equipes.push(eq); });
+
+  equipes.forEach(eq => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "btn-team-filter" + (eq === _equipeFiltro ? " active" : "");
+    btn.textContent = eq + (eq !== "TODAS" ? " (" + (counts[eq] || 0) + ")" : " (" + dadosFiltrados.length + ")");
+    btn.onclick = () => {
+      document.querySelectorAll(".btn-team-filter").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      _equipeFiltro = eq;
+      _render();
+    };
+    container.appendChild(btn);
+  });
+}
+
+function _atualizaStats(lista) {
+  let atrasadas = 0, prazo = 0, semprev = 0;
+  lista.forEach(os => {
+    const st = _statusOS(os.data_previsao);
+    if (st.cls === "os-status-atrasada") atrasadas++;
+    else if (st.cls === "os-status-semprev") semprev++;
+    else prazo++;
+  });
+  document.getElementById("os-stat-atrasadas").textContent = atrasadas;
+  document.getElementById("os-stat-sem-prev").textContent = semprev;
+  document.getElementById("os-stat-prazo").textContent = prazo;
+  document.getElementById("os-stat-total").textContent = lista.length;
+}
+
+document.getElementById("os-search-input").addEventListener("input", () => _render());
+
+// Função auxiliar para identificar serviços de borracharia
+function _isBorracharia(desc) {
+  if (!desc) return false;
+  const d = desc.toUpperCase();
+  return (
+    d.includes("BORRACHARIA") ||
+    d.includes("PNEU")        ||
+    d.includes("CAMARA")      ||
+    d.includes("CÂMARA")      ||
+    d.includes("VULCANIZ")    ||
+    d.includes("CALIBR")      ||  // calibrar, calibragem, calibração
+    d.includes("FURAD")       ||  // furado, furada
+    d.includes("ESTOURO")     ||  // estourado, estouro
+    d.includes("ESTOURAD")    ||
+    d.includes("TROCA DE PNEU") ||
+    d.includes("TROCAR PNEU")
+  );
+}
+
+// ============================================================
+// LIMPEZA DE OS FECHADAS NAS ABAS DE FROTA
+// Remove linhas "Via Sistema" cujas OS do DIA ATUAL já foram
+// fechadas/resolvidas no sistema de oficina.
+// Regra: só remove linhas com data_entrada = hoje E cujo
+// cod_os_origin não esteja mais no _osCache. OS de dias
+// anteriores que ainda estejam abertas NÃO são removidas.
+// ============================================================
+function _limparOSFechadasDasFrotas() {
+  const hoje = new Date();
+  const hojeFormatado = String(hoje.getDate()).padStart(2, '0') + '/' +
+                        String(hoje.getMonth() + 1).padStart(2, '0') + '/' +
+                        hoje.getFullYear();
+
+  // Conjunto dos codes de OS do dia de hoje que ainda estão ativas no cache
+  const activeCodsHoje = new Set(
+    _osCache
+      .filter(os => {
+        if (!os.data_entrada) return false;
+        const dataStr = os.data_entrada.split(' ')[0].trim();
+        return dataStr === hojeFormatado;
+      })
+      .map(os => String(os.cod_os).trim())
+  );
+
+  TABELAS.forEach(id => {
+    const tbody = document.querySelector(`#${id} tbody`);
+    if (!tbody) return;
+
+    let needsSave = false;
+    tbody.querySelectorAll('tr[data-os-origin="true"]').forEach(tr => {
+      const cod        = (tr.dataset.osOriginCod || '').trim();
+      const dataCell   = tr.querySelector('[data-campo="data"]');
+      const dataEntrada = dataCell ? dataCell.value.trim() : '';
+
+      // Só remove se a linha é de HOJE e o código não está mais ativo
+      if (cod && dataEntrada === hojeFormatado && !activeCodsHoje.has(cod)) {
+        _addedOSCodigos.delete(cod);
+        tr.remove();
+        needsSave = true;
+        _log(`[Cleanup] OS #${cod} fechada — linha removida de ${id}`);
+      }
+    });
+
+    if (needsSave) _salvarDados(id);
+  });
+
+  atualizarTodosContadores();
+}
+
+// Function to process OS data and add to respective tables
+function _processarOSParaFrotasParadas() {
+  _osCache.forEach(os => {
+    const frota = os.frota_cc;
+    const descricao = os.descricao_servico;
+    const cod_os = os.cod_os;
+    const hoje = new Date();
+    const hojeFormatado = String(hoje.getDate()).padStart(2, '0') + '/' + String(hoje.getMonth() + 1).padStart(2, '0') + '/' + hoje.getFullYear();
+
+    // 1. Ignorar se dados essenciais (frota ou cod_os) estão faltando,
+    //    ou se esta OS específica já foi processada nesta sessão.
+    if (!frota || !cod_os || _addedOSCodigos.has(String(cod_os).trim())) {
+      return;
+    }
+
+    // Ignorar OS geradas em lote na migração automática
+    if (descricao && descricao.trim().toUpperCase().startsWith("GERADA PELA GERAÇÃO DE O.S. EM LOTE")) {
+      return;
+    }
+
+    // 2. Garantir que processe APENAS as do dia atual para as tabelas automáticas
+    if (os.data_entrada && !os.data_entrada.startsWith(hojeFormatado)) return;
+
+    // 2. Ignorar se a frota (pelo seu número) já estiver presente em qualquer tabela no DOM.
+    // Pegamos apenas o número (ex: "80116") para comparar com o que o usuário digita
+    const numFrota = frota.split(' ')[0].trim();
+    const existeNoPainel = Array.from(document.querySelectorAll('input[data-campo="frota"]'))
+      .some(inp => inp.value.trim() === numFrota);
+
+    if (existeNoPainel) {
+      _addedOSCodigos.add(cod_os); // Marca como "visto" para não processar novamente
+      return;
+    }
+
+    let targetTableId = null;
+
+    // 1. Check para Borracharia: DEVE estar explicitamente na lista de frotas da borracharia
+    if (_isBorracharia(descricao) && (FROTAS_DISPONIVEIS['tabela-cam-borracharia'] || []).includes(numFrota)) {
+      targetTableId = 'tabela-cam-borracharia';
+    } else {
+      // 2. Determinar tabela baseada na presença da frota na lista oficial (FROTAS_DISPONIVEIS)
+      for (const tableId in FROTAS_DISPONIVEIS) {
+        // Skip borracharia table here, as it's handled above
+        if (tableId === 'tabela-cam-borracharia') continue;
+
+        if ((FROTAS_DISPONIVEIS[tableId] || []).includes(numFrota)) {
+          targetTableId = tableId;
+          break;
+        }
+      }
+    }
+
+    if (targetTableId) {
+      // Extract date and time from data_entrada
+      const dataEntradaParts = os.data_entrada ? os.data_entrada.split(' ') : [];
+      const data = dataEntradaParts[0] || hojeFormatado;
+      const hora = dataEntradaParts[1] ? dataEntradaParts[1].substring(0, 5) : '';
+
+      _criarLinha(targetTableId, {
+        frota: numFrota, // Usar apenas o número da frota para consistência
+        dataEntrada: data,
+        motivo: descricao,
+        horarioParada: hora,
+        previsaoRetorno: '', // User fills
+        horarioRetorno: '', // User fills
+        cod_os_origin: String(cod_os).trim() // Store original OS code (normalizado)
+      }, true, true); // salvo=true, isOSOrigin=true
+      _addedOSCodigos.add(String(cod_os).trim());
+    }
+  });
+  atualizarTodosContadores();
+  atualizarTodosCronometros();
+}
+ </script>
 </body>
-</html>
