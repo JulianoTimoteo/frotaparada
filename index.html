@@ -1066,7 +1066,8 @@ const PILLS = {
   'tabela-cam-borracharia':'pill-caminhao','tabela-col-proprio':'pill-colhedora',
   'tabela-col-terceiro':'pill-colhedora','tabela-transbordo':'pill-transbordo'
 };
-const SEM_BORRACHARIA = ['tabela-cam-proprio','tabela-cam-terceiro','tabela-col-proprio','tabela-col-terceiro','tabela-transbordo'];
+// "Fora Borracharia" = apenas caminhões próprios + terceiros (exclui borracharia, colhedoras e transbordo)
+const SEM_BORRACHARIA = ['tabela-cam-proprio','tabela-cam-terceiro'];
 
 let trPendente = null, tabelaPendente = null;
 const _alarmeSet = new Set();
