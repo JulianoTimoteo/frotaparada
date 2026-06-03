@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -2666,6 +2666,12 @@ function _processarOSParaFrotasParadas() {
 
     // Ignorar OS geradas em lote na migração automática
     if (descricao && descricao.trim().toUpperCase().startsWith("GERADA PELA GERAÇÃO DE O.S. EM LOTE")) {
+      return;
+    }
+
+    // Ignorar OS de revisão periódica (ex: "REVISÃO DE 75.000 KM", "REVISÃO DE 50000 KM")
+    // Essas OS aparecem apenas na aba Histórico (OS Oficina), nunca nas tabelas de frota
+    if (descricao && /REVIS[ÃA]O\s+DE\s+[\d.,]+\s*KM/i.test(descricao.trim())) {
       return;
     }
 
