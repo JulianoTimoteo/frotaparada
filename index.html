@@ -754,7 +754,6 @@ body.light .btn-team-filter.active {
 <div class="tab-nav-container">
   <div class="tab-nav-wrapper">
     <button class="tab-button active" onclick="showTab('tab-caminhoes', this)">🚛 Caminhões</button>
-    <button class="tab-button" onclick="showTab('tab-colhedoras', this)">🌾 Colhedoras e Transbordo</button>
     <button class="tab-button" onclick="showTab('tab-oficina', this)">🔧 OS Oficina</button>
   </div>
 </div>
@@ -778,36 +777,6 @@ body.light .btn-team-filter.active {
         <div class="group"><div class="group-label blue-t">Próprio <span class="gc" id="gc-cam-proprio">0</span></div><div class="table-wrap"><table id="tabela-cam-proprio"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante / Parado</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-cam-proprio')">＋ Adicionar</button></div>
         <div class="group"><div class="group-label amber-t">Terceiro <span class="gc" id="gc-cam-terceiro">0</span></div><div class="table-wrap"><table id="tabela-cam-terceiro"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante / Parado</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-cam-terceiro')">＋ Adicionar</button></div>
         <div class="group"><div class="group-label red-t">Borracharia <span class="gc" id="gc-cam-borracharia">0</span></div><div class="table-wrap"><table id="tabela-cam-borracharia"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante / Parado</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-cam-borracharia')">＋ Adicionar</button></div>
-      </div>
-    </section>
-  </div>
-
-  <!-- Aba Colhedoras e Transbordo -->
-  <div id="tab-colhedoras" class="tab-content hidden">
-    <div class="stat-grid">
-      <div class="stat-card" style="--accent:var(--green)"><div class="stat-icon">🌾</div><div class="stat-info"><span class="stat-label">Col. Própria</span><span class="stat-value" id="contador-col-proprio">0</span></div></div>
-      <div class="stat-card" style="--accent:var(--amber)"><div class="stat-icon">🌾</div><div class="stat-info"><span class="stat-label">Col. Terceira</span><span class="stat-value" id="contador-col-terceiro">0</span></div></div>
-      <div class="stat-card" style="--accent:var(--purple)"><div class="stat-icon">🔄</div><div class="stat-info"><span class="stat-label">Transbordo</span><span class="stat-value" id="contador-transbordo">0</span></div></div>
-      <div class="stat-card stat-total" style="--accent:var(--green)"><div class="stat-icon">🌾</div><div class="stat-info"><span class="stat-label">Total Col+Transbordo</span><span class="stat-value" id="tot-geral-col">0</span></div></div>
-    </div>
-    <section class="card" id="sec-colhedora">
-      <div class="card-header" id="hdr-colhedora" onclick="toggleSec('colhedora')">
-        <div class="card-title">🌾 Colhedoras Paradas <span class="pill" id="pill-colhedora">0</span></div>
-        <span class="arrow">▼</span>
-      </div>
-      <div class="card-body" id="body-colhedora">
-        <div class="group"><div class="group-label green-t">Própria <span class="gc" id="gc-col-proprio">0</span></div><div class="table-wrap"><table id="tabela-col-proprio"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante / Parado</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-col-proprio')">＋ Adicionar</button></div>
-        <div class="group"><div class="group-label amber-t">Terceira <span class="gc" id="gc-col-terceiro">0</span></div><div class="table-wrap"><table id="tabela-col-terceiro"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante / Parado</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-col-terceiro')">＋ Adicionar</button></div>
-      </div>
-    </section>
-    <section class="card" id="sec-transbordo">
-      <div class="card-header" id="hdr-transbordo" onclick="toggleSec('transbordo')">
-        <div class="card-title">🔄 Transbordos Parados <span class="pill" id="pill-transbordo">0</span></div>
-        <span class="arrow">▼</span>
-      </div>
-      <div class="card-body" id="body-transbordo">
-        <div class="group"><div class="group-label purple-t">Terceiro <span class="gc" id="gc-transbordo">0</span></div><div class="table-wrap"><table id="tabela-transbordo"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante / Parado</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-transbordo')">＋ Adicionar</button></div>
-        <div class="card-note">⚠️ Transbordo possui somente grupo Terceiro.</div>
       </div>
     </section>
   </div>
@@ -2342,10 +2311,6 @@ async function carregarDadosOficina(forcar = false) {
   _log("✅ Total: " + todas.length + " OS carregadas");
   _osCache = todas;
   showToast("✅ " + todas.length + " OS carregadas!", "ok");
-  // 1. Remove linhas "Via Sistema" cujas OS do dia foram fechadas
-  _limparOSFechadasDasFrotas();
-  // 2. Cria novas linhas para OS do dia ainda não presentes nas abas
-  _processarOSParaFrotasParadas();
   _render();
 }
 
