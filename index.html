@@ -496,6 +496,28 @@ body.light tr[data-os-origin="true"] {
   </div>
 </div>
 
+<!-- ===== MODAL INICIAR PREVENTIVA COM DATA/HORA RETROATIVA (Ctrl+clique em Iniciar) ===== -->
+<div id="modalIniciarRetroativo" class="modal">
+  <div class="modal-content">
+    <h3>⏪ Iniciar com Data/Hora Retroativa</h3>
+    <p>Frota <b id="retroFrotaLabel">—</b><br>Informe a data e a hora em que a manutenção realmente começou (uso para apontamentos esquecidos, ex.: ontem).</p>
+    <div style="display:flex;gap:10px;margin:14px 0;flex-wrap:wrap;">
+      <div style="flex:1;min-width:140px;">
+        <label style="font-size:.72rem;opacity:.8;display:block;margin-bottom:4px;">Data</label>
+        <input type="date" id="retroData" style="width:100%;padding:8px;border-radius:7px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:.85rem;">
+      </div>
+      <div style="flex:1;min-width:110px;">
+        <label style="font-size:.72rem;opacity:.8;display:block;margin-bottom:4px;">Hora</label>
+        <input type="time" id="retroHora" style="width:100%;padding:8px;border-radius:7px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:.85rem;">
+      </div>
+    </div>
+    <div class="modal-btns">
+      <button onclick="confirmarIniciarRetroativo()" class="btn-salvar" style="padding:10px 18px;">✔ Confirmar</button>
+      <button onclick="cancelarIniciarRetroativo()" style="padding:10px 18px;border-radius:7px;border:1px solid var(--border);background:var(--s2);color:var(--text);cursor:pointer;font-weight:700;">✕ Cancelar</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <header>
@@ -1574,15 +1596,15 @@ function showTab(tabId, clickedButton) {
   const isGeral = tabId === 'tab-geral';
   if (subtabNav) {
     subtabNav.classList.toggle('visible', isPrev);
-    // Mostra imediatamente as sub-abas já conhecidas (evita tela vazia) enquanto
-    // os dados atualizados chegam do Firebase; carregarPreventivas() corrige o
-    // conjunto final de sub-abas ao terminar, de acordo com a aba ativa.
+    // Os dados de preventivas ja chegam em tempo real via listener (iniciarListenerPreventivas),
+    // entao so precisamos exibir a barra de sub-abas correspondente a aba escolhida,
+    // preservando a subclasse que o usuario tinha selecionado.
     if (isGeral && _dadosPreventivasGeral.length) {
-      criarSubTabsPreventivas(_dadosPreventivasGeral, 'prev-geral-');
+      criarSubTabsPreventivas(_dadosPreventivasGeral, 'prev-geral-', _prevSubclasseAtivaGeral);
     } else if (!isGeral && _dadosPreventivasCTT.length) {
-      criarSubTabsPreventivas(_dadosPreventivasCTT, 'prev-');
+      criarSubTabsPreventivas(_dadosPreventivasCTT, 'prev-', _prevSubclasseAtivaCTT);
     }
-    if (isPrev && typeof carregarPreventivas === 'function') carregarPreventivas();
+    if (isPrev) iniciarListenerPreventivas(); // garante que o listener esteja ativo (idempotente)
   }
 
   // Mostra/esconde botões da Preventivas no header
@@ -1807,8 +1829,10 @@ window.onload = async function () {
   // Botão sincronizar
   document.getElementById('btnSyncFirebase').addEventListener('click', syncFirebase);
 
-  // Se carregar a tab Preventivas, carregar dados
-  carregarPreventivas();
+  // Preventivas: liga o listener em tempo real assim que o app abre —
+  // qualquer alteração feita por qualquer usuário aparece automaticamente
+  // aqui, sem precisar trocar de aba.
+  iniciarListenerPreventivas();
 };
 
 // ============================================================
@@ -1822,12 +1846,47 @@ function setPrevStatus(msg, type) {
   el.style.color = type === 'err' ? 'var(--red)' : type === 'ok' ? 'var(--green)' : 'var(--text-secondary)';
 }
 
-async function carregarPreventivas() {
-  if (!db) { setPrevStatus('Firebase nao disponivel', 'err'); return; }
-  setPrevStatus('Carregando...', '');
-  
+// Preventivas agora usam um listener em tempo real (onSnapshot) — assim como
+// no Firestore, qualquer "Iniciar"/"Reabrir" ou importação feita por QUALQUER
+// usuário, em QUALQUER computador, aparece automaticamente para todos os
+// outros que estiverem com o programa aberto, sem precisar trocar de aba ou
+// clicar em nada. É o mesmo dado para todo mundo, em tempo real.
+let _prevListenerAtivo = false;
+
+// Lembra qual sub-aba (subclasse) o usuario tinha selecionado em cada bloco,
+// para nao "pular" de volta pro primeiro grupo toda vez que alguem mais mexe
+// em uma preventiva em outro computador.
+let _prevSubclasseAtivaCTT = null;
+let _prevSubclasseAtivaGeral = null;
+
+function iniciarListenerPreventivas() {
+  if (!db || _prevListenerAtivo) return;
+  _prevListenerAtivo = true;
+  setPrevStatus('Conectando...', '');
+
+  db.collection('preventivas').onSnapshot(snapshot => {
+    processarSnapshotPreventivas(snapshot);
+  }, err => {
+    console.error('Erro no listener de preventivas:', err);
+    setPrevStatus('Erro ao sincronizar: ' + err.message, 'err');
+  });
+}
+
+// Mantido por compatibilidade com chamadas existentes — apenas garante que o
+// listener em tempo real esteja ativo (nao faz mais um fetch avulso).
+function carregarPreventivas() {
+  iniciarListenerPreventivas();
+}
+
+function setPrevStatus(msg, type) {
+  const el = document.getElementById('prev-status');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.color = type === 'err' ? 'var(--red)' : type === 'ok' ? 'var(--green)' : 'var(--text-secondary)';
+}
+
+function processarSnapshotPreventivas(snapshot) {
   try {
-    const snapshot = await db.collection('preventivas').get();
     if (snapshot.empty) {
       setPrevStatus('Nenhum dado. Clique em Importar.', 'warn');
       return;
@@ -1876,25 +1935,28 @@ async function carregarPreventivas() {
     
     // Popula CTT
     popularTabelasPreventivas(dadosCTT, 'body-preventivas', 'prev-');
+    restaurarSubclasseAtiva(dadosCTT, 'body-preventivas', 'prev-', _prevSubclasseAtivaCTT);
     filtrarPreventivas();
     atualizarStatsPreventivas(dadosCTT, 'prev-');
     
     // Popula GERAL
     popularTabelasPreventivas(dadosGeral, 'body-preventivas-geral', 'prev-geral-');
+    restaurarSubclasseAtiva(dadosGeral, 'body-preventivas-geral', 'prev-geral-', _prevSubclasseAtivaGeral);
     filtrarPreventivasGeral();
     document.getElementById('pill-preventivas-geral').textContent = dadosGeral.length;
 
     // Reconstroi a barra de sub-abas de acordo com a aba REALMENTE ativa no momento
-    // (evita que a barra fique presa nas sub-abas da CTT quando o usuario esta na Geral)
+    // (evita que a barra fique presa nas sub-abas da CTT quando o usuario esta na Geral),
+    // mantendo a subclasse que o usuario tinha escolhido, se ela ainda existir.
     const tabGeralEl = document.getElementById('tab-geral');
     const estaNaGeral = tabGeralEl && !tabGeralEl.classList.contains('hidden');
     if (estaNaGeral) {
-      criarSubTabsPreventivas(dadosGeral, 'prev-geral-');
+      criarSubTabsPreventivas(dadosGeral, 'prev-geral-', _prevSubclasseAtivaGeral);
     } else {
-      criarSubTabsPreventivas(dadosCTT, 'prev-');
+      criarSubTabsPreventivas(dadosCTT, 'prev-', _prevSubclasseAtivaCTT);
     }
 
-    setPrevStatus(`${dados.length} preventivas carregadas`, 'ok');
+    setPrevStatus(`${dados.length} preventivas · 🟢 tempo real`, 'ok');
     
     // Atualiza grafico de turnos se o card estiver virado
     const flipCard = document.querySelector('.card-flip');
@@ -1902,9 +1964,24 @@ async function carregarPreventivas() {
       atualizarGraficoTurnos();
     }
   } catch (e) {
-    console.error('Erro ao carregar preventivas:', e);
+    console.error('Erro ao processar preventivas:', e);
     setPrevStatus('Erro ao carregar: ' + e.message, 'err');
   }
+}
+
+// Reaplica a visibilidade do grupo/subclasse que estava selecionado antes de
+// um re-render (disparado por uma mudanca de qualquer usuario), evitando que
+// a tela "pule" de volta para o primeiro grupo toda vez que chega uma
+// atualizacao em tempo real de outro computador.
+function restaurarSubclasseAtiva(dados, containerId, prefix, subclasseDesejada) {
+  const container = document.getElementById(containerId);
+  if (!container || !subclasseDesejada) return;
+  const grupoId = 'sub-' + subclasseDesejada.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+  const alvo = document.getElementById('group-' + grupoId);
+  if (!alvo) return; // subclasse nao existe mais nesse conjunto de dados — mantem o padrao (1o grupo)
+  container.querySelectorAll(':scope > .group').forEach(g => {
+    g.style.display = (g.id === 'group-' + grupoId) ? '' : 'none';
+  });
 }
 
 // Mapa de merge: subclasses que sao o mesmo tipo de equipamento
@@ -1919,7 +1996,7 @@ const SUBCLASSE_MERGE_MAP = {
 let _dadosPreventivasCTT = [];
 let _dadosPreventivasGeral = [];
 
-function criarSubTabsPreventivas(dados, prefix) {
+function criarSubTabsPreventivas(dados, prefix, subclasseAtiva) {
   const wrapperVazio = document.getElementById('subtab-nav-wrapper');
   if (!dados || !dados.length) {
     // Limpa a barra para nao deixar sub-abas "fantasmas" de outra aba visiveis
@@ -1947,12 +2024,16 @@ function criarSubTabsPreventivas(dados, prefix) {
     if (grupos[b] !== grupos[a]) return grupos[b] - grupos[a];
     return a.localeCompare(b);
   });
+  // Mantem a subclasse que o usuario ja tinha escolhido, se ela ainda existir
+  // neste conjunto de dados; senao cai no comportamento padrao (primeira da lista).
+  const idxAtiva = subclasseAtiva ? sortedSubs.indexOf(subclasseAtiva) : -1;
+  const idxSelecionado = idxAtiva !== -1 ? idxAtiva : 0;
   const wrapper = document.getElementById('subtab-nav-wrapper');
   if (!wrapper) return;
   wrapper.innerHTML = '';
   sortedSubs.forEach((sub, idx) => {
     const btn = document.createElement('button');
-    btn.className = 'subtab-button' + (idx === 0 ? ' active' : '');
+    btn.className = 'subtab-button' + (idx === idxSelecionado ? ' active' : '');
     btn.dataset.subclasse = sub;
     btn.dataset.prefix = prefix;
     btn.onclick = function() { showSubTabBySubclasse(sub, this, prefix); };
@@ -2070,6 +2151,10 @@ function showSubTabBySubclasse(subclasse, btn, prefix) {
   prefix = prefix || 'prev-';
   const isGeral = prefix === 'prev-geral-';
   const tabSelector = isGeral ? '#tab-geral' : '#tab-oficina';
+
+  // Memoriza a escolha para nao perde-la quando uma atualizacao em tempo real
+  // (de qualquer computador) forcar um re-render das tabelas.
+  if (isGeral) _prevSubclasseAtivaGeral = subclasse; else _prevSubclasseAtivaCTT = subclasse;
   
   const filtroAtual = isGeral ? prevStatusFilterGeral : prevStatusFilterCTT;
   if (filtroAtual === 'realizadas') {
@@ -2101,7 +2186,8 @@ function renderAcoes(item) {
   }
   
   return `<div style="display:flex;gap:6px;align-items:center;flex-wrap:nowrap;">
-    <button class="btn-iniciar" data-frota="${esc(item.frota)}" onclick="iniciarPreventiva(this)" 
+    <button class="btn-iniciar" data-frota="${esc(item.frota)}" onclick="iniciarPreventiva(this, event)" 
+    title="Clique para iniciar agora. Segure Ctrl e clique para informar uma data/hora retroativa (ex.: apontamento esquecido de ontem)."
     style="padding:3px 12px;font-size:.72rem;border:1px solid var(--green);background:var(--green);color:#fff;border-radius:4px;cursor:pointer;font-weight:600;">▶ Iniciar</button>
   </div>`;
 }
@@ -2125,13 +2211,68 @@ function horaAtualStr() {
   return String(agora.getHours()).padStart(2,'0') + ':' + String(agora.getMinutes()).padStart(2,'0');
 }
 
-async function iniciarPreventiva(btn) {
+async function iniciarPreventiva(btn, ev) {
   const frota = btn.dataset.frota || btn.closest('tr')?.dataset.frota;
   if (!frota) return;
   const tr = btn.closest('tr');
-  const horaInicio = horaAtualStr();
-  const dataEnc = new Date().toISOString().slice(0,10);
 
+  // Ctrl+clique -> abre modal para informar data/hora retroativa
+  // (ex.: apontamento esquecido, precisa lançar como se fosse ontem)
+  if (ev && ev.ctrlKey) {
+    abrirModalIniciarRetroativo(frota, tr);
+    return;
+  }
+
+  await _gravarInicioPreventiva(frota, tr, horaAtualStr(), new Date().toISOString().slice(0, 10));
+}
+
+// ===== INICIAR COM DATA/HORA RETROATIVA (Ctrl+clique) =====
+let _retroFrotaPendente = null;
+let _retroTrPendente = null;
+
+function abrirModalIniciarRetroativo(frota, tr) {
+  _retroFrotaPendente = frota;
+  _retroTrPendente = tr;
+  const hojeStr = new Date().toISOString().slice(0, 10);
+  const label = document.getElementById('retroFrotaLabel');
+  const inputData = document.getElementById('retroData');
+  const inputHora = document.getElementById('retroHora');
+  if (label) label.textContent = frota;
+  if (inputData) { inputData.value = hojeStr; inputData.max = hojeStr; } // nao permite data futura
+  if (inputHora) inputHora.value = horaAtualStr();
+  const m = document.getElementById('modalIniciarRetroativo');
+  if (m) m.style.display = 'flex';
+}
+
+function cancelarIniciarRetroativo() {
+  const m = document.getElementById('modalIniciarRetroativo');
+  if (m) m.style.display = 'none';
+  _retroFrotaPendente = null;
+  _retroTrPendente = null;
+}
+
+async function confirmarIniciarRetroativo() {
+  const data = document.getElementById('retroData')?.value || '';
+  const hora = document.getElementById('retroHora')?.value || '';
+  if (!data || !hora) { showToast('⚠️ Informe data e hora.', 'err'); return; }
+  if (data > new Date().toISOString().slice(0, 10)) { showToast('⚠️ Não é possível usar data futura.', 'err'); return; }
+
+  const frota = _retroFrotaPendente;
+  const tr = _retroTrPendente;
+  const m = document.getElementById('modalIniciarRetroativo');
+  if (m) m.style.display = 'none';
+
+  await _gravarInicioPreventiva(frota, tr, hora, data);
+  _retroFrotaPendente = null;
+  _retroTrPendente = null;
+}
+
+// Grava no Firestore o inicio da preventiva (na hora atual OU retroativo).
+// Como a lista roda em tempo real (onSnapshot), essa mesma gravacao ja e
+// suficiente para refletir "Iniciado" em TODOS os computadores automaticamente;
+// aqui so damos um retorno visual imediato para quem clicou.
+async function _gravarInicioPreventiva(frota, tr, horaInicio, dataEnc) {
+  if (!frota) return;
   try {
     await db.collection('preventivas').doc(frota).update({
       status: 'encerrado',
@@ -2140,13 +2281,15 @@ async function iniciarPreventiva(btn) {
       ultima_atualizacao: new Date().toISOString()
     });
     
-    tr.dataset.status = 'encerrado';
-    tr.className = 'encerrado';
-    const acoes = tr.querySelector('.acoes-prev');
-    acoes.innerHTML = renderAcoes({
-      frota, status: 'encerrado', hora_inicio: horaInicio,
-      data_encerramento: dataEnc
-    });
+    if (tr) {
+      tr.dataset.status = 'encerrado';
+      tr.className = 'encerrado';
+      const acoes = tr.querySelector('.acoes-prev');
+      if (acoes) acoes.innerHTML = renderAcoes({
+        frota, status: 'encerrado', hora_inicio: horaInicio,
+        data_encerramento: dataEnc
+      });
+    }
     
     // Atualiza dados globais para manter o grafico de turnos sincronizado
     const itemCTT = _dadosPreventivasCTT.find(d => String(d.frota || d.Frota || d.FROTA) === frota);
@@ -2154,7 +2297,9 @@ async function iniciarPreventiva(btn) {
     const itemGeral = _dadosPreventivasGeral.find(d => String(d.frota || d.Frota || d.FROTA) === frota);
     if (itemGeral) { itemGeral.status = 'encerrado'; itemGeral.hora_inicio = horaInicio; itemGeral.data_encerramento = dataEnc; }
     
-    showToast(`✅ Frota ${frota} iniciada às ${horaInicio}`, 'ok');
+    const hojeStr = new Date().toISOString().slice(0, 10);
+    const retroativo = dataEnc !== hojeStr;
+    showToast(`✅ Frota ${frota} iniciada às ${horaInicio}${retroativo ? ' (retroativo — ' + formatData(dataEnc) + ')' : ''}`, 'ok');
     filtrarPreventivas();
     filtrarPreventivasGeral();
     
@@ -2429,7 +2574,11 @@ function atualizarGraficoTurnos() {
 
 // ===== IMPORT SEManal DE PREVENTIVAS (planilha via navegador) =====
 // Dispara toda segunda 00:01 e repete de 10 em 10 min ate o usuario confirmar.
-const PREV_IMPORT_LS = 'prevImportSemana';
+// IMPORTANTE: o "já foi importado essa semana" é compartilhado via Firestore
+// (doc preventivas_meta/import_semanal), NÃO por localStorage — senão cada
+// computador acha que precisa importar de novo mesmo depois de alguém já ter
+// feito a atualização em outra máquina.
+const PREV_IMPORT_LS = 'prevImportSemana'; // cache local (fallback offline / resposta "ainda não")
 let _prevImportModalAberto = false;
 
 function getSemanaId(dt) {
@@ -2448,13 +2597,35 @@ function iniciarAgendadorImportPrev() {
   setInterval(verificarGatilhoImportPrev, 60 * 1000); // checa a cada minuto
 }
 
-function verificarGatilhoImportPrev() {
-  if (_prevImportModalAberto) return;
-  if (localStorage.getItem(PREV_IMPORT_LS) === getSemanaId(new Date())) return; // ja feito na semana
-  const d = new Date();
-  if (d.getDay() === 1) { // Segunda-feira
-    abrirModalImportPrev();
+async function importJaFeitoEstaSemanaCompartilhado() {
+  // Verifica no Firestore (visivel para TODOS os computadores) se algum usuario
+  // ja concluiu a importacao desta semana. Isso evita que cada maquina peca
+  // a mesma atualizacao separadamente.
+  if (!db) return false;
+  try {
+    const doc = await db.collection('preventivas_meta').doc('import_semanal').get();
+    if (doc.exists && doc.data().semana === getSemanaId(new Date())) return true;
+  } catch (e) {
+    console.warn('[Preventivas] Nao foi possivel checar import compartilhado:', e);
   }
+  return false;
+}
+
+async function verificarGatilhoImportPrev() {
+  if (_prevImportModalAberto) return;
+  const d = new Date();
+  if (d.getDay() !== 1) return; // so dispara as segundas-feiras
+
+  // 1) Ja foi importado por QUALQUER usuario nesta semana? (fonte compartilhada)
+  if (await importJaFeitoEstaSemanaCompartilhado()) {
+    try { localStorage.setItem(PREV_IMPORT_LS, getSemanaId(new Date())); } catch (e) {}
+    return;
+  }
+  // 2) Este navegador ja respondeu "ainda não" (soneca local, evita reabrir o modal
+  //    a cada minuto na MESMA maquina enquanto ninguem faz a importacao)
+  if (localStorage.getItem(PREV_IMPORT_LS) === getSemanaId(new Date())) return;
+
+  abrirModalImportPrev();
 }
 
 function abrirModalImportPrev() {
@@ -2478,7 +2649,9 @@ function importPrevSim() {
 
 function importPrevNao() {
   fecharModalImportPrev();
-  // Marca a semana como ja perguntada para so exibir 1x por segunda-feira
+  // Soneca LOCAL (so nesta maquina) para nao reabrir o modal a cada minuto.
+  // Nao marca como concluido no Firestore, pois a importacao real ainda nao
+  // aconteceu — os demais usuarios continuam sendo avisados normalmente.
   try { localStorage.setItem(PREV_IMPORT_LS, getSemanaId(new Date())); } catch (e) {}
   showToast('⏳ Ok, aguardo até a próxima semana.', 'ok');
 }
@@ -2675,9 +2848,24 @@ async function processarPlanilhaPrev(ev) {
     });
     await batch.commit();
 
-    localStorage.setItem(PREV_IMPORT_LS, getSemanaId(new Date()));
+    // Marca no Firestore (compartilhado) que a importacao desta semana foi concluida.
+    // Assim, nenhum outro computador volta a pedir a atualizacao semanal --
+    // é o mesmo programa/dado para todos, nao um controle por maquina.
+    const semanaAtual = getSemanaId(new Date());
+    try {
+      await db.collection('preventivas_meta').doc('import_semanal').set({
+        semana: semanaAtual,
+        frotas_importadas: novosDocs.length,
+        atualizado_em: new Date().toISOString()
+      });
+    } catch (e) {
+      console.warn('[Preventivas] Falha ao gravar flag compartilhado de import semanal:', e);
+    }
+    localStorage.setItem(PREV_IMPORT_LS, semanaAtual);
     showToast('✅ Preventivas atualizadas! ' + novosDocs.length + ' frotas.', 'ok');
-    if (typeof carregarPreventivas === 'function') carregarPreventivas();
+    // Nao precisa forcar recarregamento: o listener em tempo real (onSnapshot)
+    // ja vai re-renderizar automaticamente aqui e em todos os outros computadores
+    // assim que o Firestore confirmar o batch.commit() acima.
   } catch (e) {
     console.error(e);
     showToast('❌ Erro ao importar: ' + e.message, 'err');
