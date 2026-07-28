@@ -99,9 +99,9 @@ tbody tr[data-salvo="false"]{
 #body-preventivas tr.hoje{background:transparent !important;border-left:3px solid transparent !important;}
 #body-preventivas tr.amanha{background:transparent !important;border-left:3px solid transparent !important;}
 #body-preventivas tr.atrasado{background:transparent !important;border-left:3px solid transparent !important;}
-#body-preventivas tr.encerrado{opacity:.6;border-left:3px solid transparent !important;}
-#body-preventivas tr.encerrado td{text-decoration:line-through;}
-#body-preventivas tr.encerrado .hora-inicio{opacity:.5;}
+#body-preventivas tr.encerrado{opacity:1;border-left:3px solid transparent !important;}
+#body-preventivas tr.encerrado td{text-decoration:none;}
+#body-preventivas tr.encerrado .hora-inicio{opacity:1;}
 
 td input[type="text"],
 td input[type="time"]{
@@ -460,6 +460,22 @@ body.light tr[data-os-origin="true"] {
   background: rgba(26,92,184,.035);
 }
 
+/* ===== BOTÃO MANUTENÇÃO (VERMELHO) ===== */
+.btn-manutencao{
+  padding:3px 12px;font-size:.72rem;
+  border:1px solid var(--red);
+  background:var(--red);color:#000;
+  border-radius:4px;cursor:pointer;font-weight:600;
+  transition:opacity .15s;
+}
+.btn-manutencao:hover{opacity:.85;}
+
+/* ===== LINHA MANUTENÇÃO (NÃO REALIZADO) ===== */
+#body-preventivas tr.manutencao td{color:#dc2626 !important;}
+#body-preventivas tr.manutencao{opacity:1;border-left:3px solid #dc2626 !important;}
+body.light #body-preventivas tr.manutencao td{color:#b91c1c !important;}
+body.light #body-preventivas tr.manutencao{border-left:3px solid #b91c1c !important;}
+
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -496,24 +512,15 @@ body.light tr[data-os-origin="true"] {
   </div>
 </div>
 
-<!-- ===== MODAL INICIAR PREVENTIVA COM DATA/HORA RETROATIVA (Ctrl+clique em Iniciar) ===== -->
-<div id="modalIniciarRetroativo" class="modal">
+<!-- ===== MODAL JUSTIFICATIVA MANUTENÇÃO ===== -->
+<div id="modalManutencao" class="modal">
   <div class="modal-content">
-    <h3>⏪ Iniciar com Data/Hora Retroativa</h3>
-    <p>Frota <b id="retroFrotaLabel">—</b><br>Informe a data e a hora em que a manutenção realmente começou (uso para apontamentos esquecidos, ex.: ontem).</p>
-    <div style="display:flex;gap:10px;margin:14px 0;flex-wrap:wrap;">
-      <div style="flex:1;min-width:140px;">
-        <label style="font-size:.72rem;opacity:.8;display:block;margin-bottom:4px;">Data</label>
-        <input type="date" id="retroData" style="width:100%;padding:8px;border-radius:7px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:.85rem;">
-      </div>
-      <div style="flex:1;min-width:110px;">
-        <label style="font-size:.72rem;opacity:.8;display:block;margin-bottom:4px;">Hora</label>
-        <input type="time" id="retroHora" style="width:100%;padding:8px;border-radius:7px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:.85rem;">
-      </div>
-    </div>
+    <h3>🔧 Justificativa de Manutenção</h3>
+    <p>Informe o motivo pelo qual a frota <strong id="modalManutFrota"></strong> não realizará a preventiva:</p>
+    <textarea id="modalManutJustificativa" class="modal-input" style="min-height:100px;resize:vertical;text-align:left;" placeholder="Descreva o motivo da não realização..."></textarea>
     <div class="modal-btns">
-      <button onclick="confirmarIniciarRetroativo()" class="btn-salvar" style="padding:10px 18px;">✔ Confirmar</button>
-      <button onclick="cancelarIniciarRetroativo()" style="padding:10px 18px;border-radius:7px;border:1px solid var(--border);background:var(--s2);color:var(--text);cursor:pointer;font-weight:700;">✕ Cancelar</button>
+      <button onclick="salvarManutencao()" class="btn-salvar" style="padding:10px 18px;">✅ Salvar</button>
+      <button onclick="fecharModalManutencao()" style="padding:10px 18px;border-radius:7px;border:1px solid var(--border);background:var(--s2);color:var(--text);cursor:pointer;font-weight:700;">✕ Cancelar</button>
     </div>
   </div>
 </div>
@@ -579,7 +586,7 @@ body.light tr[data-os-origin="true"] {
   <div id="tab-oficina" class="tab-content hidden">
     <!-- Stat Cards -->
     <div class="stat-grid">
-      <div class="stat-card" style="--accent:var(--blue)">
+      <div class="stat-card" style="--accent:var(--blue);cursor:pointer;" title="Duplo clique para ver equipamentos não realizados" ondblclick="mostrarManutencaoJustificativas()">
         <div class="stat-icon">🛠️</div>
         <div class="stat-info">
           <span class="stat-label">Total Preventivas</span>
@@ -1596,15 +1603,15 @@ function showTab(tabId, clickedButton) {
   const isGeral = tabId === 'tab-geral';
   if (subtabNav) {
     subtabNav.classList.toggle('visible', isPrev);
-    // Os dados de preventivas ja chegam em tempo real via listener (iniciarListenerPreventivas),
-    // entao so precisamos exibir a barra de sub-abas correspondente a aba escolhida,
-    // preservando a subclasse que o usuario tinha selecionado.
+    // Mostra imediatamente as sub-abas já conhecidas (evita tela vazia) enquanto
+    // os dados atualizados chegam do Firebase; carregarPreventivas() corrige o
+    // conjunto final de sub-abas ao terminar, de acordo com a aba ativa.
     if (isGeral && _dadosPreventivasGeral.length) {
-      criarSubTabsPreventivas(_dadosPreventivasGeral, 'prev-geral-', _prevSubclasseAtivaGeral);
+      criarSubTabsPreventivas(_dadosPreventivasGeral, 'prev-geral-');
     } else if (!isGeral && _dadosPreventivasCTT.length) {
-      criarSubTabsPreventivas(_dadosPreventivasCTT, 'prev-', _prevSubclasseAtivaCTT);
+      criarSubTabsPreventivas(_dadosPreventivasCTT, 'prev-');
     }
-    if (isPrev) iniciarListenerPreventivas(); // garante que o listener esteja ativo (idempotente)
+    if (isPrev && typeof carregarPreventivas === 'function') carregarPreventivas();
   }
 
   // Mostra/esconde botões da Preventivas no header
@@ -1829,10 +1836,8 @@ window.onload = async function () {
   // Botão sincronizar
   document.getElementById('btnSyncFirebase').addEventListener('click', syncFirebase);
 
-  // Preventivas: liga o listener em tempo real assim que o app abre —
-  // qualquer alteração feita por qualquer usuário aparece automaticamente
-  // aqui, sem precisar trocar de aba.
-  iniciarListenerPreventivas();
+  // Se carregar a tab Preventivas, carregar dados
+  carregarPreventivas();
 };
 
 // ============================================================
@@ -1846,47 +1851,12 @@ function setPrevStatus(msg, type) {
   el.style.color = type === 'err' ? 'var(--red)' : type === 'ok' ? 'var(--green)' : 'var(--text-secondary)';
 }
 
-// Preventivas agora usam um listener em tempo real (onSnapshot) — assim como
-// no Firestore, qualquer "Iniciar"/"Reabrir" ou importação feita por QUALQUER
-// usuário, em QUALQUER computador, aparece automaticamente para todos os
-// outros que estiverem com o programa aberto, sem precisar trocar de aba ou
-// clicar em nada. É o mesmo dado para todo mundo, em tempo real.
-let _prevListenerAtivo = false;
-
-// Lembra qual sub-aba (subclasse) o usuario tinha selecionado em cada bloco,
-// para nao "pular" de volta pro primeiro grupo toda vez que alguem mais mexe
-// em uma preventiva em outro computador.
-let _prevSubclasseAtivaCTT = null;
-let _prevSubclasseAtivaGeral = null;
-
-function iniciarListenerPreventivas() {
-  if (!db || _prevListenerAtivo) return;
-  _prevListenerAtivo = true;
-  setPrevStatus('Conectando...', '');
-
-  db.collection('preventivas').onSnapshot(snapshot => {
-    processarSnapshotPreventivas(snapshot);
-  }, err => {
-    console.error('Erro no listener de preventivas:', err);
-    setPrevStatus('Erro ao sincronizar: ' + err.message, 'err');
-  });
-}
-
-// Mantido por compatibilidade com chamadas existentes — apenas garante que o
-// listener em tempo real esteja ativo (nao faz mais um fetch avulso).
-function carregarPreventivas() {
-  iniciarListenerPreventivas();
-}
-
-function setPrevStatus(msg, type) {
-  const el = document.getElementById('prev-status');
-  if (!el) return;
-  el.textContent = msg;
-  el.style.color = type === 'err' ? 'var(--red)' : type === 'ok' ? 'var(--green)' : 'var(--text-secondary)';
-}
-
-function processarSnapshotPreventivas(snapshot) {
+async function carregarPreventivas() {
+  if (!db) { setPrevStatus('Firebase nao disponivel', 'err'); return; }
+  setPrevStatus('Carregando...', '');
+  
   try {
+    const snapshot = await db.collection('preventivas').get();
     if (snapshot.empty) {
       setPrevStatus('Nenhum dado. Clique em Importar.', 'warn');
       return;
@@ -1935,28 +1905,25 @@ function processarSnapshotPreventivas(snapshot) {
     
     // Popula CTT
     popularTabelasPreventivas(dadosCTT, 'body-preventivas', 'prev-');
-    restaurarSubclasseAtiva(dadosCTT, 'body-preventivas', 'prev-', _prevSubclasseAtivaCTT);
     filtrarPreventivas();
     atualizarStatsPreventivas(dadosCTT, 'prev-');
     
     // Popula GERAL
     popularTabelasPreventivas(dadosGeral, 'body-preventivas-geral', 'prev-geral-');
-    restaurarSubclasseAtiva(dadosGeral, 'body-preventivas-geral', 'prev-geral-', _prevSubclasseAtivaGeral);
     filtrarPreventivasGeral();
     document.getElementById('pill-preventivas-geral').textContent = dadosGeral.length;
 
     // Reconstroi a barra de sub-abas de acordo com a aba REALMENTE ativa no momento
-    // (evita que a barra fique presa nas sub-abas da CTT quando o usuario esta na Geral),
-    // mantendo a subclasse que o usuario tinha escolhido, se ela ainda existir.
+    // (evita que a barra fique presa nas sub-abas da CTT quando o usuario esta na Geral)
     const tabGeralEl = document.getElementById('tab-geral');
     const estaNaGeral = tabGeralEl && !tabGeralEl.classList.contains('hidden');
     if (estaNaGeral) {
-      criarSubTabsPreventivas(dadosGeral, 'prev-geral-', _prevSubclasseAtivaGeral);
+      criarSubTabsPreventivas(dadosGeral, 'prev-geral-');
     } else {
-      criarSubTabsPreventivas(dadosCTT, 'prev-', _prevSubclasseAtivaCTT);
+      criarSubTabsPreventivas(dadosCTT, 'prev-');
     }
 
-    setPrevStatus(`${dados.length} preventivas · 🟢 tempo real`, 'ok');
+    setPrevStatus(`${dados.length} preventivas carregadas`, 'ok');
     
     // Atualiza grafico de turnos se o card estiver virado
     const flipCard = document.querySelector('.card-flip');
@@ -1964,24 +1931,9 @@ function processarSnapshotPreventivas(snapshot) {
       atualizarGraficoTurnos();
     }
   } catch (e) {
-    console.error('Erro ao processar preventivas:', e);
+    console.error('Erro ao carregar preventivas:', e);
     setPrevStatus('Erro ao carregar: ' + e.message, 'err');
   }
-}
-
-// Reaplica a visibilidade do grupo/subclasse que estava selecionado antes de
-// um re-render (disparado por uma mudanca de qualquer usuario), evitando que
-// a tela "pule" de volta para o primeiro grupo toda vez que chega uma
-// atualizacao em tempo real de outro computador.
-function restaurarSubclasseAtiva(dados, containerId, prefix, subclasseDesejada) {
-  const container = document.getElementById(containerId);
-  if (!container || !subclasseDesejada) return;
-  const grupoId = 'sub-' + subclasseDesejada.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
-  const alvo = document.getElementById('group-' + grupoId);
-  if (!alvo) return; // subclasse nao existe mais nesse conjunto de dados — mantem o padrao (1o grupo)
-  container.querySelectorAll(':scope > .group').forEach(g => {
-    g.style.display = (g.id === 'group-' + grupoId) ? '' : 'none';
-  });
 }
 
 // Mapa de merge: subclasses que sao o mesmo tipo de equipamento
@@ -1996,7 +1948,7 @@ const SUBCLASSE_MERGE_MAP = {
 let _dadosPreventivasCTT = [];
 let _dadosPreventivasGeral = [];
 
-function criarSubTabsPreventivas(dados, prefix, subclasseAtiva) {
+function criarSubTabsPreventivas(dados, prefix) {
   const wrapperVazio = document.getElementById('subtab-nav-wrapper');
   if (!dados || !dados.length) {
     // Limpa a barra para nao deixar sub-abas "fantasmas" de outra aba visiveis
@@ -2024,16 +1976,12 @@ function criarSubTabsPreventivas(dados, prefix, subclasseAtiva) {
     if (grupos[b] !== grupos[a]) return grupos[b] - grupos[a];
     return a.localeCompare(b);
   });
-  // Mantem a subclasse que o usuario ja tinha escolhido, se ela ainda existir
-  // neste conjunto de dados; senao cai no comportamento padrao (primeira da lista).
-  const idxAtiva = subclasseAtiva ? sortedSubs.indexOf(subclasseAtiva) : -1;
-  const idxSelecionado = idxAtiva !== -1 ? idxAtiva : 0;
   const wrapper = document.getElementById('subtab-nav-wrapper');
   if (!wrapper) return;
   wrapper.innerHTML = '';
   sortedSubs.forEach((sub, idx) => {
     const btn = document.createElement('button');
-    btn.className = 'subtab-button' + (idx === idxSelecionado ? ' active' : '');
+    btn.className = 'subtab-button' + (idx === 0 ? ' active' : '');
     btn.dataset.subclasse = sub;
     btn.dataset.prefix = prefix;
     btn.onclick = function() { showSubTabBySubclasse(sub, this, prefix); };
@@ -2123,6 +2071,7 @@ function popularTabelasPreventivas(dados, containerId, prefix) {
       else if (dataProg === hojeStr) rowClass = 'hoje';
       else if (dataProg === amanhaStr) rowClass = 'amanha';
       if (item.status === 'encerrado') rowClass = (rowClass ? rowClass + ' ' : '') + 'encerrado';
+      if (item.status === 'manutencao') rowClass = (rowClass ? rowClass + ' ' : '') + 'manutencao';
       if (rowClass) tr.className = rowClass;
 
       tr.innerHTML = `
@@ -2151,10 +2100,6 @@ function showSubTabBySubclasse(subclasse, btn, prefix) {
   prefix = prefix || 'prev-';
   const isGeral = prefix === 'prev-geral-';
   const tabSelector = isGeral ? '#tab-geral' : '#tab-oficina';
-
-  // Memoriza a escolha para nao perde-la quando uma atualizacao em tempo real
-  // (de qualquer computador) forcar um re-render das tabelas.
-  if (isGeral) _prevSubclasseAtivaGeral = subclasse; else _prevSubclasseAtivaCTT = subclasse;
   
   const filtroAtual = isGeral ? prevStatusFilterGeral : prevStatusFilterCTT;
   if (filtroAtual === 'realizadas') {
@@ -2174,8 +2119,17 @@ function showSubTabBySubclasse(subclasse, btn, prefix) {
 
 function renderAcoes(item) {
   const encerrado = item.status === 'encerrado';
+  const manutencao = item.status === 'manutencao';
   const inicio = item.hora_inicio || '';
   const dataEnc = item.data_encerramento || '';
+  
+  if (manutencao) {
+    return `<div style="display:flex;gap:6px;align-items:center;flex-wrap:nowrap;">
+      <span style="font-size:.7rem;color:#dc2626;white-space:nowrap;">🔧 ${item.hora_manutencao || ''} ${item.data_manutencao ? formatData(item.data_manutencao) : ''}</span>
+      <button class="btn-reabrir" data-frota="${esc(item.frota)}" onclick="reabrirPreventiva(this)" 
+      style="padding:2px 8px;font-size:.7rem;border:1px solid var(--amber);background:transparent;color:var(--amber);border-radius:4px;cursor:pointer;">Reabrir</button>
+    </div>`;
+  }
   
   if (encerrado) {
     return `<div style="display:flex;gap:6px;align-items:center;flex-wrap:nowrap;">
@@ -2186,9 +2140,10 @@ function renderAcoes(item) {
   }
   
   return `<div style="display:flex;gap:6px;align-items:center;flex-wrap:nowrap;">
-    <button class="btn-iniciar" data-frota="${esc(item.frota)}" onclick="iniciarPreventiva(this, event)" 
-    title="Clique para iniciar agora. Segure Ctrl e clique para informar uma data/hora retroativa (ex.: apontamento esquecido de ontem)."
+    <button class="btn-iniciar" data-frota="${esc(item.frota)}" onclick="iniciarPreventiva(this)" 
     style="padding:3px 12px;font-size:.72rem;border:1px solid var(--green);background:var(--green);color:#fff;border-radius:4px;cursor:pointer;font-weight:600;">▶ Iniciar</button>
+    <button class="btn-manutencao" data-frota="${esc(item.frota)}" onclick="abrirModalManutencao(this)"
+    style="padding:3px 12px;font-size:.72rem;border:1px solid var(--red);background:var(--red);color:#000;border-radius:4px;cursor:pointer;font-weight:600;">Manutenção</button>
   </div>`;
 }
 
@@ -2211,68 +2166,13 @@ function horaAtualStr() {
   return String(agora.getHours()).padStart(2,'0') + ':' + String(agora.getMinutes()).padStart(2,'0');
 }
 
-async function iniciarPreventiva(btn, ev) {
+async function iniciarPreventiva(btn) {
   const frota = btn.dataset.frota || btn.closest('tr')?.dataset.frota;
   if (!frota) return;
   const tr = btn.closest('tr');
+  const horaInicio = horaAtualStr();
+  const dataEnc = new Date().toISOString().slice(0,10);
 
-  // Ctrl+clique -> abre modal para informar data/hora retroativa
-  // (ex.: apontamento esquecido, precisa lançar como se fosse ontem)
-  if (ev && ev.ctrlKey) {
-    abrirModalIniciarRetroativo(frota, tr);
-    return;
-  }
-
-  await _gravarInicioPreventiva(frota, tr, horaAtualStr(), new Date().toISOString().slice(0, 10));
-}
-
-// ===== INICIAR COM DATA/HORA RETROATIVA (Ctrl+clique) =====
-let _retroFrotaPendente = null;
-let _retroTrPendente = null;
-
-function abrirModalIniciarRetroativo(frota, tr) {
-  _retroFrotaPendente = frota;
-  _retroTrPendente = tr;
-  const hojeStr = new Date().toISOString().slice(0, 10);
-  const label = document.getElementById('retroFrotaLabel');
-  const inputData = document.getElementById('retroData');
-  const inputHora = document.getElementById('retroHora');
-  if (label) label.textContent = frota;
-  if (inputData) { inputData.value = hojeStr; inputData.max = hojeStr; } // nao permite data futura
-  if (inputHora) inputHora.value = horaAtualStr();
-  const m = document.getElementById('modalIniciarRetroativo');
-  if (m) m.style.display = 'flex';
-}
-
-function cancelarIniciarRetroativo() {
-  const m = document.getElementById('modalIniciarRetroativo');
-  if (m) m.style.display = 'none';
-  _retroFrotaPendente = null;
-  _retroTrPendente = null;
-}
-
-async function confirmarIniciarRetroativo() {
-  const data = document.getElementById('retroData')?.value || '';
-  const hora = document.getElementById('retroHora')?.value || '';
-  if (!data || !hora) { showToast('⚠️ Informe data e hora.', 'err'); return; }
-  if (data > new Date().toISOString().slice(0, 10)) { showToast('⚠️ Não é possível usar data futura.', 'err'); return; }
-
-  const frota = _retroFrotaPendente;
-  const tr = _retroTrPendente;
-  const m = document.getElementById('modalIniciarRetroativo');
-  if (m) m.style.display = 'none';
-
-  await _gravarInicioPreventiva(frota, tr, hora, data);
-  _retroFrotaPendente = null;
-  _retroTrPendente = null;
-}
-
-// Grava no Firestore o inicio da preventiva (na hora atual OU retroativo).
-// Como a lista roda em tempo real (onSnapshot), essa mesma gravacao ja e
-// suficiente para refletir "Iniciado" em TODOS os computadores automaticamente;
-// aqui so damos um retorno visual imediato para quem clicou.
-async function _gravarInicioPreventiva(frota, tr, horaInicio, dataEnc) {
-  if (!frota) return;
   try {
     await db.collection('preventivas').doc(frota).update({
       status: 'encerrado',
@@ -2281,15 +2181,13 @@ async function _gravarInicioPreventiva(frota, tr, horaInicio, dataEnc) {
       ultima_atualizacao: new Date().toISOString()
     });
     
-    if (tr) {
-      tr.dataset.status = 'encerrado';
-      tr.className = 'encerrado';
-      const acoes = tr.querySelector('.acoes-prev');
-      if (acoes) acoes.innerHTML = renderAcoes({
-        frota, status: 'encerrado', hora_inicio: horaInicio,
-        data_encerramento: dataEnc
-      });
-    }
+    tr.dataset.status = 'encerrado';
+    tr.className = 'encerrado';
+    const acoes = tr.querySelector('.acoes-prev');
+    acoes.innerHTML = renderAcoes({
+      frota, status: 'encerrado', hora_inicio: horaInicio,
+      data_encerramento: dataEnc
+    });
     
     // Atualiza dados globais para manter o grafico de turnos sincronizado
     const itemCTT = _dadosPreventivasCTT.find(d => String(d.frota || d.Frota || d.FROTA) === frota);
@@ -2297,9 +2195,8 @@ async function _gravarInicioPreventiva(frota, tr, horaInicio, dataEnc) {
     const itemGeral = _dadosPreventivasGeral.find(d => String(d.frota || d.Frota || d.FROTA) === frota);
     if (itemGeral) { itemGeral.status = 'encerrado'; itemGeral.hora_inicio = horaInicio; itemGeral.data_encerramento = dataEnc; }
     
-    const hojeStr = new Date().toISOString().slice(0, 10);
-    const retroativo = dataEnc !== hojeStr;
-    showToast(`✅ Frota ${frota} iniciada às ${horaInicio}${retroativo ? ' (retroativo — ' + formatData(dataEnc) + ')' : ''}`, 'ok');
+    atualizarStatsPreventivas(_dadosPreventivasCTT, 'prev-');
+    showToast(`✅ Frota ${frota} iniciada às ${horaInicio}`, 'ok');
     filtrarPreventivas();
     filtrarPreventivasGeral();
     
@@ -2322,23 +2219,40 @@ async function reabrirPreventiva(btn) {
   try {
     await db.collection('preventivas').doc(frota).update({
       status: 'aberto',
+      justificativa_manutencao: firebase.firestore.FieldValue.delete(),
+      hora_manutencao: firebase.firestore.FieldValue.delete(),
+      data_manutencao: firebase.firestore.FieldValue.delete(),
       ultima_atualizacao: new Date().toISOString()
     });
     
     const tr = btn.closest('tr');
     tr.dataset.status = 'aberto';
-    tr.className = '';
+    tr.className = tr.className.replace(/\b(encerrado|manutencao)\b/g, '').trim();
     const acoes = tr.querySelector('.acoes-prev');
     acoes.innerHTML = renderAcoes({ frota, status: 'aberto', hora_inicio: '', data_encerramento: '' });
     
     // Atualiza dados globais
     const itemCTT = _dadosPreventivasCTT.find(d => String(d.frota || d.Frota || d.FROTA) === frota);
-    if (itemCTT) { itemCTT.status = 'aberto'; itemCTT.hora_inicio = ''; itemCTT.data_encerramento = ''; }
+    if (itemCTT) { 
+      itemCTT.status = 'aberto'; 
+      itemCTT.hora_inicio = ''; 
+      itemCTT.data_encerramento = '';
+      delete itemCTT.justificativa_manutencao;
+      delete itemCTT.hora_manutencao;
+      delete itemCTT.data_manutencao;
+    }
     const itemGeral = _dadosPreventivasGeral.find(d => String(d.frota || d.Frota || d.FROTA) === frota);
-    if (itemGeral) { itemGeral.status = 'aberto'; itemGeral.hora_inicio = ''; itemGeral.data_encerramento = ''; }
+    if (itemGeral) { 
+      itemGeral.status = 'aberto'; 
+      itemGeral.hora_inicio = ''; 
+      itemGeral.data_encerramento = '';
+      delete itemGeral.justificativa_manutencao;
+      delete itemGeral.hora_manutencao;
+      delete itemGeral.data_manutencao;
+    }
     
     showToast(`🔄 Frota ${frota} reaberta`, 'ok');
-    atualizarStatsPreventivasFromDOM();
+    atualizarStatsPreventivas(_dadosPreventivasCTT, 'prev-');
     
     // Atualiza grafico de turnos se estiver visivel
     const flipCard = document.querySelector('.card-flip');
@@ -2358,6 +2272,7 @@ function atualizarStatsPreventivas(dados, prefix) {
 
   const total = dados.length;
   const iniciadas = dados.filter(d => d.hora_inicio && d.hora_inicio.trim()).length;
+  const manutencaoCount = dados.filter(d => d.status === 'manutencao').length;
   const aFazer = total - iniciadas;
   const hojeDados = dados.filter(d => d.data_programacao === hojeStr);
   const hojeTotal = hojeDados.length;
@@ -2367,7 +2282,12 @@ function atualizarStatsPreventivas(dados, prefix) {
     d.data_programacao && d.data_programacao < hojeStr && d.status === 'aberto'
   ).length;
 
-  setStat(prefix + 'total', total);
+  const totalEl = document.getElementById(prefix + 'total');
+  if (totalEl) {
+    totalEl.innerHTML = manutencaoCount > 0
+      ? `${total} <span style="color:var(--red);font-size:1.2rem;">- ${manutencaoCount}</span>`
+      : total;
+  }
   setStat(prefix + 'frotas', aFazer);
   if (hojeTotal > 0 && hojeTotal === hojeRealizados) {
     setStat(prefix + 'hoje', '✅ Concluído');
@@ -2436,7 +2356,7 @@ function filtrarPreventivas() {
   
   document.querySelectorAll('#body-preventivas tbody tr').forEach(tr => {
     const status = tr.dataset.status || 'aberto';
-    const isEncerrado = status === 'encerrado';
+    const isEncerrado = status === 'encerrado' || status === 'manutencao';
     let show = (!isRealizadas && !isEncerrado) ||
                (isRealizadas && isEncerrado);
     
@@ -2465,7 +2385,7 @@ function filtrarPreventivasGeral() {
   
   document.querySelectorAll('#body-preventivas-geral tbody tr').forEach(tr => {
     const status = tr.dataset.status || 'aberto';
-    const isEncerrado = status === 'encerrado';
+    const isEncerrado = status === 'encerrado' || status === 'manutencao';
     let show = (!isRealizadas && !isEncerrado) ||
                (isRealizadas && isEncerrado);
     if (show && termo) {
@@ -2483,6 +2403,104 @@ reabrirPreventiva = async function(btn) {
   filtrarPreventivas();
   filtrarPreventivasGeral();
 };
+
+// ===== MANUTENÇÃO (NÃO REALIZOU A PREVENTIVA) =====
+let _manutencaoFrotaAtual = null;
+
+function abrirModalManutencao(btn) {
+  const frota = btn.dataset.frota || btn.closest('tr')?.dataset.frota;
+  if (!frota) return;
+  _manutencaoFrotaAtual = frota;
+  document.getElementById('modalManutFrota').textContent = frota;
+  document.getElementById('modalManutJustificativa').value = '';
+  document.getElementById('modalManutencao').style.display = 'flex';
+}
+
+function fecharModalManutencao() {
+  document.getElementById('modalManutencao').style.display = 'none';
+  _manutencaoFrotaAtual = null;
+}
+
+async function salvarManutencao() {
+  const frota = _manutencaoFrotaAtual;
+  const justificativa = document.getElementById('modalManutJustificativa').value.trim();
+  if (!frota) { showToast('❌ Erro: frota não identificada', 'err'); return; }
+  if (!justificativa) { showToast('⚠️ Informe a justificativa', 'warn'); return; }
+
+  const horaManut = horaAtualStr();
+  const dataManut = new Date().toISOString().slice(0,10);
+
+  try {
+    await db.collection('preventivas').doc(frota).update({
+      status: 'manutencao',
+      justificativa_manutencao: justificativa,
+      hora_manutencao: horaManut,
+      data_manutencao: dataManut,
+      ultima_atualizacao: new Date().toISOString()
+    });
+
+    // Atualiza DOM
+    const tr = document.querySelector(`#body-preventivas tbody tr[data-frota="${frota}"]`) ||
+               document.querySelector(`#body-preventivas-geral tbody tr[data-frota="${frota}"]`);
+    if (tr) {
+      tr.dataset.status = 'manutencao';
+      tr.className = tr.className.replace(/encerrado/g, '').trim();
+      if (!tr.classList.contains('manutencao')) tr.className += ' manutencao';
+      tr.className = tr.className.trim();
+      const acoes = tr.querySelector('.acoes-prev');
+      if (acoes) {
+        acoes.innerHTML = renderAcoes({
+          frota, status: 'manutencao',
+          hora_manutencao: horaManut,
+          data_manutencao: dataManut,
+          justificativa_manutencao: justificativa
+        });
+      }
+    }
+
+    // Atualiza dados globais
+    const itemCTT = _dadosPreventivasCTT.find(d => String(d.frota || d.Frota || d.FROTA) === frota);
+    if (itemCTT) {
+      itemCTT.status = 'manutencao';
+      itemCTT.justificativa_manutencao = justificativa;
+      itemCTT.hora_manutencao = horaManut;
+      itemCTT.data_manutencao = dataManut;
+    }
+    const itemGeral = _dadosPreventivasGeral.find(d => String(d.frota || d.Frota || d.FROTA) === frota);
+    if (itemGeral) {
+      itemGeral.status = 'manutencao';
+      itemGeral.justificativa_manutencao = justificativa;
+      itemGeral.hora_manutencao = horaManut;
+      itemGeral.data_manutencao = dataManut;
+    }
+
+    fecharModalManutencao();
+    showToast(`🔧 Frota ${frota} marcada como manutenção`, 'ok');
+    filtrarPreventivas();
+    filtrarPreventivasGeral();
+
+    // Atualiza card de total
+    atualizarStatsPreventivas(_dadosPreventivasCTT, 'prev-');
+  } catch (e) {
+    showToast('❌ Erro: ' + e.message, 'err');
+    console.error(e);
+  }
+}
+
+function mostrarManutencaoJustificativas() {
+  const todos = [...(_dadosPreventivasCTT || []), ...(_dadosPreventivasGeral || [])];
+  const manutencaoItems = todos.filter(d => d.status === 'manutencao');
+
+  if (manutencaoItems.length === 0) {
+    showToast('✅ Nenhum equipamento pendente de manutenção!', 'ok');
+    return;
+  }
+
+  const lista = manutencaoItems.map(d =>
+    `${d.frota} — ${d.justificativa_manutencao || 'Sem justificativa'}`
+  ).join('\n');
+  alert(`🔧 EQUIPAMENTOS NÃO REALIZADOS (${manutencaoItems.length}):\n\n${lista}`);
+}
 
 function mostrarAtrasadas() {
   const atrasadas = [];
@@ -2574,11 +2592,7 @@ function atualizarGraficoTurnos() {
 
 // ===== IMPORT SEManal DE PREVENTIVAS (planilha via navegador) =====
 // Dispara toda segunda 00:01 e repete de 10 em 10 min ate o usuario confirmar.
-// IMPORTANTE: o "já foi importado essa semana" é compartilhado via Firestore
-// (doc preventivas_meta/import_semanal), NÃO por localStorage — senão cada
-// computador acha que precisa importar de novo mesmo depois de alguém já ter
-// feito a atualização em outra máquina.
-const PREV_IMPORT_LS = 'prevImportSemana'; // cache local (fallback offline / resposta "ainda não")
+const PREV_IMPORT_LS = 'prevImportSemana';
 let _prevImportModalAberto = false;
 
 function getSemanaId(dt) {
@@ -2597,35 +2611,13 @@ function iniciarAgendadorImportPrev() {
   setInterval(verificarGatilhoImportPrev, 60 * 1000); // checa a cada minuto
 }
 
-async function importJaFeitoEstaSemanaCompartilhado() {
-  // Verifica no Firestore (visivel para TODOS os computadores) se algum usuario
-  // ja concluiu a importacao desta semana. Isso evita que cada maquina peca
-  // a mesma atualizacao separadamente.
-  if (!db) return false;
-  try {
-    const doc = await db.collection('preventivas_meta').doc('import_semanal').get();
-    if (doc.exists && doc.data().semana === getSemanaId(new Date())) return true;
-  } catch (e) {
-    console.warn('[Preventivas] Nao foi possivel checar import compartilhado:', e);
-  }
-  return false;
-}
-
-async function verificarGatilhoImportPrev() {
+function verificarGatilhoImportPrev() {
   if (_prevImportModalAberto) return;
+  if (localStorage.getItem(PREV_IMPORT_LS) === getSemanaId(new Date())) return; // ja feito na semana
   const d = new Date();
-  if (d.getDay() !== 1) return; // so dispara as segundas-feiras
-
-  // 1) Ja foi importado por QUALQUER usuario nesta semana? (fonte compartilhada)
-  if (await importJaFeitoEstaSemanaCompartilhado()) {
-    try { localStorage.setItem(PREV_IMPORT_LS, getSemanaId(new Date())); } catch (e) {}
-    return;
+  if (d.getDay() === 1) { // Segunda-feira
+    abrirModalImportPrev();
   }
-  // 2) Este navegador ja respondeu "ainda não" (soneca local, evita reabrir o modal
-  //    a cada minuto na MESMA maquina enquanto ninguem faz a importacao)
-  if (localStorage.getItem(PREV_IMPORT_LS) === getSemanaId(new Date())) return;
-
-  abrirModalImportPrev();
 }
 
 function abrirModalImportPrev() {
@@ -2649,9 +2641,7 @@ function importPrevSim() {
 
 function importPrevNao() {
   fecharModalImportPrev();
-  // Soneca LOCAL (so nesta maquina) para nao reabrir o modal a cada minuto.
-  // Nao marca como concluido no Firestore, pois a importacao real ainda nao
-  // aconteceu — os demais usuarios continuam sendo avisados normalmente.
+  // Marca a semana como ja perguntada para so exibir 1x por segunda-feira
   try { localStorage.setItem(PREV_IMPORT_LS, getSemanaId(new Date())); } catch (e) {}
   showToast('⏳ Ok, aguardo até a próxima semana.', 'ok');
 }
@@ -2848,24 +2838,9 @@ async function processarPlanilhaPrev(ev) {
     });
     await batch.commit();
 
-    // Marca no Firestore (compartilhado) que a importacao desta semana foi concluida.
-    // Assim, nenhum outro computador volta a pedir a atualizacao semanal --
-    // é o mesmo programa/dado para todos, nao um controle por maquina.
-    const semanaAtual = getSemanaId(new Date());
-    try {
-      await db.collection('preventivas_meta').doc('import_semanal').set({
-        semana: semanaAtual,
-        frotas_importadas: novosDocs.length,
-        atualizado_em: new Date().toISOString()
-      });
-    } catch (e) {
-      console.warn('[Preventivas] Falha ao gravar flag compartilhado de import semanal:', e);
-    }
-    localStorage.setItem(PREV_IMPORT_LS, semanaAtual);
+    localStorage.setItem(PREV_IMPORT_LS, getSemanaId(new Date()));
     showToast('✅ Preventivas atualizadas! ' + novosDocs.length + ' frotas.', 'ok');
-    // Nao precisa forcar recarregamento: o listener em tempo real (onSnapshot)
-    // ja vai re-renderizar automaticamente aqui e em todos os outros computadores
-    // assim que o Firestore confirmar o batch.commit() acima.
+    if (typeof carregarPreventivas === 'function') carregarPreventivas();
   } catch (e) {
     console.error(e);
     showToast('❌ Erro ao importar: ' + e.message, 'err');
