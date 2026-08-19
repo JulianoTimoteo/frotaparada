@@ -470,6 +470,56 @@ body.light tr[data-os-origin="true"] {
 }
 .btn-manutencao:hover{opacity:.85;}
 
+/* ===== BADGE PA — PRIORIDADE TURNO A (pulsante) ===== */
+.pa-badge{
+  position:relative;
+  display:inline-flex;align-items:center;justify-content:center;
+  width:26px;height:26px;border-radius:50%;
+  background:#facc15;color:#000;
+  font-size:.58rem;font-weight:800;letter-spacing:.5px;
+  cursor:help;user-select:none;flex-shrink:0;
+  animation:pa-pulse 1.3s ease-in-out infinite;
+  box-shadow:0 0 0 rgba(250,204,21,.6);
+}
+@keyframes pa-pulse{
+  0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(250,204,21,.55);}
+  50%{transform:scale(1.12);box-shadow:0 0 0 8px rgba(250,204,21,0);}
+}
+.pa-badge::after{
+  content:attr(data-tooltip);
+  position:absolute;bottom:calc(100% + 7px);left:50%;
+  transform:translateX(-50%) translateY(4px);
+  background:#111;color:#fff;padding:4px 9px;border-radius:6px;
+  font-size:.66rem;font-weight:600;white-space:nowrap;letter-spacing:.3px;
+  border:1px solid #333;
+  opacity:0;visibility:hidden;
+  transition:opacity .15s,transform .15s,visibility .15s;
+  z-index:20;pointer-events:none;
+}
+.pa-badge:hover::after,
+.pa-badge.active::after{
+  opacity:1;visibility:visible;transform:translateX(-50%) translateY(0);
+}
+body.light .pa-badge::after{background:#fff;color:#111;border-color:#d1d5db;}
+
+/* ===== BOLINHA RADAR — FROTA COM PRAZO VENCIDO (global) ===== */
+.radar-dot{
+  position:relative;display:inline-block;
+  width:8px;height:8px;border-radius:50%;
+  background:#ef4444;margin-right:7px;vertical-align:middle;
+  box-shadow:0 0 6px rgba(239,68,68,.9);
+}
+.radar-dot::after{
+  content:'';position:absolute;top:0;left:0;
+  width:8px;height:8px;border-radius:50%;
+  background:rgba(239,68,68,.45);
+  animation:radar-ring 1.6s ease-out infinite;
+}
+@keyframes radar-ring{
+  0%{transform:scale(1);opacity:.9;}
+  100%{transform:scale(3.4);opacity:0;}
+}
+
 /* ===== LINHA MANUTENÇÃO (NÃO REALIZADO) ===== */
 #body-preventivas tr.manutencao td{color:#dc2626 !important;}
 #body-preventivas tr.manutencao{opacity:1;border-left:3px solid #dc2626 !important;}
@@ -2067,7 +2117,8 @@ function popularTabelasPreventivas(dados, containerId, prefix) {
 
       const dataProg = item.data_programacao || '';
       let rowClass = '';
-      if (dataProg && dataProg < hojeStr && item.status === 'aberto') rowClass = 'atrasado';
+      const prazoVencido = dataProg && dataProg < hojeStr && item.status === 'aberto';
+      if (prazoVencido) rowClass = 'atrasado';
       else if (dataProg === hojeStr) rowClass = 'hoje';
       else if (dataProg === amanhaStr) rowClass = 'amanha';
       if (item.status === 'encerrado') rowClass = (rowClass ? rowClass + ' ' : '') + 'encerrado';
@@ -2139,12 +2190,51 @@ function renderAcoes(item) {
     </div>`;
   }
   
-  return `<div style="display:flex;gap:6px;align-items:center;flex-wrap:nowrap;">
+  const badgePA = _temPrioridadeTurnoA(item)
+    ? '<span class="pa-badge" data-tooltip="Prioridade turno A" onclick="this.classList.toggle(\'active\')">PA</span>'
+    : '';
+  
+  const badgeAtraso = _temPrazoVencido(item) ? '<span class="radar-dot"></span>' : '';
+  
+  return `<div style="display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:nowrap;">
+    ${badgeAtraso}
     <button class="btn-iniciar" data-frota="${esc(item.frota)}" onclick="iniciarPreventiva(this)" 
-    style="padding:3px 12px;font-size:.72rem;border:1px solid var(--green);background:var(--green);color:#fff;border-radius:4px;cursor:pointer;font-weight:600;">▶ Iniciar</button>
+    style="padding:3px 12px;font-size:.72rem;border:1px solid var(--green);background:var(--green);color:#fff;border-radius:4px;cursor:pointer;font-weight:600;flex-shrink:0;">▶ Iniciar</button>
     <button class="btn-manutencao" data-frota="${esc(item.frota)}" onclick="abrirModalManutencao(this)"
-    style="padding:3px 12px;font-size:.72rem;border:1px solid var(--red);background:var(--red);color:#000;border-radius:4px;cursor:pointer;font-weight:600;">Manutenção</button>
+    style="padding:3px 12px;font-size:.72rem;border:1px solid var(--red);background:var(--red);color:#000;border-radius:4px;cursor:pointer;font-weight:600;flex-shrink:0;">Manutenção</button>
+    ${badgePA}
   </div>`;
+}
+
+// Prazo vencido (frota aberta com data programada anterior a hoje)
+function _temPrazoVencido(item) {
+  const completo = _itemPreventivaCompleto(item);
+  if (completo.status !== 'aberto') return false;
+  const dataProg = completo.data_programacao || '';
+  if (!dataProg) return false;
+  return dataProg < new Date().toISOString().slice(0, 10);
+}
+
+// Resolve o item completo (com subclasse/manutencao) mesmo quando renderAcoes
+// recebe apenas um subconjunto de campos (ex: apos reabrir/iniciar)
+function _itemPreventivaCompleto(item) {
+  if (item.subclasse && item.manutencao_programada) return item;
+  const frota = String(item.frota || '').trim();
+  if (!frota) return item;
+  return (_dadosPreventivasCTT || []).find(d => String(d.frota || d.Frota || d.FROTA) === frota)
+    || (_dadosPreventivasGeral || []).find(d => String(d.frota || d.Frota || d.FROTA) === frota)
+    || item;
+}
+
+// Regra: PA (Prioridade turno A) apenas para CAVALO MECANICO / TRANSPORTE DE CANA
+// quando a manutencao programada for "Lavagem (LAVADOR) - Lubrificação (LUBRIFICAÇÃO) - Inspeção (LAVADOR)"
+function _temPrioridadeTurnoA(item) {
+  const completo = _itemPreventivaCompleto(item);
+  const norm = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase().replace(/\s+/g, '');
+  const sub = norm(completo.subclasse);
+  if (sub !== 'TRANSPORTEDECANA' && sub !== 'CAVALOMECANICO') return false;
+  const alvo = norm('Lavagem (LAVADOR) - Lubrificação (LUBRIFICAÇÃO) - Inspeção (LAVADOR)');
+  return norm(completo.manutencao_programada) === alvo;
 }
 
 function formatData(data) {
