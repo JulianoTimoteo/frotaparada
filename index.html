@@ -526,6 +526,671 @@ body.light .pa-badge::after{background:#fff;color:#111;border-color:#d1d5db;}
 body.light #body-preventivas tr.manutencao td{color:#b91c1c !important;}
 body.light #body-preventivas tr.manutencao{border-left:3px solid #b91c1c !important;}
 
+/* ============================================================ */
+/* [UI ANTI-SLOP] DESIGN PROFISSIONAL & RESPONSIVO — ABA CAMINHÕES */
+/* ============================================================ */
+
+/* Expansão ergonômica para telas Ultra-wide e Monitores 27" (QHD / 4K) */
+@media (min-width: 1600px) {
+  main {
+    max-width: 1800px;
+  }
+}
+
+/* Stat Cards — Métricas Operacionais Cockpit */
+#tab-caminhoes .stat-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+  padding: 16px 0 18px;
+  width: 100%;
+}
+
+#tab-caminhoes .stat-card {
+  background: var(--s1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 4px solid var(--accent, var(--blue));
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: transform 120ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 120ms cubic-bezier(0.16, 1, 0.3, 1), border-color 120ms;
+}
+
+#tab-caminhoes .stat-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+#tab-caminhoes .stat-icon {
+  font-size: 1.7rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  flex-shrink: 0;
+}
+
+#tab-caminhoes .stat-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+#tab-caminhoes .stat-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #94a3b8;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#tab-caminhoes .stat-value {
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: var(--accent, var(--text));
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+#tab-caminhoes .stat-total .stat-value {
+  color: #60a5fa;
+}
+
+/* Card Principal de Caminhões */
+#sec-caminhao {
+  background: var(--s1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 3px solid #3b82f6;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+#hdr-caminhao {
+  padding: 16px 20px;
+  background: var(--s1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  transition: background 120ms ease;
+}
+
+#hdr-caminhao:hover {
+  background: var(--s2);
+}
+
+#hdr-caminhao .card-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  letter-spacing: -0.01em;
+}
+
+#pill-caminhao {
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  color: #60a5fa;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Grupos Operacionais (Próprio, Terceiro, Borracharia) */
+#body-caminhao .group {
+  margin: 14px 16px 20px;
+  background: var(--s2);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
+#body-caminhao .group-label {
+  padding: 11px 18px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+#body-caminhao .group-label.blue-t {
+  color: #60a5fa;
+  background: rgba(59, 130, 246, 0.08);
+}
+#body-caminhao .group-label.amber-t {
+  color: #fbbf24;
+  background: rgba(245, 158, 11, 0.08);
+}
+#body-caminhao .group-label.red-t {
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.08);
+}
+
+#body-caminhao .gc {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* Tabela e Wrapper */
+#body-caminhao .table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+#body-caminhao table {
+  width: 100%;
+  min-width: 1020px;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+#body-caminhao thead th {
+  padding: 12px 10px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #94a3b8;
+  background: var(--s1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  white-space: nowrap;
+  text-align: center;
+}
+
+#body-caminhao thead th:nth-child(1) { width: 11%; } /* Frota */
+#body-caminhao thead th:nth-child(2) { width: 11%; } /* Data */
+#body-caminhao thead th:nth-child(3) { width: 25%; text-align: left; padding-left: 14px; } /* Motivo */
+#body-caminhao thead th:nth-child(4) { width: 10%; } /* Hora Parada */
+#body-caminhao thead th:nth-child(5) { width: 10%; } /* Duração */
+#body-caminhao thead th:nth-child(6) { width: 10%; } /* Retorno */
+#body-caminhao thead th:nth-child(7) { width: 13%; } /* Tempo Restante / Parado */
+#body-caminhao thead th:nth-child(8) { width: 10%; } /* Ações */
+
+#body-caminhao tbody tr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  transition: background 100ms ease;
+}
+
+#body-caminhao tbody tr:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+#body-caminhao tbody tr[data-salvo="false"] {
+  background: rgba(245, 158, 11, 0.06);
+  border-left: 3px solid #f59e0b;
+}
+
+#body-caminhao tbody td {
+  padding: 8px 6px;
+  vertical-align: middle;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+#body-caminhao tbody td:nth-child(3) {
+  text-align: left;
+}
+
+/* Inputs da Tabela */
+#body-caminhao td input[type="text"],
+#body-caminhao td input[type="time"] {
+  height: 36px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.2);
+  color: var(--text);
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  outline: none;
+  transition: border-color 120ms ease, background 120ms ease, box-shadow 120ms ease;
+  box-sizing: border-box;
+}
+
+#body-caminhao td input[data-campo="frota"] {
+  font-weight: 700;
+  text-align: center;
+}
+
+#body-caminhao td input[data-campo="motivo"] {
+  text-align: left;
+  padding-left: 10px;
+}
+
+#body-caminhao td input[data-campo="previsao"] {
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: 0.04em;
+}
+
+#body-caminhao td input[data-campo="retorno"] {
+  font-weight: 700;
+  text-align: center;
+}
+
+#body-caminhao td input:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+#body-caminhao td input:focus {
+  border-color: #3b82f6;
+  background: var(--s1);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+#body-caminhao td input[readonly] {
+  color: #94a3b8;
+  background: rgba(255, 255, 255, 0.02);
+  border-color: transparent;
+  cursor: default;
+}
+
+#body-caminhao td input[readonly]:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+#body-caminhao td input[data-unlocked="true"] {
+  border-color: #f59e0b !important;
+  background: rgba(245, 158, 11, 0.1) !important;
+  color: var(--text) !important;
+  cursor: text !important;
+}
+
+/* Cronômetro e Barra de Progresso */
+#body-caminhao .cronometro {
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  font-weight: 700;
+  font-size: 0.8rem;
+  padding: 4px 8px;
+  border-radius: 6px;
+  display: inline-block;
+  min-width: 120px;
+}
+
+#body-caminhao .cronometro-ativo {
+  color: #60a5fa;
+  background: rgba(59, 130, 246, 0.12);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+}
+
+#body-caminhao .cronometro-parado {
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+#body-caminhao .cronometro-atrasado {
+  color: #fca5a5;
+  background: rgba(239, 68, 68, 0.22);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+#body-caminhao .progress-wrap {
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.08);
+  margin-top: 4px;
+  overflow: hidden;
+}
+
+/* Botões da Tabela */
+#body-caminhao .acoes-cell {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+}
+
+#body-caminhao .btn-salvar {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 120ms cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+#body-caminhao .btn-salvar:hover {
+  background: #10b981;
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+#body-caminhao .btn-salvar:active {
+  transform: scale(0.97);
+}
+
+#body-caminhao .btn-del {
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  background: rgba(239, 68, 68, 0.08);
+  color: #f87171;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 120ms cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+#body-caminhao .btn-del:hover {
+  background: #ef4444;
+  color: #ffffff;
+  border-color: #ef4444;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+#body-caminhao .btn-del:active {
+  transform: scale(0.97);
+}
+
+/* Botão Adicionar Frota */
+#body-caminhao .btn-add {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 12px 18px 16px;
+  padding: 9px 18px;
+  border-radius: 8px;
+  border: 1px dashed rgba(59, 130, 246, 0.45);
+  background: rgba(59, 130, 246, 0.06);
+  color: #60a5fa;
+  font-size: 0.83rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 120ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#body-caminhao .btn-add:hover {
+  background: rgba(59, 130, 246, 0.16);
+  border-color: #3b82f6;
+  color: #93c5fd;
+  transform: translateY(-1px);
+}
+
+#body-caminhao .btn-add:active {
+  transform: scale(0.98);
+}
+
+/* Feedback visual sutil para nova linha adicionada */
+@keyframes highlightNovaLinha {
+  0% { background: rgba(59, 130, 246, 0.22); }
+  100% { background: rgba(245, 158, 11, 0.06); }
+}
+#body-caminhao tbody tr.nova-linha-destaque {
+  animation: highlightNovaLinha 1.2s ease-out;
+}
+
+/* ===== TEMA CLARO PARA A ABA CAMINHÕES ===== */
+body.light #tab-caminhoes .stat-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid var(--accent, var(--blue));
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+body.light #tab-caminhoes .stat-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+body.light #tab-caminhoes .stat-icon {
+  background: #f1f5f9;
+}
+
+body.light #tab-caminhoes .stat-label {
+  color: #64748b;
+}
+
+body.light #tab-caminhoes .stat-value {
+  color: #0f172a;
+}
+
+body.light #sec-caminhao {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-top: 3px solid #1a5cb8;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+body.light #hdr-caminhao {
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+body.light #hdr-caminhao:hover {
+  background: #f8fafc;
+}
+
+body.light #hdr-caminhao .card-title {
+  color: #0f172a;
+}
+
+body.light #pill-caminhao {
+  background: #e0edff;
+  border-color: #1a5cb8;
+  color: #1a5cb8;
+}
+
+body.light #body-caminhao .group {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+body.light #body-caminhao .group-label {
+  border-bottom: 1px solid #e2e8f0;
+}
+
+body.light #body-caminhao .group-label.blue-t {
+  color: #1a5cb8;
+  background: #f0f7ff;
+}
+body.light #body-caminhao .group-label.amber-t {
+  color: #b45309;
+  background: #fffbeb;
+}
+body.light #body-caminhao .group-label.red-t {
+  color: #b91c1c;
+  background: #fef2f2;
+}
+
+body.light #body-caminhao thead th {
+  background: #f8fafc;
+  color: #475569;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+body.light #body-caminhao tbody tr {
+  border-bottom: 1px solid #f1f5f9;
+}
+
+body.light #body-caminhao tbody tr:hover {
+  background: #f8fafc;
+}
+
+body.light #body-caminhao tbody tr[data-salvo="false"] {
+  background: #fffdf5;
+  border-left: 3px solid #d97000;
+}
+
+body.light #body-caminhao td input[type="text"],
+body.light #body-caminhao td input[type="time"] {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #0f172a;
+}
+
+body.light #body-caminhao td input:hover {
+  border-color: #94a3b8;
+  background: #f8fafc;
+}
+
+body.light #body-caminhao td input:focus {
+  border-color: #1a5cb8;
+  background: #ffffff;
+  box-shadow: 0 0 0 2px rgba(26, 92, 184, 0.15);
+}
+
+body.light #body-caminhao td input[readonly] {
+  background: #f8fafc;
+  border-color: transparent;
+  color: #64748b;
+}
+
+body.light #body-caminhao .cronometro-ativo {
+  color: #1a5cb8;
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+body.light #body-caminhao .cronometro-parado {
+  color: #b91c1c;
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+body.light #body-caminhao .btn-add {
+  background: #f0f7ff;
+  border-color: #93c5fd;
+  color: #1a5cb8;
+}
+
+body.light #body-caminhao .btn-add:hover {
+  background: #e0edff;
+  border-color: #1a5cb8;
+  color: #0f172a;
+}
+
+/* ===== RESPONSIVIDADE MULTI-DISPOSITIVOS ===== */
+
+/* Tablets / Telas médias (641px - 1024px) */
+@media (max-width: 1024px) {
+  #tab-caminhoes .stat-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+}
+
+/* Celulares (Mobile <= 640px) */
+@media (max-width: 640px) {
+  #tab-caminhoes .stat-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    padding: 10px 0 14px;
+  }
+
+  #tab-caminhoes .stat-card {
+    padding: 10px 12px;
+    gap: 10px;
+  }
+
+  #tab-caminhoes .stat-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 1.3rem;
+  }
+
+  #tab-caminhoes .stat-label {
+    font-size: 0.65rem;
+  }
+
+  #tab-caminhoes .stat-value {
+    font-size: 1.45rem;
+  }
+
+  /* O 5º card (Total Caminhões) ocupa as 2 colunas */
+  #tab-caminhoes .stat-card.stat-total {
+    grid-column: span 2;
+  }
+
+  #body-caminhao .group {
+    margin: 10px 8px 16px;
+    border-radius: 8px;
+  }
+
+  #body-caminhao .group-label {
+    padding: 9px 12px;
+    font-size: 0.72rem;
+  }
+
+  #body-caminhao td input[type="text"],
+  #body-caminhao td input[type="time"] {
+    height: 38px;
+    font-size: 14px; /* Evita auto-zoom do iOS Safari e Chrome */
+  }
+
+  #body-caminhao .btn-add {
+    width: calc(100% - 24px);
+    margin: 10px 12px 14px;
+    height: 42px;
+    font-size: 0.88rem;
+  }
+
+  #body-caminhao .acoes-cell {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  #body-caminhao .btn-salvar,
+  #body-caminhao .btn-del {
+    width: 100%;
+    height: 30px;
+    font-size: 0.75rem;
+  }
+}
+
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -624,9 +1289,9 @@ body.light #body-preventivas tr.manutencao{border-left:3px solid #b91c1c !import
         <span class="arrow">▼</span>
       </div>
       <div class="card-body" id="body-caminhao">
-        <div class="group"><div class="group-label blue-t">Próprio <span class="gc" id="gc-cam-proprio">0</span></div><div class="table-wrap"><table id="tabela-cam-proprio"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante / Parado</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-cam-proprio')">＋ Adicionar</button></div>
-        <div class="group"><div class="group-label amber-t">Terceiro <span class="gc" id="gc-cam-terceiro">0</span></div><div class="table-wrap"><table id="tabela-cam-terceiro"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante / Parado</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-cam-terceiro')">＋ Adicionar</button></div>
-        <div class="group"><div class="group-label red-t">Borracharia <span class="gc" id="gc-cam-borracharia">0</span></div><div class="table-wrap"><table id="tabela-cam-borracharia"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante / Parado</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-cam-borracharia')">＋ Adicionar</button></div>
+        <div class="group"><div class="group-label blue-t">Próprio <span class="gc" id="gc-cam-proprio">0</span></div><div class="table-wrap"><table id="tabela-cam-proprio"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante / Parado</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-cam-proprio')">＋ Adicionar Frota</button></div>
+        <div class="group"><div class="group-label amber-t">Terceiro <span class="gc" id="gc-cam-terceiro">0</span></div><div class="table-wrap"><table id="tabela-cam-terceiro"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante / Parado</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-cam-terceiro')">＋ Adicionar Frota</button></div>
+        <div class="group"><div class="group-label red-t">Borracharia <span class="gc" id="gc-cam-borracharia">0</span></div><div class="table-wrap"><table id="tabela-cam-borracharia"><thead><tr><th>Frota</th><th>Data Entrada</th><th>Motivo</th><th>Hora Parada</th><th>Duração</th><th>Retorno</th><th>Tempo Restante / Parado</th><th>Ações</th></tr></thead><tbody></tbody></table></div><button class="btn-add" onclick="adicionarLinha('tabela-cam-borracharia')">＋ Adicionar Frota</button></div>
 
       </div>
     </section>
@@ -1087,9 +1752,23 @@ function _mascaraData(inp) {
   inp.value = v.slice(0, 10);
 }
 
-// [FIX 2] Duração livre: aceita número puro (minutos) ou HH:MM
+// [FIX 2] Duração: preenchimento dos minutos para hora (ex: 30 -> 00:30, 130 -> 01:30, 5 -> 00:05)
 function _interpretarDuracao(inp) {
-  let raw = inp.value.trim().replace(/[^0-9:]/g, '');
+  let val = inp.value.trim().toLowerCase();
+  if (!val) { inp.value = ''; return; }
+
+  // Se o usuário digitou com 'h' (ex: 1h, 1h30, 2h)
+  if (val.includes('h')) {
+    const parts = val.split('h');
+    let hh = parseInt(parts[0], 10) || 0;
+    let mm = parseInt(parts[1], 10) || 0;
+    if (mm > 59) { hh += Math.floor(mm / 60); mm = mm % 60; }
+    if (hh === 0 && mm === 0) { inp.value = ''; return; }
+    inp.value = String(hh).padStart(2, '0') + ':' + String(mm).padStart(2, '0');
+    return;
+  }
+
+  let raw = val.replace(/[^0-9:]/g, '');
   if (!raw) { inp.value = ''; return; }
 
   // Se já está no formato HH:MM, normalizar
@@ -1103,11 +1782,18 @@ function _interpretarDuracao(inp) {
     return;
   }
 
-  // Número puro: até 2 dígitos = minutos, 3+ dígitos = últimos 2 são min, resto são horas
+  // Preenchimento sempre dos minutos para a hora:
+  // até 2 dígitos = minutos (ex: 30 -> 00:30, 5 -> 00:05)
+  // 3+ dígitos = últimos 2 são minutos, resto horas (ex: 130 -> 01:30, 200 -> 02:00)
   const v = raw.replace(/\D/g, '').slice(0, 4);
-  let hh, mm;
-  if (v.length <= 2) { hh = 0; mm = parseInt(v, 10); }
-  else { mm = parseInt(v.slice(-2), 10); hh = parseInt(v.slice(0, v.length - 2), 10); }
+  let hh = 0, mm = 0;
+  if (v.length <= 2) {
+    hh = 0;
+    mm = parseInt(v, 10) || 0;
+  } else {
+    mm = parseInt(v.slice(-2), 10) || 0;
+    hh = parseInt(v.slice(0, v.length - 2), 10) || 0;
+  }
   if (mm > 59) { hh += Math.floor(mm / 60); mm = mm % 60; }
   if (hh === 0 && mm === 0) { inp.value = ''; return; }
   inp.value = String(hh).padStart(2, '0') + ':' + String(mm).padStart(2, '0');
@@ -1379,8 +2065,30 @@ function _ativarListeners(tr, id, salvo) {
   });
 
   // Previsão (Duração) — sempre editável, inclusive em linhas Via Sistema
-  inpPrevisao.addEventListener('input', () => { _recalcular(inpPrevisao); if (tr.dataset.salvo === 'true') _salvarDados(id); });
-  inpPrevisao.addEventListener('blur', () => { _interpretarDuracao(inpPrevisao); _recalcular(inpPrevisao); if (tr.dataset.salvo === 'true') _salvarDados(id); });
+  inpPrevisao.addEventListener('focus', () => {
+    inpPrevisao.select?.();
+  });
+  inpPrevisao.addEventListener('input', () => {
+    // Se o usuário apagar o campo, recalcula imediatamente para manter o tempo parado
+    if (!inpPrevisao.value.trim()) {
+      _recalcular(inpPrevisao);
+      if (tr.dataset.salvo === 'true') _salvarDados(id);
+    }
+  });
+  inpPrevisao.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      _interpretarDuracao(inpPrevisao);
+      _recalcular(inpPrevisao);
+      if (tr.dataset.salvo === 'true') _salvarDados(id);
+      inpPrevisao.blur();
+    }
+  });
+  inpPrevisao.addEventListener('blur', () => {
+    _interpretarDuracao(inpPrevisao);
+    _recalcular(inpPrevisao);
+    if (tr.dataset.salvo === 'true') _salvarDados(id);
+  });
 
   // [FIX 4] Retorno: readonly, ctrl+dblclick para desbloquear
   if (inpRetorno) {
@@ -1447,6 +2155,15 @@ function _confirmarLinha(tr, id) {
   const f = tr.querySelector('[data-campo="frota"]').value.trim();
   if (!f) { showToast('⚠️ Preencha a frota', 'warn'); tr.querySelector('[data-campo="frota"]').focus(); return; }
   if (!_prefixoValido(f, id)) { showToast('❌ Frota ' + f + ' inválida para ' + NOMES_TABELA[id], 'err'); tr.querySelector('[data-campo="frota"]').focus(); return; }
+
+  // Interpretar duração e recalcular antes de salvar para garantir consistência dos cálculos
+  const inpPrevisao = tr.querySelector('[data-campo="previsao"]');
+  if (inpPrevisao) {
+    if (inpPrevisao.value.trim()) {
+      _interpretarDuracao(inpPrevisao);
+    }
+    _recalcular(inpPrevisao);
+  }
 
   _autoCadastrarFrota(f, id);
   tr.setAttribute('data-salvo', 'true');
@@ -1528,7 +2245,7 @@ function _criarLinha(id, d, salvo, isOSOrigin = false) {
     <td><input type="text" data-campo="data" placeholder="dd/mm/aaaa" maxlength="10" value="${d.dataEntrada||''}" ${isOSOrigin ? 'readonly' : ''}></td>
     <td><input type="text" data-campo="motivo" placeholder="Descreva o motivo" value="${(d.motivo||'').replace(/"/g,'&quot;')}" ${isOSOrigin ? 'readonly' : ''}></td>
     <td><input type="time" data-campo="parada" value="${d.horarioParada||''}" ${isOSOrigin ? 'readonly' : ''}></td>
-    <td><input type="text" data-campo="previsao" placeholder="Ex: 130 = 1h30" maxlength="5" value="${d.previsaoRetorno||''}"></td>
+    <td><input type="text" data-campo="previsao" placeholder="00:00" title="Digite a duração (ex: 30 = 00:30, 130 = 01:30) e aperte Enter" maxlength="5" value="${d.previsaoRetorno||''}"></td>
     <td><input type="text" data-campo="retorno" ${isOSOrigin ? '' : 'readonly'} title="CTRL + Duplo Clique para editar" placeholder="Calculado" value="${d.horarioRetorno||''}"></td>
     <td>
       <span class="cronometro">--:--</span>
@@ -1538,10 +2255,16 @@ function _criarLinha(id, d, salvo, isOSOrigin = false) {
   `;
   while (tpl.content.firstChild) tr.appendChild(tpl.content.firstChild);
 
-  tbody.prepend(tr); // Add to the top of the table
+  if (salvo) {
+    tbody.appendChild(tr);
+  } else {
+    tbody.prepend(tr);
+    tr.classList.add('nova-linha-destaque');
+  }
   _ativarListeners(tr, id, salvo);
   _criarAutocomplete(inpF, id);
   _renderizarIconeRelogio(tr);
+  return tr;
 }
 
 // ============================================================
@@ -1550,14 +2273,16 @@ function _criarLinha(id, d, salvo, isOSOrigin = false) {
 function adicionarLinha(id) {
   const hoje = new Date();
   const data = `${String(hoje.getDate()).padStart(2,'0')}/${String(hoje.getMonth()+1).padStart(2,'0')}/${hoje.getFullYear()}`;
-  _criarLinha(id, { dataEntrada: data }, false);
-  // Foco automático no campo Frota da última linha adicionada
-  const tbody = document.querySelector(`#${id} tbody`);
-  if (tbody) {
-    const lastRow = tbody.lastElementChild;
-    if (lastRow) {
-      const frotaInp = lastRow.querySelector('[data-campo="frota"]');
-      if (frotaInp) setTimeout(() => { frotaInp.focus(); frotaInp.select?.(); }, 60);
+  const tr = _criarLinha(id, { dataEntrada: data }, false);
+  // Foco automático e imediato no campo Frota da nova linha aberta
+  if (tr) {
+    const frotaInp = tr.querySelector('[data-campo="frota"]');
+    if (frotaInp) {
+      setTimeout(() => {
+        frotaInp.focus();
+        frotaInp.select?.();
+        tr.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 50);
     }
   }
 }
